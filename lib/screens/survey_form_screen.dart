@@ -61,8 +61,8 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEditing ? 'Edit Survey' : 'Baseline Survey Form'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           if (_currentSection > 0)
             IconButton(
@@ -90,8 +90,21 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
           children: [
             // Progress indicator
             Container(
-              padding: const EdgeInsets.all(16),
-              color: Colors.blue.shade50,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                    const Color(0xFFF0F4F7),
+                  ],
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+              ),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   Text(
@@ -102,17 +115,21 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  LinearProgressIndicator(
-                    value: (_currentSection + 1) / _sections.length,
-                    backgroundColor: Colors.grey.shade300,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: (_currentSection + 1) / _sections.length,
+                      backgroundColor: Theme.of(context).colorScheme.outline,
+                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                      minHeight: 6,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     _sections[_currentSection],
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.blue.shade900,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ],
@@ -127,17 +144,21 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
             ),
             // Navigation buttons
             Container(
-              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.shade300,
-                    blurRadius: 4,
-                    offset: const Offset(0, -2),
+                    color: const Color(0x33B0BEC5),
+                    blurRadius: 8,
+                    offset: const Offset(0, -4),
                   ),
                 ],
               ),
+              padding: const EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -163,8 +184,8 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
                       icon: const Icon(Icons.arrow_forward),
                       label: const Text('Next', style: TextStyle(fontSize: 16)),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade700,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       ),
                     )
                   else
@@ -173,7 +194,7 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
                       icon: const Icon(Icons.save),
                       label: Text(_isEditing ? 'Update Survey' : 'Submit Survey', style: const TextStyle(fontSize: 16)),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: const Color(0xFF4CAF50),
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -241,7 +262,7 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(_isEditing ? 'Survey updated successfully!' : 'Survey submitted successfully!'),
-              backgroundColor: Colors.green,
+              backgroundColor: const Color(0xFF4CAF50),
             ),
           );
           Navigator.pop(context);
@@ -251,7 +272,7 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error saving survey: $e'),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }

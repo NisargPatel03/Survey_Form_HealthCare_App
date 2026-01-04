@@ -57,7 +57,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('CSV data ready (${_surveys.length} surveys)'),
-            backgroundColor: Colors.green,
+            backgroundColor: const Color(0xFF4CAF50),
             duration: const Duration(seconds: 3),
             action: SnackBarAction(
               label: 'Copy',
@@ -73,7 +73,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error preparing CSV: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -93,7 +93,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('PDF report ready (${_surveys.length} surveys)'),
-            backgroundColor: Colors.green,
+            backgroundColor: const Color(0xFF4CAF50),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -103,7 +103,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error preparing PDF: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -193,8 +193,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Survey Submissions'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -247,7 +247,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(20),
-                  color: Colors.blue.shade50,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -263,7 +263,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             style: const TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: Colors.blue,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ],
@@ -285,7 +285,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             style: const TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: Colors.green,
+                              color: const Color(0xFF4CAF50),
                             ),
                           ),
                         ],
@@ -326,10 +326,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         ),
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: Colors.blue.shade700,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
                             child: Text(
                               '${index + 1}',
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                             ),
                           ),
                           title: Text(

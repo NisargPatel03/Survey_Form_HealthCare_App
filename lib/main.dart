@@ -16,8 +16,80 @@ class MyApp extends StatelessWidget {
       title: 'Community Health Care Survey',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
         useMaterial3: true,
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF00796B),
+          primaryContainer: Color(0xFF26A69A),
+          secondary: Color(0xFF0097A7),
+          secondaryContainer: Color(0xFF4DB6AC),
+          surface: Color(0xFFFAFAFA),
+          surfaceContainerHighest: Color(0xFFF5F7FA),
+          error: Color(0xFFD32F2F),
+          onPrimary: Color(0xFFFFFFFF),
+          onSecondary: Color(0xFFFFFFFF),
+          onSurface: Color(0xFF263238),
+          onSurfaceVariant: Color(0xFF37474F),
+          onError: Color(0xFFFFFFFF),
+          outline: Color(0xFFB0BEC5),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF00796B),
+          foregroundColor: Color(0xFFFFFFFF),
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFFFFFFF),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF00796B),
+            foregroundColor: const Color(0xFFFFFFFF),
+            elevation: 3,
+            shadowColor: const Color(0x4D00796B),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          ),
+        ),
+        cardTheme: const CardThemeData(
+          elevation: 4,
+          shadowColor: Color(0x1A00796B),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFB0BEC5)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF00796B), width: 2),
+          ),
+          filled: true,
+          fillColor: const Color(0xFFFAFAFA),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFF26A69A),
+          foregroundColor: Color(0xFFFFFFFF),
+          elevation: 6,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Color(0xFF0097A7),
+        ),
+        snackBarTheme: const SnackBarThemeData(
+          backgroundColor: Color(0xFF37474F),
+          contentTextStyle: TextStyle(color: Color(0xFFFFFFFF)),
+        ),
       ),
       home: const HomeScreen(),
       routes: {
@@ -100,8 +172,6 @@ class HomeScreen extends StatelessWidget {
                   horizontal: 40,
                   vertical: 18,
                 ),
-                backgroundColor: Colors.blue.shade700,
-                foregroundColor: Colors.white,
               ),
             ),
             const SizedBox(height: 20),
@@ -121,8 +191,7 @@ class HomeScreen extends StatelessWidget {
                   horizontal: 40,
                   vertical: 18,
                 ),
-                backgroundColor: Colors.green.shade700,
-                foregroundColor: Colors.white,
+                backgroundColor: const Color(0xFF4CAF50),
               ),
             ),
           ],

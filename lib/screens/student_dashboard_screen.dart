@@ -72,8 +72,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Student: ${widget.studentId}', style: const TextStyle(fontSize: 18)),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -95,7 +95,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(16),
-                  color: Colors.blue.shade50,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -107,10 +107,10 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                           ),
                           Text(
                             '${_surveys.length}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.blue,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ],
@@ -163,10 +163,10 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                                 ),
                                 child: ListTile(
                                   leading: CircleAvatar(
-                                    backgroundColor: Colors.blue.shade700,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
                                     child: Text(
                                       '${index + 1}',
-                                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                                      style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16),
                                     ),
                                   ),
                                   title: Text(
@@ -301,7 +301,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         },
         icon: const Icon(Icons.add),
         label: const Text('New Survey', style: TextStyle(fontSize: 16)),
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
     );
   }
