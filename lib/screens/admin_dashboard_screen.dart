@@ -260,7 +260,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           const SizedBox(height: 8),
                           Text(
                             '$_totalStudents',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.primary,
