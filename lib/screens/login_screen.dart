@@ -33,10 +33,9 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  widget.userType == 'student' ? Icons.person : Icons.admin_panel_settings,
-                  size: 80,
-                  color: Colors.blue,
+                Image.asset(
+                  'assets/logo.jpg',
+                  height: 120, // Adjusted height for logo
                 ),
                 const SizedBox(height: 30),
                 if (widget.userType == 'student') ...[

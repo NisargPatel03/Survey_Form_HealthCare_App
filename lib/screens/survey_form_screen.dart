@@ -163,39 +163,45 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (_currentSection > 0)
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          _currentSection--;
-                        });
-                      },
-                      icon: const Icon(Icons.arrow_back),
-                      label: const Text('Previous', style: TextStyle(fontSize: 16)),
-                    )
-                  else
-                    const SizedBox(),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            _currentSection--;
+                          });
+                        },
+                        icon: const Icon(Icons.arrow_back, size: 18),
+                        label: const Text('Previous', style: TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
+                      ),
+                    ),
+                  if (_currentSection > 0)
+                    const SizedBox(width: 16),
                   if (_currentSection < _sections.length - 1)
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          _currentSection++;
-                        });
-                      },
-                      icon: const Icon(Icons.arrow_forward),
-                      label: const Text('Next', style: TextStyle(fontSize: 16)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            _currentSection++;
+                          });
+                        },
+                        icon: const Icon(Icons.arrow_forward, size: 18),
+                        label: const Text('Next', style: TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        ),
                       ),
                     )
                   else
-                    ElevatedButton.icon(
-                      onPressed: _submitSurvey,
-                      icon: const Icon(Icons.save),
-                      label: Text(_isEditing ? 'Update Survey' : 'Submit Survey', style: const TextStyle(fontSize: 16)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4CAF50),
-                        foregroundColor: Colors.white,
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: _submitSurvey,
+                        icon: const Icon(Icons.save, size: 18),
+                        label: Text(_isEditing ? 'Update' : 'Submit', style: const TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4CAF50),
+                          foregroundColor: Colors.white,
+                        ),
                       ),
                     ),
                 ],

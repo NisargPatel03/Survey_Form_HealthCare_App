@@ -271,6 +271,62 @@ class _ExpenditureSectionState extends State<ExpenditureSection> {
             ),
           );
         }).toList(),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Total Income:', style: TextStyle(fontSize: 16)),
+                  Text(
+                    'Rs. ${(widget.surveyData.totalIncome ?? 0).toStringAsFixed(2)}',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Total Expenditure:', style: TextStyle(fontSize: 16)),
+                  Flexible(
+                    child: Text(
+                      'Rs. ${widget.surveyData.expenditureItems.fold<double>(0.0, (sum, item) => sum + item.amount).toStringAsFixed(2)}',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Income Left:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Flexible(
+                    child: Text(
+                      'Rs. ${((widget.surveyData.totalIncome ?? 0) - widget.surveyData.expenditureItems.fold<double>(0.0, (sum, item) => sum + item.amount)).toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: ((widget.surveyData.totalIncome ?? 0) - widget.surveyData.expenditureItems.fold<double>(0.0, (sum, item) => sum + item.amount)) < 0
+                            ? Colors.redAccent
+                            : Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -292,7 +348,7 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
       child: DefaultTabController(
-        length: 4,
+        length: 6,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -301,8 +357,13 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-          const TabBar(
-            tabs: [
+          TabBar(
+            isScrollable: true,
+            labelColor: Theme.of(context).colorScheme.primary, // Ensure visible label color
+            unselectedLabelColor: Colors.grey,
+            tabs: const [
+              Tab(text: 'Non-Communicable'),
+              Tab(text: 'Communicable'),
               Tab(text: 'Fever'),
               Tab(text: 'Skin Disease'),
               Tab(text: 'Cough'),
@@ -312,6 +373,31 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
             Expanded(
               child: TabBarView(
                 children: [
+                  _buildDiseaseChecklist(
+                    'Non-Communicable Diseases',
+                    [
+                      'Malnutrition', 'Anemia', 'Hypertension', 'Stroke', 'Rheumatic Heart Disease',
+                      'Coronary Heart Disease', 'Cancer', 'Diabetes mellitus', 'Blindness',
+                      'Accidents', 'Mental illness', 'Obesity', 'Iodine Deficiency',
+                      'Fluorosis', 'Epilepsy'
+                    ],
+                    widget.surveyData.nonCommunicableDiseases,
+                  ),
+                  _buildDiseaseChecklist(
+                    'Communicable Diseases',
+                    [
+                      'Small pox', 'Chicken pox', 'Measles', 'Influenza', 'Rubella',
+                      'ARI’s & Pneumonia', 'Mumps', 'Diphtheria', 'Whooping cough',
+                      'Meningococcal meningitis', 'Tuberculosis', 'SARS', 'SARS 2(CORONA VIRUS)',
+                      'EBOLA virus disease', 'Nipah Virus infection', 'Poliomyelitis',
+                      'Viral Hepatitis', 'Cholera', 'Diarrheal diseases', 'Typhoid Fever',
+                      'Food poisoning', 'Hook worm infection', 'Dengue', 'Malaria',
+                      'Filariasis', 'Rabies', 'Yellow fever', 'Japanese encephalitis',
+                      'Brucellosis', 'Plague', 'Anthrax', 'Trachoma', 'Tetanus',
+                      'Leprosy', 'STD & RTI', 'Yaws', 'HIV/AIDS'
+                    ],
+                    widget.surveyData.communicableDiseases,
+                  ),
                   _buildHealthConditionList(
                     '11. IS THERE ANY CASE OF FEVER',
                     widget.surveyData.feverCases,
@@ -338,6 +424,45 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDiseaseChecklist(
+    String title,
+    List<String> diseases,
+    List<String> selectedDiseases,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: diseases.length,
+            itemBuilder: (context, index) {
+              final disease = diseases[index];
+              return CheckboxListTile(
+                title: Text(disease),
+                value: selectedDiseases.contains(disease),
+                onChanged: (value) {
+                  setState(() {
+                    if (value ?? false) {
+                      if (!selectedDiseases.contains(disease)) {
+                        selectedDiseases.add(disease);
+                      }
+                    } else {
+                      selectedDiseases.remove(disease);
+                    }
+                  });
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

@@ -322,6 +322,11 @@ class StorageService {
     survey.medicinePurchaseLocation = json['medicinePurchaseLocation'];
     survey.medicineCompliance = json['medicineCompliance'];
     survey.contactNumber = json['contactNumber'];
+    survey.houseNo = json['houseNo'];
+    survey.aadharNumber = json['aadharNumber'];
+    survey.isApproved = json['isApproved'] ?? false;
+    survey.nonCommunicableDiseases = List<String>.from(json['nonCommunicableDiseases'] ?? []);
+    survey.communicableDiseases = List<String>.from(json['communicableDiseases'] ?? []);
     
     if (json['surveyDate'] != null) {
       survey.surveyDate = DateTime.parse(json['surveyDate']);

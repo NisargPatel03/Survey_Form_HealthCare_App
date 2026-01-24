@@ -10,8 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  shared_preferences: ^2.2.2
-  path_provider: ^2.1.1
+  shared_preferences: 2.2.0
+  path_provider: 2.1.0
   csv: ^5.0.2
   intl: ^0.18.1
   path: ^1.8.3
@@ -24,4 +24,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/logo.jpg
 

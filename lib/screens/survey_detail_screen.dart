@@ -26,6 +26,8 @@ class SurveyDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSection('Basic Information', [
+              _buildInfoRow('House No.', survey.houseNo),
+              _buildInfoRow('Aadhar Number', survey.aadharNumber),
               _buildInfoRow('Area Name', survey.areaName),
               _buildInfoRow('Area Type', survey.areaType),
               _buildInfoRow('Health Centre', survey.healthCentreName),
@@ -84,6 +86,10 @@ class SurveyDetailScreen extends StatelessWidget {
             ]),
             const SizedBox(height: 16),
             _buildSection('Health Conditions', [
+              if (survey.nonCommunicableDiseases.isNotEmpty)
+                _buildInfoRow('Non-Communicable', survey.nonCommunicableDiseases.join(', ')),
+              if (survey.communicableDiseases.isNotEmpty)
+                _buildInfoRow('Communicable', survey.communicableDiseases.join(', ')),
               Text('Fever Cases: ${survey.feverCases.length}'),
               Text('Skin Diseases: ${survey.skinDiseases.length}'),
               Text('Cough Cases: ${survey.coughCases.length}'),

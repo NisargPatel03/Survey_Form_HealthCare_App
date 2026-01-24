@@ -113,6 +113,17 @@ class SurveyData {
   // Section 37: National Health Programme
   List<String> applicableProgrammes = [];
 
+  // New Fields
+  String? houseNo;
+  String? aadharNumber;
+  bool isApproved = false;
+  List<String> nonCommunicableDiseases = [];
+
+  List<String> communicableDiseases = [];
+  String? familyStrengthOther;
+  String? familyWeaknessOther;
+  String? applicableProgrammeOther;
+
   // Section 38: Medicine Purchase
   String? medicinePurchaseLocation;
   String? medicineCompliance; // Complete/Partial/Unfinished
@@ -201,11 +212,19 @@ class SurveyData {
       'hasHealthInsurance': hasHealthInsurance,
       'healthInsuranceDetails': healthInsuranceDetails,
       'familyStrengths': familyStrengths,
+      'familyStrengthOther': familyStrengthOther,
       'familyWeaknesses': familyWeaknesses,
+      'familyWeaknessOther': familyWeaknessOther,
       'applicableProgrammes': applicableProgrammes,
+      'applicableProgrammeOther': applicableProgrammeOther,
       'medicinePurchaseLocation': medicinePurchaseLocation,
       'medicineCompliance': medicineCompliance,
       'contactNumber': contactNumber,
+      'houseNo': houseNo,
+      'aadharNumber': aadharNumber,
+      'isApproved': isApproved,
+      'nonCommunicableDiseases': nonCommunicableDiseases,
+      'communicableDiseases': communicableDiseases,
       'surveyDate': surveyDate?.toIso8601String(),
       'studentName': studentName,
       'studentSignature': studentSignature,

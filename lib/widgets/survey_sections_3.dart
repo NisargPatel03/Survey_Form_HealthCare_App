@@ -23,9 +23,11 @@ class _PregnantWomenSectionState extends State<PregnantWomenSection> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                '16. ANY PREGNANT WOMEN',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              const Expanded(
+                child: Text(
+                  '16. ANY PREGNANT WOMEN',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
               ElevatedButton.icon(
                 onPressed: () {
@@ -217,24 +219,37 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
                           ),
                         ],
                       ),
-                      ListTile(
-                        title: const Text('Date of birth'),
-                        subtitle: Text(birth.dateOfBirth != null
-                            ? DateFormat('yyyy-MM-dd').format(birth.dateOfBirth!)
-                            : 'Not set'),
-                        trailing: const Icon(Icons.calendar_today),
-                        onTap: () async {
-                          final date = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime.now(),
-                          );
-                          if (date != null) {
-                            setState(() => birth.dateOfBirth = date);
-                          }
-                        },
-                      ),
+                        ListTile(
+                          title: const Text('Date of birth'),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(birth.dateOfBirth != null
+                                  ? DateFormat('yyyy-MM-dd').format(birth.dateOfBirth!)
+                                  : 'Not set'),
+                              if (birth.dateOfBirth != null)
+                                Text(
+                                  _calculateAge(birth.dateOfBirth!),
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          trailing: const Icon(Icons.calendar_today),
+                          onTap: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now(),
+                            );
+                            if (date != null) {
+                              setState(() => birth.dateOfBirth = date);
+                            }
+                          },
+                        ),
                       DropdownButtonFormField<String>(
                         value: birth.gender.isEmpty ? null : birth.gender,
                         decoration: const InputDecoration(
@@ -486,6 +501,21 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
         ),
       ],
     );
+  }
+  String _calculateAge(DateTime dob) {
+    final now = DateTime.now();
+    final difference = now.difference(dob);
+    final days = difference.inDays;
+    final years = (days / 365).floor();
+    final months = ((days % 365) / 30).floor();
+    
+    if (years > 0) {
+      return '$years years ${months > 0 ? '$months months' : ''}';
+    } else if (months > 0) {
+      return '$months months';
+    } else {
+      return '$days days';
+    }
   }
 }
 

@@ -115,10 +115,9 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.health_and_safety,
-              size: 100,
-              color: Colors.blue,
+            Image.asset(
+              'assets/logo.jpg',
+              height: 120, // Adjusted height for logo
             ),
             const SizedBox(height: 30),
             const Text(

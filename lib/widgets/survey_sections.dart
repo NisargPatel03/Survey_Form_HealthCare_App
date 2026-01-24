@@ -16,6 +16,8 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
   final _healthCentreController = TextEditingController();
   final _headOfFamilyController = TextEditingController();
   final _subCasteController = TextEditingController();
+  final _houseNoController = TextEditingController();
+  final _aadharController = TextEditingController();
 
   @override
   void initState() {
@@ -24,6 +26,8 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
     _healthCentreController.text = widget.surveyData.healthCentreName ?? '';
     _headOfFamilyController.text = widget.surveyData.headOfFamily ?? '';
     _subCasteController.text = widget.surveyData.subCaste ?? '';
+    _houseNoController.text = widget.surveyData.houseNo ?? '';
+    _aadharController.text = widget.surveyData.aadharNumber ?? '';
   }
 
   @override
@@ -36,6 +40,43 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
+        TextFormField(
+          controller: _houseNoController,
+          decoration: const InputDecoration(
+            labelText: 'House No.',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.home),
+          ),
+          onChanged: (value) => widget.surveyData.houseNo = value,
+          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _aadharController,
+          decoration: const InputDecoration(
+            labelText: 'Aadhar Card No. (Head of Family)',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.credit_card),
+            counterText: "",
+          ),
+          keyboardType: TextInputType.number,
+          maxLength: 12,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          onChanged: (value) => widget.surveyData.aadharNumber = value,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter Aadhar Card No.';
+            }
+            if (value.length != 12) {
+              return 'Aadhar Card No. must be exactly 12 digits';
+            }
+            if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+               return 'Please enter valid digits only';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
         TextFormField(
           controller: _areaNameController,
           decoration: const InputDecoration(
@@ -573,6 +614,8 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextFormField(
                     initialValue: member.name,
                     decoration: const InputDecoration(
@@ -582,13 +625,27 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                     onChanged: (value) => member.name = value,
                   ),
                   const SizedBox(height: 8),
-                  TextFormField(
-                    initialValue: member.relationship,
+                  DropdownButtonFormField<String>(
+                    value: member.relationship.isNotEmpty ? member.relationship : null,
                     decoration: const InputDecoration(
                       labelText: 'Relationship With Head of the Family',
                       border: OutlineInputBorder(),
                     ),
-                    onChanged: (value) => member.relationship = value,
+                    items: const [
+                      DropdownMenuItem(value: 'Hof', child: Text('Hof')),
+                      DropdownMenuItem(value: 'Father', child: Text('Father')),
+                      DropdownMenuItem(value: 'Mother', child: Text('Mother')),
+                      DropdownMenuItem(value: 'Husband', child: Text('Husband')),
+                      DropdownMenuItem(value: 'Wife', child: Text('Wife')),
+                      DropdownMenuItem(value: 'Brother', child: Text('Brother')),
+                      DropdownMenuItem(value: 'Sister', child: Text('Sister')),
+                      DropdownMenuItem(value: 'Uncle', child: Text('Uncle')),
+                      DropdownMenuItem(value: 'Aunty', child: Text('Aunty')),
+                      DropdownMenuItem(value: 'Grand Son', child: Text('Grand Son')),
+                      DropdownMenuItem(value: 'Grand Daughter', child: Text('Grand Daughter')),
+                      DropdownMenuItem(value: 'Other', child: Text('Other')),
+                    ],
+                    onChanged: (value) => setState(() => member.relationship = value ?? ''),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -609,7 +666,7 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: member.gender.isEmpty ? null : member.gender,
+                          value: member.gender.isNotEmpty ? member.gender : null,
                           decoration: const InputDecoration(
                             labelText: 'Gender',
                             border: OutlineInputBorder(),
@@ -626,22 +683,39 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  TextFormField(
-                    initialValue: member.education,
+                  DropdownButtonFormField<String>(
+                    value: member.education.isNotEmpty ? member.education : null,
                     decoration: const InputDecoration(
                       labelText: 'Education',
                       border: OutlineInputBorder(),
                     ),
-                    onChanged: (value) => member.education = value,
+                    items: const [
+                      DropdownMenuItem(value: 'Professional Degree, Post Graduate', child: Text('Professional/Post Grad')),
+                      DropdownMenuItem(value: 'Graduate', child: Text('Graduate')),
+                      DropdownMenuItem(value: 'Diploma', child: Text('Diploma')),
+                      DropdownMenuItem(value: 'High secondary school', child: Text('High secondary school')),
+                      DropdownMenuItem(value: 'Secondary school', child: Text('Secondary school')),
+                      DropdownMenuItem(value: 'Primary school or literate', child: Text('Primary school/literate')),
+                      DropdownMenuItem(value: 'Illiterate', child: Text('Illiterate')),
+                    ],
+                    onChanged: (value) => setState(() => member.education = value ?? ''),
                   ),
                   const SizedBox(height: 8),
-                  TextFormField(
-                    initialValue: member.occupation,
+                  DropdownButtonFormField<String>(
+                    value: member.occupation.isNotEmpty ? member.occupation : null,
                     decoration: const InputDecoration(
                       labelText: 'Occupation',
                       border: OutlineInputBorder(),
                     ),
-                    onChanged: (value) => member.occupation = value,
+                    items: const [
+                      DropdownMenuItem(value: 'Laborer', child: Text('Laborer')),
+                      DropdownMenuItem(value: 'Farmer', child: Text('Farmer')),
+                      DropdownMenuItem(value: 'Own Business', child: Text('Own Business')),
+                      DropdownMenuItem(value: 'Private job', child: Text('Private job')),
+                      DropdownMenuItem(value: 'Government job', child: Text('Government job')),
+                      DropdownMenuItem(value: 'Unemployment', child: Text('Unemployment')),
+                    ],
+                    onChanged: (value) => setState(() => member.occupation = value ?? ''),
                   ),
                   const SizedBox(height: 8),
                   Row(

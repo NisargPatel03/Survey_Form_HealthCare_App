@@ -244,6 +244,17 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
               },
             );
           }).toList(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Other Strength (Specify)',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) => widget.surveyData.familyStrengthOther = value,
+              initialValue: widget.surveyData.familyStrengthOther,
+            ),
+          ),
           const SizedBox(height: 16),
           const Text(
             '36. Weakness of the family.',
@@ -265,6 +276,17 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
               },
             );
           }).toList(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Other Weakness (Specify)',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) => widget.surveyData.familyWeaknessOther = value,
+              initialValue: widget.surveyData.familyWeaknessOther,
+            ),
+          ),
           const SizedBox(height: 16),
           const Text(
             '37. National health programme applicable to the family.',
@@ -286,6 +308,17 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
               },
             );
           }).toList(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Other Programme (Specify)',
+                border: OutlineInputBorder(),
+              ),
+               onChanged: (value) => widget.surveyData.applicableProgrammeOther = value,
+               initialValue: widget.surveyData.applicableProgrammeOther,
+            ),
+          ),
         ],
       ),
     );
