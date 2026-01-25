@@ -6,6 +6,7 @@ import '../widgets/survey_sections_2.dart';
 import '../widgets/survey_sections_3.dart';
 import '../widgets/survey_sections_4.dart';
 import '../widgets/survey_sections_5.dart';
+import '../utils/validation_helper.dart';
 
 class SurveyFormScreen extends StatefulWidget {
   final String? studentId;
@@ -258,6 +259,21 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
 
   Future<void> _submitSurvey() async {
     if (_formKey.currentState?.validate() ?? false) {
+      // Custom validation for all sections
+      String? validationError = ValidationHelper.validateSurvey(_surveyData);
+      if (validationError != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(validationError),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
+        return;
+      }
+
       try {
         if (_isEditing && widget.surveyIndex != null) {
           await _storageService.updateSurvey(widget.surveyIndex!, _surveyData);
