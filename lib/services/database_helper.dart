@@ -15,13 +15,6 @@ class DatabaseHelper {
     return _database!;
   }
 
-  Future<Database> _initDB(String filePath) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath);
-
-    return await openDatabase(path, version: 1, onCreate: _createDB);
-  }
-
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE surveys (
@@ -30,16 +23,34 @@ class DatabaseHelper {
         headOfFamily TEXT,
         surveyDate TEXT,
         jsonContent TEXT,
-        createdAt TEXT
+        createdAt TEXT,
+        isSynced INTEGER DEFAULT 0
       )
     ''');
+  }
+
+  // Handle migration for existing users
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE surveys ADD COLUMN isSynced INTEGER DEFAULT 0');
+    }
+  }
+
+  Future<Database> _initDB(String filePath) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
+
+    return await openDatabase(
+      path, 
+      version: 2, 
+      onCreate: _createDB,
+      onUpgrade: _onUpgrade,
+    );
   }
 
   Future<int> create(SurveyData survey) async {
     final db = await instance.database;
     
-    // We serialize the survey to JSON. 
-    // The ID might be null initially in the JSON, but we will assign it after insertion.
     final jsonContent = jsonEncode(survey.toJson());
     
     final id = await db.insert('surveys', {
@@ -48,10 +59,38 @@ class DatabaseHelper {
       'surveyDate': survey.surveyDate?.toIso8601String(),
       'jsonContent': jsonContent,
       'createdAt': DateTime.now().toIso8601String(),
+      'isSynced': 0, // Default to not synced
     });
     
     survey.id = id;
     return id;
+  }
+
+  // --- Sync Related Methods ---
+
+  Future<List<SurveyData>> getPendingSurveys() async {
+    final db = await instance.database;
+    final result = await db.query(
+      'surveys',
+      where: 'isSynced = ?',
+      whereArgs: [0], // 0 means false
+    );
+
+    return result.map((json) {
+       final contentMap = jsonDecode(json['jsonContent'] as String);
+       contentMap['id'] = json['id'];
+       return SurveyData.fromJson(contentMap);
+    }).toList();
+  }
+
+  Future<int> markAsSynced(int id) async {
+    final db = await instance.database;
+    return await db.update(
+      'surveys',
+      {'isSynced': 1},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<SurveyData?> read(int id) async {

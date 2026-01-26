@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 import 'screens/survey_form_screen.dart';
 import 'screens/admin_dashboard_screen.dart';
 import 'screens/login_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
+import 'services/sync_service.dart'; // Import SyncService
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  await Supabase.initialize(
+    url: 'https://bptrstciuoaaqutanmal.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwdHJzdGNpdW9hYXF1dGFubWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzI0NDEsImV4cCI6MjA4NTAwODQ0MX0.hBL1YcChvPruPh7mGCFkV6HCkMsPjx7cEofbiI0DoJc',
+  );
+
   runApp(const MyApp());
 }
 
@@ -191,6 +200,40 @@ class HomeScreen extends StatelessWidget {
                   vertical: 18,
                 ),
                 backgroundColor: const Color(0xFF4CAF50),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Sync Button
+            ElevatedButton.icon(
+              onPressed: () async {
+                // Show loading indicator or simple snackbar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Syncing data to server...')),
+                );
+                
+                final count = await SyncService().syncPendingSurveys();
+                
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                   if (count > 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Successfully synced $count surveys!')),
+                    );
+                   } else {
+                     ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('No pending surveys to sync.')),
+                    );
+                   }
+                }
+              },
+              icon: const Icon(Icons.cloud_upload),
+              label: const Text('Sync to Server', style: TextStyle(fontSize: 18)),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 18,
+                ),
+                backgroundColor: const Color(0xFF2196F3), // Blue color
               ),
             ),
           ],
