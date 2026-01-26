@@ -78,6 +78,17 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
             IconButton(
               icon: const Icon(Icons.arrow_forward),
               onPressed: () {
+                String? error = ValidationHelper.validateSection(_currentSection, _surveyData);
+                if (error != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(error),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
                 setState(() {
                   _currentSection++;
                 });
@@ -151,11 +162,11 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
                 ),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                    color: const Color(0x33B0BEC5),
+                    color: Color(0x33B0BEC5),
                     blurRadius: 8,
-                    offset: const Offset(0, -4),
+                    offset: Offset(0, -4),
                   ),
                 ],
               ),
@@ -181,6 +192,17 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () {
+                          String? error = ValidationHelper.validateSection(_currentSection, _surveyData);
+                          if (error != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(error),
+                                backgroundColor: Theme.of(context).colorScheme.error,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                            return;
+                          }
                           setState(() {
                             _currentSection++;
                           });
@@ -275,8 +297,8 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
       }
 
       try {
-        if (_isEditing && widget.surveyIndex != null) {
-          await _storageService.updateSurvey(widget.surveyIndex!, _surveyData);
+        if (_isEditing && _surveyData.id != null) {
+          await _storageService.updateSurvey(_surveyData);
         } else {
           await _storageService.saveSurvey(_surveyData);
         }

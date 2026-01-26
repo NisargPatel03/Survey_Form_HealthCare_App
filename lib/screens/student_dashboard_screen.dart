@@ -36,7 +36,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
     });
   }
 
-  Future<void> _deleteSurvey(int index, SurveyData survey) async {
+  Future<void> _deleteSurvey(SurveyData survey) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -56,23 +56,18 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
     );
 
     if (confirmed == true) {
-      final allSurveys = await _storageService.getAllSurveys();
-      // Robust matching
-      final actualIndex = allSurveys.indexWhere((s) =>
-          s.headOfFamily == survey.headOfFamily &&
-          s.areaName == survey.areaName &&
-          s.surveyDate?.millisecondsSinceEpoch == survey.surveyDate?.millisecondsSinceEpoch &&
-          s.studentName == survey.studentName);
-          
-      if (actualIndex >= 0) {
-        await _storageService.deleteSurvey(actualIndex);
-        _loadSurveys();
+      // Use ID if available
+      if (survey.id != null) {
+         await _storageService.deleteSurvey(survey.id!);
+         _loadSurveys();
       } else {
-        if (mounted) {
-           ScaffoldMessenger.of(context).showSnackBar(
-             const SnackBar(content: Text('Could not find original survey to delete')),
-           );
-        }
+         // Fallback legacy logic if ID missing for some reason
+         // ... (existing logic or just error)
+          if (mounted) {
+             ScaffoldMessenger.of(context).showSnackBar(
+               const SnackBar(content: Text('Cannot delete survey without ID')),
+             );
+          }
       }
     }
   }
@@ -135,7 +130,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       }
   }
 
-  Future<void> _showApprovalDialog(SurveyData survey, int index) async {
+  Future<void> _showApprovalDialog(SurveyData survey) async {
     final passwordController = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
@@ -180,15 +175,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
     if (confirmed == true) {
       survey.isApproved = true;
       // We need to save this update to storage
-       final allSurveys = await _storageService.getAllSurveys();
-       final actualIndex = allSurveys.indexWhere((s) =>
-          s.headOfFamily == survey.headOfFamily &&
-          s.areaName == survey.areaName &&
-          s.surveyDate?.millisecondsSinceEpoch == survey.surveyDate?.millisecondsSinceEpoch &&
-          s.studentName == survey.studentName);
-       
-       if (actualIndex >= 0) {
-         await _storageService.updateSurvey(actualIndex, survey);
+       if (survey.id != null) {
+         await _storageService.updateSurvey(survey);
          _loadSurveys();
          if (mounted) {
            ScaffoldMessenger.of(context).showSnackBar(
@@ -317,7 +305,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                                             ActionChip(
                                               label: const Text('Approve'),
                                               backgroundColor: Colors.orange,
-                                              onPressed: () => _showApprovalDialog(survey, index),
+                                              onPressed: () => _showApprovalDialog(survey),
                                             ),
                                         ],
                                       ),
@@ -366,7 +354,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                                           IconButton(
                                             icon: const Icon(Icons.delete, color: Colors.red),
                                             tooltip: 'Delete',
-                                            onPressed: () => _deleteSurvey(index, survey),
+                                            onPressed: () => _deleteSurvey(survey),
                                           ),
                                         ],
                                       ),

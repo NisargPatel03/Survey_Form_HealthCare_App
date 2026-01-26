@@ -163,7 +163,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     }
   }
 
-  Future<void> _deleteSurvey(int index) async {
+  Future<void> _deleteSurvey(int id) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -183,7 +183,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
 
     if (confirmed == true) {
-      await _storageService.deleteSurvey(index);
+      await _storageService.deleteSurvey(id);
       _loadSurveys();
     }
   }
@@ -285,7 +285,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             style: const TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF4CAF50),
+                              color: Color(0xFF4CAF50),
                             ),
                           ),
                         ],
@@ -383,7 +383,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                   ),
                                 ).then((_) => _loadSurveys());
                               } else if (value == 'delete') {
-                                _deleteSurvey(index);
+                                if (survey.id != null) {
+                                  _deleteSurvey(survey.id!);
+                                }
                               }
                             },
                           ),

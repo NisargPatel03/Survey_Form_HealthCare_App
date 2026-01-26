@@ -2,7 +2,38 @@ import '../models/survey_data.dart';
 
 class ValidationHelper {
   static String? validateSurvey(SurveyData data) {
-    // Section 1: Basic Information
+    // Validate all sections sequentially
+    // We use the indices corresponding to SurveyFormScreen
+    for (int i = 0; i < 18; i++) {
+        String? error = validateSection(i, data);
+        if (error != null) return error;
+    }
+    return null;
+  }
+
+  static String? validateSection(int sectionIndex, SurveyData data) {
+    switch (sectionIndex) {
+      case 0: return _validateBasicInfo(data);
+      case 1: return _validateHousingCondition(data);
+      case 2: return _validateFamilyComposition(data);
+      case 3: return _validateIncomeSocioEconomic(data);
+      case 4: return _validateTransportCommunication(data);
+      case 5: return _validateDietaryPattern(data);
+      case 6: return _validateExpenditure(data);
+      // Case 7: Health Conditions (Not in mandatory list: 1,2,3,4,5,6,7,9,15,16,17,18)
+      case 7: return null; 
+      case 8: return _validateFamilyHealthAttitude(data); // Section 9 in list
+      // Cases 9, 10, 11, 12, 13 skipped in mandatory list
+      case 14: return _validateEnvironmentalHealth(data); // Section 15
+      case 15: return _validateHealthServices(data); // Section 16
+      case 16: return _validateFamilyAssessment(data); // Section 17
+      case 17: return _validateFinalDetails(data); // Section 18
+      default: return null;
+    }
+  }
+
+  // Section 1: Basic Information
+  static String? _validateBasicInfo(SurveyData data) {
     if (_isEmpty(data.houseNo)) return "Section 1: House No. is required";
     if (_isEmpty(data.aadharNumber)) return "Section 1: Aadhar Card No. is required";
     if (data.aadharNumber!.length != 12) return "Section 1: Aadhar Card No. must be 12 digits";
@@ -12,10 +43,12 @@ class ValidationHelper {
     if (_isEmpty(data.headOfFamily)) return "Section 1: Head of Family is required";
     if (_isEmpty(data.familyType)) return "Section 1: Family Type is required";
     if (_isEmpty(data.religion)) return "Section 1: Religion is required";
-    // Subcaste might be optional? User said "Section-1... mandatory". Assuming yes if text field.
     if (_isEmpty(data.subCaste)) return "Section 1: Sub Caste is required";
+    return null;
+  }
 
-    // Section 2: Housing Condition
+  // Section 2: Housing Condition
+  static String? _validateHousingCondition(SurveyData data) {
     if (_isEmpty(data.houseType)) return "Section 2: House Type is required";
     if (data.numberOfRooms == null) return "Section 2: Number of Rooms is required";
     if (_isEmpty(data.roomAdequacy)) return "Section 2: Room Adequacy is required";
@@ -27,32 +60,43 @@ class ValidationHelper {
     if (_isEmpty(data.kitchen)) return "Section 2: Kitchen is required";
     if (_isEmpty(data.drainage)) return "Section 2: Drainage is required";
     if (_isEmpty(data.lavatory)) return "Section 2: Lavatory is required";
+    return null;
+  }
 
-    // Section 3: Family Composition
+  // Section 3: Family Composition
+  static String? _validateFamilyComposition(SurveyData data) {
     if (data.familyMembers.isEmpty) return "Section 3: At least one family member is required";
     for (int i = 0; i < data.familyMembers.length; i++) {
-      final member = data.familyMembers[i];
-      if (_isEmpty(member.name)) return "Section 3: Member ${i + 1} Name is required";
-      if (_isEmpty(member.relationship)) return "Section 3: Member ${i + 1} Relationship is required";
-      if (member.age <= 0) return "Section 3: Member ${i + 1} Age is required";
-      if (_isEmpty(member.gender)) return "Section 3: Member ${i + 1} Gender is required";
-      if (_isEmpty(member.education)) return "Section 3: Member ${i + 1} Education is required";
-      if (_isEmpty(member.occupation)) return "Section 3: Member ${i + 1} Occupation is required";
-      if (_isEmpty(member.healthStatus)) return "Section 3: Member ${i + 1} Health Status is required";
+        final member = data.familyMembers[i];
+        if (_isEmpty(member.name)) return "Section 3: Member ${i + 1} Name is required";
+        if (_isEmpty(member.relationship)) return "Section 3: Member ${i + 1} Relationship is required";
+        if (member.age <= 0) return "Section 3: Member ${i + 1} Age is required";
+        if (_isEmpty(member.gender)) return "Section 3: Member ${i + 1} Gender is required";
+        if (_isEmpty(member.education)) return "Section 3: Member ${i + 1} Education is required";
+        if (_isEmpty(member.occupation)) return "Section 3: Member ${i + 1} Occupation is required";
+        if (_isEmpty(member.healthStatus)) return "Section 3: Member ${i + 1} Health Status is required";
     }
+    return null;
+  }
 
-    // Section 4: Income & Socio-economic
+  // Section 4: Income & Socio-economic
+  static String? _validateIncomeSocioEconomic(SurveyData data) {
     if (data.totalIncome == null) return "Section 4: Total Income is required";
     if (_isEmpty(data.socioEconomicClass)) return "Section 4: Socio-economic class is required";
+    return null;
+  }
 
-    // Section 5: Transport & Communication
+  // Section 5: Transport & Communication
+  static String? _validateTransportCommunication(SurveyData data) {
     if (data.communicationMedia.isEmpty) return "Section 5: Select at least one Communication Media";
     if (data.transportOptions.isEmpty) return "Section 5: Select at least one Transport Option";
     if (_isEmpty(data.motherTongue)) return "Section 5: Mother Tongue is required";
     if (data.languagesKnown.isEmpty) return "Section 5: Select at least one Language Known";
+    return null;
+  }
 
-    // Section 6: Dietary Pattern
-    // Ensure all initialized items have valid status if available
+  // Section 6: Dietary Pattern
+  static String? _validateDietaryPattern(SurveyData data) {
     for (var entry in data.dietaryPattern.entries) {
       if (entry.value.available) {
         if (!entry.value.traditional && !entry.value.ideal && !entry.value.unhygienic) {
@@ -60,32 +104,35 @@ class ValidationHelper {
         }
       }
     }
+    return null;
+  }
 
-    // Section 7: Expenditure
-    // Ensure total expenditure > 0 or at least one item > 0
+  // Section 7: Expenditure
+  static String? _validateExpenditure(SurveyData data) {
     bool hasExpenditure = data.expenditureItems.any((item) => item.amount > 0);
     if (!hasExpenditure) return "Section 7: Expenditure details are required";
-    
-    // Section 9: Family Health Attitude (Index 8 in list, so Section 9 in user list?)
-    // Note: User said "Section-9". In app sections list, index 8 is Family Health Attitude.
-    // Index 7 is Health Conditions (User didn't list Section 8).
-    // Section 9 is Family Health Attitude.
+    return null;
+  }
+
+  // Section 9: Family Health Attitude
+  static String? _validateFamilyHealthAttitude(SurveyData data) {
     if (_isEmpty(data.healthKnowledgeAttitude)) return "Section 9: Health Knowledge Attitude is required";
     if (_isEmpty(data.nutritionKnowledgeAttitude)) return "Section 9: Nutrition Knowledge Attitude is required";
     if (data.healthServiceUtilizationList == null || data.healthServiceUtilizationList!.isEmpty) {
       return "Section 9: Health Service Utilization is required";
     }
     if (_isEmpty(data.communityLeaders)) return "Section 9: Community Leaders information is required";
+    return null;
+  }
 
-    // Section 15: Environmental Health (Index 14)
+  // Section 15: Environmental Health
+  static String? _validateEnvironmentalHealth(SurveyData data) {
     // 21. Sewage
     if (data.sewageDisposalHygienic == null) return "Section 15: Sewage Disposal question is required (21)";
     if (data.sewageDisposalHygienic == false && _isEmpty(data.sewageDisposalReason)) return "Section 15: Sewage Disposal Reason is required";
     if (data.sewageDisposalHygienic == true && _isEmpty(data.sewageDisposalReason)) return "Section 15: Sewage Disposal Method is required";
     
     // 22. Waste
-    // Logic: if not hygienic, reason required. But "hygienic" is determined by checkboxes?
-    // Let's assume one of the methods (Composting, Burning...) OR a reason must be provided.
     if (data.wasteDisposalMethods.isEmpty && _isEmpty(data.wasteDisposalReason)) {
       return "Section 15: Waste Disposal Method or Reason is required (22)";
     }
@@ -104,19 +151,17 @@ class ValidationHelper {
     if (data.hasWellOrHandPump == true) {
       if (data.wellMaintained == null) return "Section 15: Well Maintenance question is required (25.1)";
       if (data.wellMaintained == false && _isEmpty(data.wellMaintenanceReason)) return "Section 15: Well Maintenance Reason is required";
-      // 25.2 Chlorination - Optional date? Let's skip strict date check, but maybe reason if not chlorinated.
-      // But we don't have a bool for "is chlorinated". Just date and reason.
     }
     
     // 26. Clean House
     if (data.houseKeptClean == null) return "Section 15: House Cleanliness question is required (26)";
     if (data.houseKeptClean == false && _isEmpty(data.houseCleanReason)) return "Section 15: House Cleanliness Reason is required";
 
-    // 27. Spray - Optional? User said Section 15 mandatory.
-    // Let's enforce date or reason?
-    // if (_isEmpty(data.houseSprayDate) && _isEmpty(data.houseSprayReason)) return "Section 15: House Spary Date or Reason is required (27)";
+    return null;
+  }
 
-    // Section 16: Health Services (Index 15)
+  // Section 16: Health Services
+  static String? _validateHealthServices(SurveyData data) {
     if (_isEmpty(data.treatmentLocation)) return "Section 16: Treatment Location is required (30)";
     if (data.officialHealthAgenciesAdequate == null) return "Section 16: Official Health Agencies question required (31)";
     if (data.officialHealthAgenciesAdequate == false && _isEmpty(data.healthAgenciesReason)) return "Section 16: Health Agencies Reason is required";
@@ -126,20 +171,24 @@ class ValidationHelper {
     // 38. Medicine
     if (_isEmpty(data.medicinePurchaseLocation)) return "Section 16: Medicine Purchase Location is required (38)";
     if (_isEmpty(data.medicineCompliance)) return "Section 16: Medicine Compliance is required (38.1)";
+    return null;
+  }
 
-    // Section 17: Family Assessment (Index 16)
-    // 35 & 36
+  // Section 17: Family Assessment
+  static String? _validateFamilyAssessment(SurveyData data) {
     if (data.familyStrengths.isEmpty && _isEmpty(data.familyStrengthOther)) return "Section 17: Family Strength is required";
     if (data.familyWeaknesses.isEmpty && _isEmpty(data.familyWeaknessOther)) return "Section 17: Family Weakness is required";
     if (data.applicableProgrammes.isEmpty && _isEmpty(data.applicableProgrammeOther)) return "Section 17: Applicable Programme is required";
-    
-    // Section 18: Final Details (Index 17)
+    return null;
+  }
+
+  // Section 18: Final Details
+  static String? _validateFinalDetails(SurveyData data) {
     if (_isEmpty(data.contactNumber)) return "Section 18: Contact Number is required";
     if (data.surveyDate == null) return "Section 18: Survey Date is required";
     if (_isEmpty(data.studentName)) return "Section 18: Student Name is required";
     if (_isEmpty(data.studentSignature)) return "Section 18: Student Signature is required";
-
-    return null; // Valid
+    return null;
   }
 
   static bool _isEmpty(String? value) {
