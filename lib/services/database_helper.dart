@@ -80,7 +80,7 @@ class DatabaseHelper {
        final contentMap = jsonDecode(json['jsonContent'] as String);
        contentMap['id'] = json['id'];
        return SurveyData.fromJson(contentMap);
-    }).toList();
+    }).where((s) => s.isApproved).toList();
   }
 
   Future<int> markAsSynced(int id) async {
