@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'screens/survey_form_screen.dart';
-import 'screens/admin_dashboard_screen.dart';
 import 'screens/login_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
 import 'services/sync_service.dart'; // Import SyncService
@@ -103,7 +102,6 @@ class MyApp extends StatelessWidget {
       home: const HomeScreen(),
       routes: {
         '/survey': (context) => const SurveyFormScreen(),
-        '/admin': (context) => const AdminDashboardScreen(),
       },
     );
   }
@@ -169,37 +167,17 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const LoginScreen(userType: 'student'),
+                    builder: (context) => const LoginScreen(),
                   ),
                 );
               },
               icon: const Icon(Icons.person),
-              label: const Text('Student Login', style: TextStyle(fontSize: 18)),
+              label: const Text('Login', style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 40,
                   vertical: 18,
                 ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoginScreen(userType: 'admin'),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.admin_panel_settings),
-              label: const Text('Admin Login', style: TextStyle(fontSize: 18)),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 18,
-                ),
-                backgroundColor: const Color(0xFF4CAF50),
               ),
             ),
             const SizedBox(height: 20),
