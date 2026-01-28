@@ -3,6 +3,7 @@ import 'screens/survey_form_screen.dart';
 import 'screens/login_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
 import 'services/sync_service.dart'; // Import SyncService
+import 'screens/student_dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if user is already logged in
+    final session = Supabase.instance.client.auth.currentSession;
+    final initialRoute = session != null ? '/dashboard' : '/';
+
     return MaterialApp(
       title: 'Community Health Care Survey',
       debugShowCheckedModeBanner: false,
@@ -99,8 +104,16 @@ class MyApp extends StatelessWidget {
           contentTextStyle: TextStyle(color: Color(0xFFFFFFFF)),
         ),
       ),
-      home: const HomeScreen(),
+      initialRoute: initialRoute,
       routes: {
+        '/': (context) => const HomeScreen(),
+        '/dashboard': (context) {
+           // Retrieve user metadata if available, otherwise just pass a default 'Student'
+           // Ideally we would get the ID from local storage or user metadata
+           final user = Supabase.instance.client.auth.currentUser;
+           final studentId = user?.userMetadata?['student_id'] as String? ?? 'Student';
+           return StudentDashboardScreen(studentId: studentId);
+        },
         '/survey': (context) => const SurveyFormScreen(),
       },
     );
