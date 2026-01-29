@@ -2,56 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { useSurveys } from '../hooks/useSurveys';
 import { processAnalytics, generateChartConfig } from '../utils/analyticsEngine';
 import { LineChart, BarChart, PieChart } from '../components/Charts/ChartWidgets';
+import StatsTable from '../components/StatsTable';
 import StatCard from '../components/StatCard';
-import { FaFilter, FaUsers, FaHeartbeat, FaChartLine, FaLeaf, FaBaby, FaNotesMedical } from 'react-icons/fa';
+import { FaFilter, FaUsers, FaLeaf, FaBaby, FaNotesMedical, FaHeartbeat } from 'react-icons/fa';
 
 /**
- * Reusable Table to show Frequency and Percentage
+ * Analytics Dashboard
+ * Now features PDF downloads with detailed disease tracking.
  */
-const StatsTable = ({ title, data }) => {
-    if (!data || !data.datasets || data.datasets.length === 0) return null;
-
-    const dataset = data.datasets[0];
-    const total = dataset.data.reduce((a, b) => a + b, 0);
-
-    return (
-        <div className="bg-white p-4 rounded-xl shadow-md flex flex-col h-full">
-            <h3 className="text-gray-700 font-semibold mb-4 border-b pb-2">{title}</h3>
-            <div className="overflow-y-auto flex-1">
-                <table className="w-full text-sm text-center">
-                    <thead className="text-xs text-gray-500 bg-gray-50 uppercase">
-                        <tr>
-                            <th className="py-2 text-left pl-2">Category</th>
-                            <th className="py-2">Freq</th>
-                            <th className="py-2">%</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {data.labels.map((label, i) => {
-                            const count = dataset.data[i];
-                            const percent = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
-                            return (
-                                <tr key={i} className="hover:bg-gray-50">
-                                    <td className="py-2 text-left pl-2 font-medium text-gray-700">{label}</td>
-                                    <td className="py-2 text-gray-600">{count}</td>
-                                    <td className="py-2 text-blue-600 font-semibold">{percent}%</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                    <tfoot className="border-t font-bold bg-gray-50">
-                        <tr>
-                            <td className="py-2 text-left pl-2">Total</td>
-                            <td className="py-2">{total}</td>
-                            <td className="py-2">100%</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    );
-};
-
 const Analytics = () => {
     const { surveys, loading, error } = useSurveys();
 

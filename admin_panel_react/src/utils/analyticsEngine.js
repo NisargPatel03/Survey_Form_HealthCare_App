@@ -90,9 +90,23 @@ export const processAnalytics = (surveys) => {
     const symptomCounts = { 'Fever': 0, 'Skin Disease': 0, 'Cough': 0 };
     const otherIllnessCounts = {};
 
+    // Detailed tracking for PDF
+    const diseaseDetails = {};
+
+    // Helper to add details
+    const trackDetail = (diseaseName, data, surveyDate) => {
+        if (!diseaseDetails[diseaseName]) diseaseDetails[diseaseName] = [];
+        diseaseDetails[diseaseName].push({
+            hof: data.headOfFamily || 'N/A',
+            contact: data.contactNumber || 'N/A',
+            date: surveyDate ? new Date(surveyDate).toLocaleDateString() : 'N/A'
+        });
+    };
+
     // --- Processing Loop ---
     surveys.forEach(survey => {
         const data = survey.data || {};
+        const sDate = survey.created_at;
 
         // -- Household Level Stats --
 
@@ -200,28 +214,36 @@ export const processAnalytics = (surveys) => {
         const commDiseases = data.communicableDiseases || [];
         commDiseases.forEach(d => {
             communicableCounts[d] = (communicableCounts[d] || 0) + 1;
+            trackDetail(d, data, sDate);
         });
 
         // 2. Non-Communicable
         const nonCommDiseases = data.nonCommunicableDiseases || [];
         nonCommDiseases.forEach(d => {
-            // Note: Fixed duplication bug d=d+1 in previous attempts.
-            // d is the disease string.
-            // If the key exists (initialized), we increment.
-            // If not initialized (unexpected string), we create it so we don't lose data.
             nonCommunicableCounts[d] = (nonCommunicableCounts[d] || 0) + 1;
+            trackDetail(d, data, sDate);
         });
 
         // 3. Symptoms (Fever, Skin, Cough)
-        if (data.feverCases) symptomCounts['Fever'] += data.feverCases.length;
-        if (data.skinDiseases) symptomCounts['Skin Disease'] += data.skinDiseases.length;
-        if (data.coughCases) symptomCounts['Cough'] += data.coughCases.length;
+        if (data.feverCases && data.feverCases.length > 0) {
+            symptomCounts['Fever'] += data.feverCases.length;
+            trackDetail('Fever', data, sDate);
+        }
+        if (data.skinDiseases && data.skinDiseases.length > 0) {
+            symptomCounts['Skin Disease'] += data.skinDiseases.length;
+            trackDetail('Skin Disease', data, sDate);
+        }
+        if (data.coughCases && data.coughCases.length > 0) {
+            symptomCounts['Cough'] += data.coughCases.length;
+            trackDetail('Cough', data, sDate);
+        }
 
         // 4. Other Illnesses
         const others = data.otherIllnesses || [];
         others.forEach(d => {
             const name = (typeof d === 'string') ? d : (d.name || d.illness || 'Unknown');
             otherIllnessCounts[name] = (otherIllnessCounts[name] || 0) + 1;
+            trackDetail(name, data, sDate);
         });
 
     });
@@ -244,7 +266,8 @@ export const processAnalytics = (surveys) => {
             communicableCounts,
             nonCommunicableCounts,
             symptomCounts,
-            otherIllnessCounts
+            otherIllnessCounts,
+            diseaseDetails
         }
     };
 };
@@ -252,7 +275,7 @@ export const processAnalytics = (surveys) => {
 /**
  * Generates Chart.js data objects with Freq & Percentage logic
  */
-const createChartData = (label, dataset, totalForPercent, colorPalette) => {
+const createChartData = (label, dataset, totalForPercent, colorPalette, detailsMap = null) => {
     const labels = Object.keys(dataset);
     const dataValues = Object.values(dataset);
 
@@ -263,7 +286,9 @@ const createChartData = (label, dataset, totalForPercent, colorPalette) => {
             data: dataValues,
             backgroundColor: colorPalette,
             borderWidth: 1
-        }]
+        }],
+        // Pass diseaseDetails map to charts to be used by PDF generator
+        details: detailsMap
     };
 };
 
@@ -290,11 +315,11 @@ export const generateChartConfig = (processedData) => {
             waste: createChartData('Waste Disposal', aggr.wasteDisposalCount, processedData.totalHouseholds, PALETTE_MULTI),
         },
         health: {
-            // Split Charts
-            communicable: createChartData('Communicable Cases', aggr.communicableCounts, 0, PALETTE_MULTI),
-            nonCommunicable: createChartData('Non-Communicable Cases', aggr.nonCommunicableCounts, 0, PALETTE_MULTI),
-            symptoms: createChartData('Symptom Cases', aggr.symptomCounts, 0, ['#ef4444', '#f59e0b', '#8b5cf6']),
-            other: createChartData('Other Illnesses', aggr.otherIllnessCounts, 0, PALETTE_MULTI),
+            // Split Charts with Disease Details for PDF
+            communicable: createChartData('Communicable Cases', aggr.communicableCounts, 0, PALETTE_MULTI, aggr.diseaseDetails),
+            nonCommunicable: createChartData('Non-Communicable Cases', aggr.nonCommunicableCounts, 0, PALETTE_MULTI, aggr.diseaseDetails),
+            symptoms: createChartData('Symptom Cases', aggr.symptomCounts, 0, ['#ef4444', '#f59e0b', '#8b5cf6'], aggr.diseaseDetails),
+            other: createChartData('Other Illnesses', aggr.otherIllnessCounts, 0, PALETTE_MULTI, aggr.diseaseDetails),
         },
         // We pass raw vital stats for card display
         vitalStats: aggr.vitalStats
