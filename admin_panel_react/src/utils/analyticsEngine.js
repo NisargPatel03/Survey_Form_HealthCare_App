@@ -1,156 +1,302 @@
+/**
+ * Analytics Engine
+ * Processes raw survey data into statistical models efficiently.
+ */
+
+// Helper to calculate percentage
+const calcPercent = (count, total) => {
+    if (!total || total === 0) return 0;
+    return ((count / total) * 100).toFixed(1);
+};
+
 export const processAnalytics = (surveys) => {
     if (!surveys || surveys.length === 0) return null;
 
-    // --- Initial Aggregators ---
-    const genderCount = { Male: 0, Female: 0, Other: 0 };
-    const ageGroups = { '0-5': 0, '6-18': 0, '19-35': 0, '36-60': 0, '60+': 0 };
-    const housingTypes = {};
-    const incomeLevels = { '< 5k': 0, '5k-10k': 0, '10k-20k': 0, '> 20k': 0 };
-    const diseaseCounts = {}; // Combined communicable & non-communicable
-    const healthServiceByGender = { Male: { Yes: 0, No: 0 }, Female: { Yes: 0, No: 0 } };
-
-    // Trend Aggregators
-    const surveysByMonth = {};
-    const diseaseTrend = {}; // { 'YYYY-MM': { DiseaseA: 5, DiseaseB: 3 } }
-
-    // New stats
+    // --- master aggregators ---
     let totalMembers = 0;
-    let totalChildren = 0; // 0-14
-    let totalElderly = 0; // 65+
-    let totalWorkingAge = 0; // 15-64
-    let membersWithIllness = 0;
+    let totalHouseholds = surveys.length;
 
+    // 1. Demographics
+    const ageGroups = {
+        'Under 5 (< 5)': 0,
+        'School (5-12)': 0,
+        'Teen (12-19)': 0,
+        'Early Adol (19-25)': 0,
+        'Mid Adol (25-40)': 0,
+        'Late Adol (40-60)': 0,
+        'Old Age (> 60)': 0
+    };
+    const genderCount = { Male: 0, Female: 0, Other: 0 };
+    const religionCount = {};
+    const educationCount = {
+        'Professional/Post Grad': 0,
+        'Graduate': 0,
+        'Diploma': 0,
+        'High Secondary': 0,
+        'Secondary': 0,
+        'Primary/Literate': 0,
+        'Illiterate': 0,
+        'Other': 0
+    };
+    const familyTypeCount = { 'Nuclear': 0, 'Joint': 0, 'Single': 0, 'Other': 0 };
+    const occupationCount = {
+        'Laborer': 0,
+        'Farmer': 0,
+        'Own Business': 0,
+        'Private Job': 0,
+        'Govt Job': 0,
+        'Unemployed': 0,
+        'Other': 0
+    };
+
+    // 2. Environmental
+    const houseTypeCount = { 'Pucca': 0, 'Semi-Pucca': 0, 'Kutcha': 0, 'Other': 0 };
+    const drainageCount = { 'Adequate': 0, 'Inadequate': 0, 'No Drainage': 0, 'Other': 0 };
+    const wasteDisposalCount = { 'Composting': 0, 'Burning': 0, 'Burying': 0, 'Dumping': 0, 'Other': 0 };
+
+    // 3. Vital Stats & Others
+    const vitalStats = {
+        'Tubectomy': 0,
+        'Vasectomy': 0,
+        'Temporary Contraceptives': 0,
+        'Infertility': 0,
+        'Births (Last 1yr)': 0,
+        'Deaths (Last 1yr)': 0,
+        'Antenatal Mothers': 0,
+        'Postnatal Mothers': 0,
+        'Eligible Couples': 0,
+        'Marriages': 0,
+        'Under 5 Children': 0,
+    };
+
+    // 4. Community Diagnosis - Detailed Split
+    const communicableCounts = {
+        'Small pox': 0, 'Chicken pox': 0, 'Measles': 0, 'Influenza': 0, 'Rubella': 0,
+        'ARI’s & Pneumonia': 0, 'Mumps': 0, 'Diphtheria': 0, 'Whooping cough': 0,
+        'Meningococcal meningitis': 0, 'Tuberculosis': 0, 'SARS': 0, 'SARS 2(CORONA VIRUS)': 0,
+        'EBOLA virus disease': 0, 'Nipah Virus infection': 0, 'Poliomyelitis': 0, 'Viral Hepatitis': 0,
+        'Cholera': 0, 'Diarrheal diseases': 0, 'Typhoid Fever': 0, 'Food poisoning': 0,
+        'Hook worm infection': 0, 'Dengue': 0, 'Malaria': 0, 'Filariasis': 0, 'Rabies': 0,
+        'Yellow fever': 0, 'Japanese encephalitis': 0, 'Brucellosis': 0, 'Plague': 0,
+        'Anthrax': 0, 'Trachoma': 0, 'Tetanus': 0, 'Leprosy': 0, 'STD & RTI': 0,
+        'Yaws': 0, 'HIV/AIDS': 0
+    };
+    const nonCommunicableCounts = {
+        'Malnutrition': 0, 'Anemia': 0, 'Hypertension': 0, 'Stroke': 0,
+        'Rheumatic Heart Disease': 0, 'Coronary Heart Disease': 0, 'Cancer': 0,
+        'Diabetes mellitus': 0, 'Blindness': 0, 'Accidents': 0, 'Mental illness': 0,
+        'Obesity': 0, 'Iodine Deficiency': 0, 'Fluorosis': 0, 'Epilepsy': 0
+    };
+    const symptomCounts = { 'Fever': 0, 'Skin Disease': 0, 'Cough': 0 };
+    const otherIllnessCounts = {};
+
+    // --- Processing Loop ---
     surveys.forEach(survey => {
         const data = survey.data || {};
-        const date = new Date(survey.created_at);
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
-        // Survey Trend
-        surveysByMonth[monthKey] = (surveysByMonth[monthKey] || 0) + 1;
+        // -- Household Level Stats --
 
-        // Housing
-        const hType = data.houseType || 'Unknown';
-        if (hType) housingTypes[hType] = (housingTypes[hType] || 0) + 1;
+        // Religion
+        const rel = data.religion || 'Unknown';
+        religionCount[rel] = (religionCount[rel] || 0) + 1;
 
-        // Income
-        const income = data.totalIncome || 0;
-        if (income < 5000) incomeLevels['< 5k']++;
-        else if (income < 10000) incomeLevels['5k-10k']++;
-        else if (income < 20000) incomeLevels['10k-20k']++;
-        else incomeLevels['> 20k']++;
+        // Family Type
+        let fType = (data.familyType || 'Other').trim();
+        if (/Nuclear/i.test(fType)) fType = 'Nuclear';
+        else if (/Joint/i.test(fType)) fType = 'Joint';
+        else if (/Single/i.test(fType)) fType = 'Single';
+        else fType = 'Other';
+        familyTypeCount[fType]++;
 
-        // Family Members Analysis
+        // House
+        let hType = (data.houseType || 'Other').trim();
+        if (/Pucca/i.test(hType) && !/Semi/i.test(hType)) hType = 'Pucca';
+        else if (/Semi/i.test(hType)) hType = 'Semi-Pucca';
+        else if (/Kutcha/i.test(hType)) hType = 'Kutcha';
+        else hType = 'Other';
+        houseTypeCount[hType]++;
+
+        // Drainage
+        let drain = (data.drainage || 'Other').trim();
+        if (/Adequate/i.test(drain) && !/Inadequate/i.test(drain)) drain = 'Adequate';
+        else if (/Inadequate/i.test(drain)) drain = 'Inadequate';
+        else if (/No/i.test(drain)) drain = 'No Drainage';
+        else drain = 'Other';
+        drainageCount[drain]++;
+
+        // Waste
+        const methods = data.wasteDisposalMethods || [];
+        if (methods.length > 0) {
+            methods.forEach(m => {
+                if (/Composting/i.test(m)) wasteDisposalCount['Composting']++;
+                else if (/Burning/i.test(m)) wasteDisposalCount['Burning']++;
+                else if (/Burying/i.test(m)) wasteDisposalCount['Burying']++;
+                else if (/Dumping/i.test(m)) wasteDisposalCount['Dumping']++;
+                else wasteDisposalCount['Other']++;
+            });
+        }
+
+        // Vital Stats
+        if (data.intendingTubalLigation) vitalStats['Tubectomy']++;
+        if (data.intendingVasectomy) vitalStats['Vasectomy']++;
+        if (data.contraceptiveMethod && data.contraceptiveMethod !== 'None') vitalStats['Temporary Contraceptives']++;
+
+        if (data.births) vitalStats['Births (Last 1yr)'] += data.births.length;
+        if (data.deaths) vitalStats['Deaths (Last 1yr)'] += data.deaths.length;
+        if (data.pregnantWomen) vitalStats['Antenatal Mothers'] += data.pregnantWomen.length;
+
+        if (data.eligibleCouples) vitalStats['Eligible Couples'] += data.eligibleCouples.length;
+        if (data.marriages) vitalStats['Marriages'] += data.marriages.length;
+
+
+        // -- Member Level Stats --
         if (data.familyMembers && Array.isArray(data.familyMembers)) {
             data.familyMembers.forEach(member => {
                 totalMembers++;
 
                 // Gender
-                const g = member.gender ? member.gender.trim() : 'Other';
-                if (genderCount[g] !== undefined) genderCount[g]++;
-                else genderCount['Other']++;
+                const g = (member.gender || 'Other').trim();
+                genderCount[g] = (genderCount[g] || 0) + 1;
 
-                // Age Groups & Dependency Ratio
-                const age = member.age || 0;
-                if (age <= 5) ageGroups['0-5']++;
-                else if (age <= 18) ageGroups['6-18']++;
-                else if (age <= 35) ageGroups['19-35']++;
-                else if (age <= 60) ageGroups['36-60']++;
-                else ageGroups['60+']++;
-
-                if (age < 15) totalChildren++;
-                else if (age >= 65) totalElderly++;
-                else totalWorkingAge++;
-
-                // Illness (Crude Check)
-                if (member.healthStatus && member.healthStatus.toLowerCase() !== 'healthy') {
-                    membersWithIllness++;
+                // Age Bucket
+                const age = parseInt(member.age) || 0;
+                if (age < 5) {
+                    ageGroups['Under 5 (< 5)']++;
+                    vitalStats['Under 5 Children']++;
                 }
+                else if (age >= 5 && age < 12) ageGroups['School (5-12)']++;
+                else if (age >= 12 && age < 19) ageGroups['Teen (12-19)']++;
+                else if (age >= 19 && age < 25) ageGroups['Early Adol (19-25)']++;
+                else if (age >= 25 && age < 40) ageGroups['Mid Adol (25-40)']++;
+                else if (age >= 40 && age <= 60) ageGroups['Late Adol (40-60)']++;
+                else ageGroups['Old Age (> 60)']++;
+
+                // Education
+                let edu = (member.education || 'Other').toLowerCase();
+                if (edu.includes('professional') || edu.includes('post')) educationCount['Professional/Post Grad']++;
+                else if (edu.includes('graduate')) educationCount['Graduate']++;
+                else if (edu.includes('diploma')) educationCount['Diploma']++;
+                else if (edu.includes('higher') || edu.includes('12')) educationCount['High Secondary']++;
+                else if (edu.includes('secondary') || edu.includes('10')) educationCount['Secondary']++;
+                else if (edu.includes('primary') || edu.includes('literate')) educationCount['Primary/Literate']++;
+                else if (edu.includes('illiterate')) educationCount['Illiterate']++;
+                else educationCount['Other']++;
+
+                // Occupation
+                let occ = (member.occupation || 'Other').toLowerCase();
+                if (occ.includes('labor')) occupationCount['Laborer']++;
+                else if (occ.includes('farm')) occupationCount['Farmer']++;
+                else if (occ.includes('business')) occupationCount['Own Business']++;
+                else if (occ.includes('private')) occupationCount['Private Job']++;
+                else if (occ.includes('gov')) occupationCount['Govt Job']++;
+                else if (occ.includes('unemploy') || occ.includes('student') || occ.includes('housewife')) occupationCount['Unemployed']++;
+                else occupationCount['Other']++;
             });
         }
 
-        // Disease Aggregation
-        const diseases = [
-            ...(data.communicableDiseases || []),
-            ...(data.nonCommunicableDiseases || [])
-        ];
+        // -- Diseases Split --
 
-        // Also check explicit cases lists if available in newer format or fallback
-        if (data.feverCases?.length) diseaseCounts['Fever'] = (diseaseCounts['Fever'] || 0) + data.feverCases.length;
+        // 1. Communicable
+        const commDiseases = data.communicableDiseases || [];
+        commDiseases.forEach(d => {
+            communicableCounts[d] = (communicableCounts[d] || 0) + 1;
+        });
 
-        diseases.forEach(d => {
-            diseaseCounts[d] = (diseaseCounts[d] || 0) + 1;
+        // 2. Non-Communicable
+        const nonCommDiseases = data.nonCommunicableDiseases || [];
+        nonCommDiseases.forEach(d => {
+            // Note: Fixed duplication bug d=d+1 in previous attempts.
+            // d is the disease string.
+            // If the key exists (initialized), we increment.
+            // If not initialized (unexpected string), we create it so we don't lose data.
+            nonCommunicableCounts[d] = (nonCommunicableCounts[d] || 0) + 1;
+        });
 
-            // Trend
-            if (!diseaseTrend[monthKey]) diseaseTrend[monthKey] = {};
-            diseaseTrend[monthKey][d] = (diseaseTrend[monthKey][d] || 0) + 1;
+        // 3. Symptoms (Fever, Skin, Cough)
+        if (data.feverCases) symptomCounts['Fever'] += data.feverCases.length;
+        if (data.skinDiseases) symptomCounts['Skin Disease'] += data.skinDiseases.length;
+        if (data.coughCases) symptomCounts['Cough'] += data.coughCases.length;
+
+        // 4. Other Illnesses
+        const others = data.otherIllnesses || [];
+        others.forEach(d => {
+            const name = (typeof d === 'string') ? d : (d.name || d.illness || 'Unknown');
+            otherIllnessCounts[name] = (otherIllnessCounts[name] || 0) + 1;
         });
 
     });
 
-    // --- Calculations ---
-    const sexRatio = (genderCount.Female / (genderCount.Male || 1)) * 1000;
-    const dependencyRatio = totalWorkingAge > 0 ? ((totalChildren + totalElderly) / totalWorkingAge) * 100 : 0;
-    const morbidityRate = totalMembers > 0 ? (membersWithIllness / totalMembers) * 100 : 0;
-
     return {
-        raw: {
-            genderCount,
+        totalTotal: totalHouseholds, // Renamed to avoid confusion
+        totalMembers,
+        aggr: {
             ageGroups,
-            housingTypes,
-            incomeLevels,
-            diseaseCounts,
-            surveysByMonth,
-            diseaseTrend
-        },
-        indicators: {
-            totalMembers,
-            avgFamilySize: surveys.length > 0 ? (totalMembers / surveys.length).toFixed(1) : 0,
-            sexRatio: sexRatio.toFixed(0),
-            dependencyRatio: dependencyRatio.toFixed(1),
-            morbidityRate: morbidityRate.toFixed(1)
+            genderCount,
+            religionCount,
+            educationCount,
+            familyTypeCount,
+            occupationCount,
+            houseTypeCount,
+            drainageCount,
+            wasteDisposalCount,
+            vitalStats,
+            // Split Disease Data
+            communicableCounts,
+            nonCommunicableCounts,
+            symptomCounts,
+            otherIllnessCounts
         }
     };
 };
 
-export const generateChartConfig = (analytics) => {
-    if (!analytics) return null;
-    const { raw } = analytics;
+/**
+ * Generates Chart.js data objects with Freq & Percentage logic
+ */
+const createChartData = (label, dataset, totalForPercent, colorPalette) => {
+    const labels = Object.keys(dataset);
+    const dataValues = Object.values(dataset);
 
     return {
-        genderPie: {
-            labels: Object.keys(raw.genderCount),
-            datasets: [{
-                data: Object.values(raw.genderCount),
-                backgroundColor: ['#3b82f6', '#ec4899', '#9ca3af'], // Blue, Pink, Gray
-            }]
+        labels,
+        datasets: [{
+            label: label,
+            data: dataValues,
+            backgroundColor: colorPalette,
+            borderWidth: 1
+        }]
+    };
+};
+
+// Standard Palettes
+const PALETTE_MULTI = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6'];
+
+export const generateChartConfig = (processedData) => {
+    if (!processedData) return null;
+
+    const { aggr } = processedData;
+
+    return {
+        demographics: {
+            age: createChartData('Population', aggr.ageGroups, processedData.totalMembers, PALETTE_MULTI),
+            gender: createChartData('Gender', aggr.genderCount, processedData.totalMembers, ['#3b82f6', '#ec4899', '#9ca3af']),
+            religion: createChartData('Religion', aggr.religionCount, processedData.totalHouseholds, PALETTE_MULTI),
+            education: createChartData('Education', aggr.educationCount, processedData.totalMembers, PALETTE_MULTI),
+            family: createChartData('Family Type', aggr.familyTypeCount, processedData.totalHouseholds, ['#f59e0b', '#8b5cf6', '#10b981', '#9ca3af']),
+            occupation: createChartData('Occupation', aggr.occupationCount, processedData.totalMembers, PALETTE_MULTI),
         },
-        ageBar: {
-            labels: Object.keys(raw.ageGroups),
-            datasets: [{
-                label: 'Population Count',
-                data: Object.values(raw.ageGroups),
-                backgroundColor: '#10b981',
-            }]
+        environment: {
+            house: createChartData('House Type', aggr.houseTypeCount, processedData.totalHouseholds, ['#10b981', '#f59e0b', '#ef4444', '#9ca3af']),
+            drainage: createChartData('Drainage', aggr.drainageCount, processedData.totalHouseholds, ['#3b82f6', '#ef4444', '#9ca3af', '#64748b']),
+            waste: createChartData('Waste Disposal', aggr.wasteDisposalCount, processedData.totalHouseholds, PALETTE_MULTI),
         },
-        diseaseBar: {
-            labels: Object.keys(raw.diseaseCounts),
-            datasets: [{
-                label: 'Reported Cases',
-                data: Object.values(raw.diseaseCounts),
-                backgroundColor: '#ef4444',
-            }]
+        health: {
+            // Split Charts
+            communicable: createChartData('Communicable Cases', aggr.communicableCounts, 0, PALETTE_MULTI),
+            nonCommunicable: createChartData('Non-Communicable Cases', aggr.nonCommunicableCounts, 0, PALETTE_MULTI),
+            symptoms: createChartData('Symptom Cases', aggr.symptomCounts, 0, ['#ef4444', '#f59e0b', '#8b5cf6']),
+            other: createChartData('Other Illnesses', aggr.otherIllnessCounts, 0, PALETTE_MULTI),
         },
-        trendLine: {
-            labels: Object.keys(raw.surveysByMonth).sort(),
-            datasets: [{
-                label: 'Survey Submissions',
-                data: Object.keys(raw.surveysByMonth).sort().map(k => raw.surveysByMonth[k]),
-                borderColor: '#8b5cf6',
-                backgroundColor: 'rgba(139, 92, 246, 0.5)',
-                tension: 0.3,
-                fill: true,
-            }]
-        },
-        // Advanced: Stacked Disease Trend (Top 3 Diseases) - Logic omitted for brevity, using simple trend
+        // We pass raw vital stats for card display
+        vitalStats: aggr.vitalStats
     };
 };
