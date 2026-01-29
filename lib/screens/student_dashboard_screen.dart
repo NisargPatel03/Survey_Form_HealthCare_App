@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/survey_data.dart';
 import '../services/storage_service.dart';
+import '../services/sync_service.dart';
 import 'survey_form_screen.dart';
 import 'survey_detail_screen.dart';
 
@@ -21,7 +22,19 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSurveys();
+    _initialSync();
+  }
+
+  Future<void> _initialSync() async {
+    setState(() => _isLoading = true);
+    
+    // Auto-restore data from cloud on first load
+    await SyncService().restoreSurveys(widget.studentId);
+    
+    // Then load local surveys
+    if (mounted) {
+      _loadSurveys();
+    }
   }
 
   Future<void> _loadSurveys() async {

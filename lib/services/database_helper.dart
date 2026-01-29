@@ -147,6 +147,46 @@ class DatabaseHelper {
     );
   }
 
+  // --- Restore / Sync Import Logic ---
+
+  /// Imports a survey from the cloud.
+  /// Checks if it already exists to avoid duplicates.
+  /// Returns the local ID if inserted/found, or null if error.
+  Future<int?> importSyncedSurvey(SurveyData survey) async {
+    final db = await instance.database;
+
+    // Check for duplicates based on unique business keys
+    // We assume (StudentName + HeadOfFamily + Date) is unique enough
+    final existing = await db.query(
+      'surveys',
+      where: 'studentName = ? AND headOfFamily = ? AND surveyDate = ?',
+      whereArgs: [
+        survey.studentName,
+        survey.headOfFamily,
+        survey.surveyDate?.toIso8601String()
+      ],
+    );
+
+    if (existing.isNotEmpty) {
+      // Already exists locally, return its ID
+      return existing.first['id'] as int;
+    }
+
+    // Insert as new, but mark as synced
+    final jsonContent = jsonEncode(survey.toJson());
+    
+    final id = await db.insert('surveys', {
+      'studentName': survey.studentName,
+      'headOfFamily': survey.headOfFamily,
+      'surveyDate': survey.surveyDate?.toIso8601String(),
+      'jsonContent': jsonContent,
+      'createdAt': DateTime.now().toIso8601String(), // Local creation time
+      'isSynced': 1, // Marked as synced since it came from cloud
+    });
+
+    return id;
+  }
+
   Future<int> delete(int id) async {
     final db = await instance.database;
     return await db.delete(
