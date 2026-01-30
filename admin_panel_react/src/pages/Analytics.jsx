@@ -19,8 +19,21 @@ const Analytics = () => {
         startDate: '',
         endDate: '',
         areaType: 'All',
+        village: 'All',
+        year: 'All',
+        month: 'All'
     });
     const [showFilters, setShowFilters] = useState(false);
+
+    // -- Derived Filter Options --
+    const filterOptions = useMemo(() => {
+        if (!surveys) return { villages: [], years: [] };
+
+        const villages = [...new Set(surveys.map(s => s.data?.areaName).filter(Boolean))].sort();
+        const years = [...new Set(surveys.map(s => new Date(s.created_at).getFullYear()))].sort((a, b) => b - a);
+
+        return { villages, years };
+    }, [surveys]);
 
     // -- Filtering Logic --
     const filteredSurveys = useMemo(() => {
@@ -29,6 +42,8 @@ const Analytics = () => {
         return surveys.filter(s => {
             const data = s.data || {};
             const date = new Date(s.created_at);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1; // 1-12
 
             // Date Range
             if (filters.startDate && date < new Date(filters.startDate)) return false;
@@ -38,6 +53,22 @@ const Analytics = () => {
             if (filters.areaType !== 'All') {
                 const type = (data.areaType || '').toLowerCase();
                 if (type !== filters.areaType.toLowerCase()) return false;
+            }
+
+            // Village
+            if (filters.village !== 'All') {
+                const village = (data.areaName || '').toLowerCase();
+                if (village !== filters.village.toLowerCase()) return false;
+            }
+
+            // Year
+            if (filters.year !== 'All') {
+                if (year !== parseInt(filters.year)) return false;
+            }
+
+            // Month
+            if (filters.month !== 'All') {
+                if (month !== parseInt(filters.month)) return false;
             }
 
             return true;
@@ -54,12 +85,17 @@ const Analytics = () => {
     };
 
     const clearFilters = () => {
-        setFilters({ startDate: '', endDate: '', areaType: 'All' });
+        setFilters({
+            startDate: '', endDate: '', areaType: 'All',
+            village: 'All', year: 'All', month: 'All'
+        });
     };
 
     if (loading) return <div className="p-8 text-center text-gray-500">Loading Analytics Engine...</div>;
     if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
-    if (!analytics) return <div className="p-8 text-center text-gray-500">No data found matching criteria.</div>;
+
+    // Don't return null here if no data, let the rest render so we can change filters
+    // if (!analytics) return <div className="p-8 text-center text-gray-500">No data found matching criteria.</div>;
 
     const { vitalStats } = chartConfig;
 
@@ -70,7 +106,9 @@ const Analytics = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-3xl font-bold text-gray-800">Advanced Analytics</h2>
-                    <p className="text-gray-500 text-sm">Real-time intelligence based on {filteredSurveys.length} records</p>
+                    <p className="text-gray-500 text-sm">
+                        Real-time intelligence based on {filteredSurveys.length} filtered records
+                    </p>
                 </div>
 
                 <button
@@ -85,39 +123,94 @@ const Analytics = () => {
 
             {/* Filter Bar */}
             {showFilters && (
-                <div className="bg-white p-4 rounded-xl shadow-inner border border-gray-200 grid grid-cols-1 md:grid-cols-4 gap-4 animate-fade-in-down">
-                    <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Start Date</label>
-                        <input
-                            type="date"
-                            className="w-full border rounded p-2 text-sm"
-                            value={filters.startDate}
-                            onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                        />
+                <div className="bg-white p-4 rounded-xl shadow-inner border border-gray-200 animate-fade-in-down">
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                        {/* Row 1: Dates & Area Type */}
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Start Date</label>
+                            <input
+                                type="date"
+                                className="w-full border rounded p-2 text-sm"
+                                value={filters.startDate}
+                                onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">End Date</label>
+                            <input
+                                type="date"
+                                className="w-full border rounded p-2 text-sm"
+                                value={filters.endDate}
+                                onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Area Type</label>
+                            <select
+                                className="w-full border rounded p-2 text-sm"
+                                value={filters.areaType}
+                                onChange={(e) => handleFilterChange('areaType', e.target.value)}
+                            >
+                                <option value="All">All Areas</option>
+                                <option value="Rural">Rural</option>
+                                <option value="Urban">Urban</option>
+                            </select>
+                        </div>
+
+                        {/* Row 2: Village, Year, Month */}
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Village</label>
+                            <select
+                                className="w-full border rounded p-2 text-sm"
+                                value={filters.village}
+                                onChange={(e) => handleFilterChange('village', e.target.value)}
+                            >
+                                <option value="All">All Villages</option>
+                                {filterOptions.villages.map(v => (
+                                    <option key={v} value={v}>{v}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Year</label>
+                            <select
+                                className="w-full border rounded p-2 text-sm"
+                                value={filters.year}
+                                onChange={(e) => handleFilterChange('year', e.target.value)}
+                            >
+                                <option value="All">All Years</option>
+                                {filterOptions.years.map(y => (
+                                    <option key={y} value={y}>{y}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Month</label>
+                            <select
+                                className="w-full border rounded p-2 text-sm"
+                                value={filters.month}
+                                onChange={(e) => handleFilterChange('month', e.target.value)}
+                            >
+                                <option value="All">All Months</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">End Date</label>
-                        <input
-                            type="date"
-                            className="w-full border rounded p-2 text-sm"
-                            value={filters.endDate}
-                            onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Area Type</label>
-                        <select
-                            className="w-full border rounded p-2 text-sm"
-                            value={filters.areaType}
-                            onChange={(e) => handleFilterChange('areaType', e.target.value)}
-                        >
-                            <option value="All">All Areas</option>
-                            <option value="Rural">Rural</option>
-                            <option value="Urban">Urban</option>
-                        </select>
-                    </div>
-                    <div className="flex items-end">
-                        <button onClick={clearFilters} className="text-sm text-red-500 hover:underline">Clear Filters</button>
+                    <div className="flex justify-end mt-4">
+                        <button onClick={clearFilters} className="text-sm text-red-500 hover:text-red-700 font-medium hover:underline">
+                            Clear All Filters
+                        </button>
                     </div>
                 </div>
             )}

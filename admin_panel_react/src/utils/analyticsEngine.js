@@ -10,11 +10,12 @@ const calcPercent = (count, total) => {
 };
 
 export const processAnalytics = (surveys) => {
-    if (!surveys || surveys.length === 0) return null;
+    // if (!surveys || surveys.length === 0) return null; // REMOVED: Allow zero-data processing
+    const safeSurveys = surveys || [];
 
     // --- master aggregators ---
     let totalMembers = 0;
-    let totalHouseholds = surveys.length;
+    let totalHouseholds = safeSurveys.length;
 
     // 1. Demographics
     const ageGroups = {
@@ -104,7 +105,7 @@ export const processAnalytics = (surveys) => {
     };
 
     // --- Processing Loop ---
-    surveys.forEach(survey => {
+    safeSurveys.forEach(survey => {
         const data = survey.data || {};
         const sDate = survey.created_at;
 
