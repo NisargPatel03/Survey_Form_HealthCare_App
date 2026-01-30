@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { FaHome, FaChartPie, FaUsers, FaFileDownload, FaBars, FaTimes, FaMapMarkedAlt } from 'react-icons/fa';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { FaHome, FaChartPie, FaUsers, FaFileDownload, FaBars, FaTimes, FaMapMarkedAlt, FaSignOutAlt } from 'react-icons/fa';
+
 
 const Layout = () => {
     // Desktop: Default Open | Mobile: Default Closed
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('isAuthenticated');
+        navigate('/login');
+    };
+
 
     // Close sidebar on route change (Mobile)
     React.useEffect(() => {
@@ -73,8 +81,20 @@ const Layout = () => {
                 </nav>
 
                 <div className="p-4 border-t border-secondary text-sm text-center text-gray-200">
+                    <button
+                        onClick={handleLogout}
+                        className="flex items-center w-full px-4 py-2 mb-4 text-white hover:bg-secondary/50 rounded transition-colors"
+                    >
+                        <span className="text-xl min-w-[24px] text-center"><FaSignOutAlt /></span>
+                        <span className={`ml-4 font-medium whitespace-nowrap transition-opacity duration-200
+                            ${!sidebarOpen ? 'md:opacity-0 md:hidden' : 'opacity-100'}
+                        `}>
+                            Logout
+                        </span>
+                    </button>
                     <p className={`${!sidebarOpen && 'md:hidden'}`}>v1.0.0</p>
                 </div>
+
             </aside>
 
             {/* Main Content */}

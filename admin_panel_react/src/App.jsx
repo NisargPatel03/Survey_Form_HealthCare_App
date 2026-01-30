@@ -1,6 +1,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
+
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import FamilyDirectory from './pages/FamilyDirectory';
@@ -10,7 +13,12 @@ import MapHealth from './pages/MapHealth';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Layout />
+        </ProtectedRoute>
+      }>
         <Route index element={<Dashboard />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="map" element={<MapHealth />} />
