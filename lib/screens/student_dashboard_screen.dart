@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/survey_data.dart';
 import '../services/storage_service.dart';
 import '../services/sync_service.dart';
@@ -215,8 +216,11 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              Navigator.popUntil(context, (route) => route.isFirst);
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+              if (context.mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+              }
             },
             tooltip: 'Logout',
           ),

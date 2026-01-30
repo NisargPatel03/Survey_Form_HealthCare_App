@@ -560,14 +560,17 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              '7. Family Composition:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            const Expanded(
+              child: Text(
+                '7. Family Composition:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
-            ElevatedButton.icon(
-              onPressed: () {
-                setState(() {
-                  widget.surveyData.familyMembers.add(FamilyMember(
+            const SizedBox(width: 8),
+            IconButton.filled(
+                onPressed: () {
+                  setState(() {
+                    widget.surveyData.familyMembers.add(FamilyMember(
                     name: '',
                     relationship: '',
                     age: 0,
@@ -579,8 +582,8 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                 });
               },
               icon: const Icon(Icons.add),
-              label: const Text('Add Member'),
-            ),
+              tooltip: 'Add Member',
+              ),
           ],
         ),
         const SizedBox(height: 16),
@@ -614,7 +617,6 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
                   const SizedBox(height: 16),
                   TextFormField(
                     initialValue: member.name,
