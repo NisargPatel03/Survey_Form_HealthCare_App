@@ -357,17 +357,31 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                                             },
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.edit),
+                                            icon: Icon(Icons.edit, color: survey.isApproved ? Colors.grey : null),
                                             tooltip: 'Edit',
                                             onPressed: () async {
+                                              if (survey.isApproved) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(content: Text('Approved surveys cannot be edited')),
+                                                );
+                                                return;
+                                              }
                                               // Edit Logic
                                               await _handleEdit(survey);
                                             },
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.delete, color: Colors.red),
+                                            icon: Icon(Icons.delete, color: survey.isApproved ? Colors.grey : Colors.red),
                                             tooltip: 'Delete',
-                                            onPressed: () => _deleteSurvey(survey),
+                                            onPressed: () {
+                                              if (survey.isApproved) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(content: Text('Approved surveys cannot be deleted')),
+                                                );
+                                                return;
+                                              }
+                                              _deleteSurvey(survey);
+                                            },
                                           ),
                                         ],
                                       ),
