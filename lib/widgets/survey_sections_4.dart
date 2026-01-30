@@ -451,19 +451,20 @@ class _EnvironmentalHealthSectionState extends State<EnvironmentalHealthSection>
             ),
           if (widget.surveyData.sewageDisposalHygienic == true)
             DropdownButtonFormField<String>(
-              value: widget.surveyData.sewageDisposalReason?.isEmpty ?? true
-                  ? null
-                  : widget.surveyData.sewageDisposalReason,
+              value: ['Sewer System', 'Septic Tank', 'Pit Latrine', 'Other']
+                      .contains(widget.surveyData.sewageDisposalReason)
+                  ? widget.surveyData.sewageDisposalReason
+                  : null,
               decoration: const InputDecoration(
                 labelText: 'Method of disposal',
                 border: OutlineInputBorder(),
               ),
-              style: const TextStyle(fontSize: 15),
+              style: const TextStyle(fontSize: 15, color: Colors.black),
               items: const [
-                DropdownMenuItem(value: 'Sewer System', child: Text('Sewer System', style: TextStyle(fontSize: 15))),
-                DropdownMenuItem(value: 'Septic Tank', child: Text('Septic Tank', style: TextStyle(fontSize: 15))),
-                DropdownMenuItem(value: 'Pit Latrine', child: Text('Pit Latrine', style: TextStyle(fontSize: 15))),
-                DropdownMenuItem(value: 'Other', child: Text('Other', style: TextStyle(fontSize: 15))),
+                DropdownMenuItem(value: 'Sewer System', child: Text('Sewer System', style: TextStyle(fontSize: 15, color: Colors.black))),
+                DropdownMenuItem(value: 'Septic Tank', child: Text('Septic Tank', style: TextStyle(fontSize: 15, color: Colors.black))),
+                DropdownMenuItem(value: 'Pit Latrine', child: Text('Pit Latrine', style: TextStyle(fontSize: 15, color: Colors.black))),
+                DropdownMenuItem(value: 'Other', child: Text('Other', style: TextStyle(fontSize: 15, color: Colors.black))),
               ],
               onChanged: (value) {
                 setState(() => widget.surveyData.sewageDisposalReason = value);
@@ -596,17 +597,18 @@ class _EnvironmentalHealthSectionState extends State<EnvironmentalHealthSection>
           if (widget.surveyData.cattlePoultryHygienic == true) ...[
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              value: widget.surveyData.cattlePoultryHousing?.isEmpty ?? true
-                  ? null
-                  : widget.surveyData.cattlePoultryHousing,
+              value: ['separate', 'within house']
+                      .contains(widget.surveyData.cattlePoultryHousing)
+                  ? widget.surveyData.cattlePoultryHousing
+                  : null,
               decoration: const InputDecoration(
                 labelText: 'How are they housed?',
                 border: OutlineInputBorder(),
               ),
-              style: const TextStyle(fontSize: 15),
+              style: const TextStyle(fontSize: 15, color: Colors.black),
               items: const [
-                DropdownMenuItem(value: 'separate', child: Text('24.1 Separate', style: TextStyle(fontSize: 15))),
-                DropdownMenuItem(value: 'within house', child: Text('24.2 Within house', style: TextStyle(fontSize: 15))),
+                DropdownMenuItem(value: 'separate', child: Text('24.1 Separate', style: TextStyle(fontSize: 15, color: Colors.black))),
+                DropdownMenuItem(value: 'within house', child: Text('24.2 Within house', style: TextStyle(fontSize: 15, color: Colors.black))),
               ],
               onChanged: (value) {
                 setState(() => widget.surveyData.cattlePoultryHousing = value);
