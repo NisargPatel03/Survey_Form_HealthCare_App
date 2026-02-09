@@ -54,6 +54,7 @@ class _PregnantWomenSectionState extends State<PregnantWomenSection> {
                     itemBuilder: (context, index) {
                       final woman = widget.surveyData.pregnantWomen[index];
                       return Card(
+              key: ObjectKey(woman),
               margin: const EdgeInsets.only(bottom: 16),
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -200,6 +201,7 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
             itemBuilder: (context, index) {
               final birth = widget.surveyData.births[index];
               return Card(
+                key: ObjectKey(birth),
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -319,6 +321,7 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
             itemBuilder: (context, index) {
               final death = widget.surveyData.deaths[index];
               return Card(
+                key: ObjectKey(death),
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -425,6 +428,7 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
             itemBuilder: (context, index) {
               final marriage = widget.surveyData.marriages[index];
               return Card(
+                key: ObjectKey(marriage),
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -588,6 +592,7 @@ class _ImmunizationSectionState extends State<ImmunizationSection> {
                     itemBuilder: (context, index) {
                 final record = widget.surveyData.immunizationRecords[index];
                 return Card(
+                  key: ObjectKey(record),
                   margin: const EdgeInsets.only(bottom: 16),
                   child: Padding(
                     padding: const EdgeInsets.all(16),

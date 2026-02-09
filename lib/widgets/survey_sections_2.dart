@@ -37,6 +37,18 @@ class _DietaryPatternSectionState extends State<DietaryPatternSection> {
   }
 
   @override
+  void didUpdateWidget(DietaryPatternSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      for (var item in _foodItems) {
+        if (!widget.surveyData.dietaryPattern.containsKey(item)) {
+          widget.surveyData.dietaryPattern[item] = DietaryInfo();
+        }
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,6 +217,22 @@ class _ExpenditureSectionState extends State<ExpenditureSection> {
     }
   }
 
+  @override
+  void didUpdateWidget(ExpenditureSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      if (widget.surveyData.expenditureItems.isEmpty) {
+        for (var item in _expenditureItems) {
+          widget.surveyData.expenditureItems.add(ExpenditureItem(
+            item: item,
+            amount: 0.0,
+            percentage: 0.0,
+          ));
+        }
+      }
+    }
+  }
+
   void _calculatePercentages() {
     final total = widget.surveyData.expenditureItems
         .fold<double>(0.0, (sum, item) => sum + item.amount);
@@ -228,6 +256,7 @@ class _ExpenditureSectionState extends State<ExpenditureSection> {
         const SizedBox(height: 16),
         ...widget.surveyData.expenditureItems.map((item) {
           return Card(
+            key: ObjectKey(item),
             margin: const EdgeInsets.only(bottom: 8),
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -504,6 +533,7 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
             itemBuilder: (context, index) {
               final condition = conditions[index];
               return Card(
+                key: ObjectKey(condition),
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -619,6 +649,17 @@ class _FamilyHealthAttitudeSectionState extends State<FamilyHealthAttitudeSectio
     _communityLeadersController.text = widget.surveyData.communityLeaders ?? '';
     if (widget.surveyData.healthServiceUtilizationList == null) {
       widget.surveyData.healthServiceUtilizationList = [];
+    }
+  }
+
+  @override
+  void didUpdateWidget(FamilyHealthAttitudeSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _communityLeadersController.text = widget.surveyData.communityLeaders ?? '';
+      if (widget.surveyData.healthServiceUtilizationList == null) {
+        widget.surveyData.healthServiceUtilizationList = [];
+      }
     }
   }
 

@@ -14,12 +14,24 @@ class HealthServicesSection extends StatefulWidget {
 class _HealthServicesSectionState extends State<HealthServicesSection> {
   final _healthAgenciesReasonController = TextEditingController();
   final _healthInsuranceController = TextEditingController();
+  final _medicineLocationController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _healthAgenciesReasonController.text = widget.surveyData.healthAgenciesReason ?? '';
     _healthInsuranceController.text = widget.surveyData.healthInsuranceDetails ?? '';
+    _medicineLocationController.text = widget.surveyData.medicinePurchaseLocation ?? '';
+  }
+
+  @override
+  void didUpdateWidget(HealthServicesSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _healthAgenciesReasonController.text = widget.surveyData.healthAgenciesReason ?? '';
+      _healthInsuranceController.text = widget.surveyData.healthInsuranceDetails ?? '';
+      _medicineLocationController.text = widget.surveyData.medicinePurchaseLocation ?? '';
+    }
   }
 
   @override
@@ -136,7 +148,7 @@ class _HealthServicesSectionState extends State<HealthServicesSection> {
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
         TextFormField(
-          initialValue: widget.surveyData.medicinePurchaseLocation,
+          controller: _medicineLocationController,
           decoration: const InputDecoration(
             labelText: 'Location',
             border: OutlineInputBorder(),
@@ -180,6 +192,7 @@ class _HealthServicesSectionState extends State<HealthServicesSection> {
   void dispose() {
     _healthAgenciesReasonController.dispose();
     _healthInsuranceController.dispose();
+    _medicineLocationController.dispose();
     super.dispose();
   }
 }
@@ -218,6 +231,36 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
     'Madhu wants local know young',
   ];
 
+  final _strengthOtherController = TextEditingController();
+  final _weaknessOtherController = TextEditingController();
+  final _programmeOtherController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _strengthOtherController.text = widget.surveyData.familyStrengthOther ?? '';
+    _weaknessOtherController.text = widget.surveyData.familyWeaknessOther ?? '';
+    _programmeOtherController.text = widget.surveyData.applicableProgrammeOther ?? '';
+  }
+
+  @override
+  void didUpdateWidget(FamilyAssessmentSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _strengthOtherController.text = widget.surveyData.familyStrengthOther ?? '';
+      _weaknessOtherController.text = widget.surveyData.familyWeaknessOther ?? '';
+      _programmeOtherController.text = widget.surveyData.applicableProgrammeOther ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _strengthOtherController.dispose();
+    _weaknessOtherController.dispose();
+    _programmeOtherController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -247,12 +290,12 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextFormField(
+              controller: _strengthOtherController,
               decoration: const InputDecoration(
                 labelText: 'Other Strength (Specify)',
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) => widget.surveyData.familyStrengthOther = value,
-              initialValue: widget.surveyData.familyStrengthOther,
             ),
           ),
           const SizedBox(height: 16),
@@ -279,12 +322,12 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextFormField(
+              controller: _weaknessOtherController,
               decoration: const InputDecoration(
                 labelText: 'Other Weakness (Specify)',
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) => widget.surveyData.familyWeaknessOther = value,
-              initialValue: widget.surveyData.familyWeaknessOther,
             ),
           ),
           const SizedBox(height: 16),
@@ -311,12 +354,12 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextFormField(
+              controller: _programmeOtherController,
               decoration: const InputDecoration(
                 labelText: 'Other Programme (Specify)',
                 border: OutlineInputBorder(),
               ),
                onChanged: (value) => widget.surveyData.applicableProgrammeOther = value,
-               initialValue: widget.surveyData.applicableProgrammeOther,
             ),
           ),
         ],
@@ -346,6 +389,16 @@ class _FinalDetailsSectionState extends State<FinalDetailsSection> {
     _contactController.text = widget.surveyData.contactNumber ?? '';
     _studentNameController.text = widget.surveyData.studentName ?? '';
     _studentSignatureController.text = widget.surveyData.studentSignature ?? '';
+  }
+
+  @override
+  void didUpdateWidget(FinalDetailsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _contactController.text = widget.surveyData.contactNumber ?? '';
+      _studentNameController.text = widget.surveyData.studentName ?? '';
+      _studentSignatureController.text = widget.surveyData.studentSignature ?? '';
+    }
   }
 
   @override

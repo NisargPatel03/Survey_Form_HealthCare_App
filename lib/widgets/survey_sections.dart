@@ -31,6 +31,19 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
   }
 
   @override
+  void didUpdateWidget(BasicInformationSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _areaNameController.text = widget.surveyData.areaName ?? '';
+      _healthCentreController.text = widget.surveyData.healthCentreName ?? '';
+      _headOfFamilyController.text = widget.surveyData.headOfFamily ?? '';
+      _subCasteController.text = widget.surveyData.subCaste ?? '';
+      _houseNoController.text = widget.surveyData.houseNo ?? '';
+      _aadharController.text = widget.surveyData.aadharNumber ?? '';
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,6 +255,15 @@ class _HousingConditionSectionState extends State<HousingConditionSection> {
     super.initState();
     _roomsController.text = widget.surveyData.numberOfRooms?.toString() ?? '';
     _rentController.text = widget.surveyData.monthlyRent ?? '';
+  }
+
+  @override
+  void didUpdateWidget(HousingConditionSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _roomsController.text = widget.surveyData.numberOfRooms?.toString() ?? '';
+      _rentController.text = widget.surveyData.monthlyRent ?? '';
+    }
   }
 
   @override
@@ -775,6 +797,14 @@ class _IncomeSectionState extends State<IncomeSection> {
   void initState() {
     super.initState();
     _incomeController.text = widget.surveyData.totalIncome?.toString() ?? '';
+  }
+
+  @override
+  void didUpdateWidget(IncomeSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _incomeController.text = widget.surveyData.totalIncome?.toString() ?? '';
+    }
   }
 
   @override

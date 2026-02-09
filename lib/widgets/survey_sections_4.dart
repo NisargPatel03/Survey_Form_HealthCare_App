@@ -23,6 +23,15 @@ class _EligibleCouplesSectionState extends State<EligibleCouplesSection> {
   }
 
   @override
+  void didUpdateWidget(EligibleCouplesSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _contraceptiveController.text = widget.surveyData.contraceptiveMethod ?? '';
+      _notInterestedController.text = widget.surveyData.notInterestedReason ?? '';
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
@@ -70,6 +79,7 @@ class _EligibleCouplesSectionState extends State<EligibleCouplesSection> {
                       itemBuilder: (context, index) {
                         final couple = widget.surveyData.eligibleCouples[index];
                         return Card(
+              key: ObjectKey(couple),
               margin: const EdgeInsets.only(bottom: 16),
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -268,6 +278,7 @@ class _MalnutritionSectionState extends State<MalnutritionSection> {
                     itemBuilder: (context, index) {
                       final case_ = widget.surveyData.malnutritionCases[index];
                       return Card(
+              key: ObjectKey(case_),
               margin: const EdgeInsets.only(bottom: 16),
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -407,6 +418,24 @@ class _EnvironmentalHealthSectionState extends State<EnvironmentalHealthSection>
     _houseSprayDateController.text = widget.surveyData.houseSprayDate ?? '';
     _houseSprayReasonController.text = widget.surveyData.houseSprayReason ?? '';
     _strayDogsController.text = widget.surveyData.numberOfStrayDogs?.toString() ?? '';
+  }
+
+  @override
+  void didUpdateWidget(EnvironmentalHealthSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _sewageReasonController.text = widget.surveyData.sewageDisposalReason ?? '';
+      _wasteReasonController.text = widget.surveyData.wasteDisposalReason ?? '';
+      _excretaReasonController.text = widget.surveyData.excretaDisposalReason ?? '';
+      _cattleReasonController.text = widget.surveyData.cattlePoultryReason ?? '';
+      _wellMaintenanceReasonController.text = widget.surveyData.wellMaintenanceReason ?? '';
+      _wellChlorinationDateController.text = widget.surveyData.wellChlorinationDate ?? '';
+      _wellChlorinationReasonController.text = widget.surveyData.wellChlorinationReason ?? '';
+      _houseCleanReasonController.text = widget.surveyData.houseCleanReason ?? '';
+      _houseSprayDateController.text = widget.surveyData.houseSprayDate ?? '';
+      _houseSprayReasonController.text = widget.surveyData.houseSprayReason ?? '';
+      _strayDogsController.text = widget.surveyData.numberOfStrayDogs?.toString() ?? '';
+    }
   }
 
   @override

@@ -34,6 +34,11 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
     if (!_isEditing && widget.studentId != null) {
       _surveyData.studentName = widget.studentId;
     }
+    
+    // Check for draft if starting a new survey
+    if (!_isEditing) {
+      _checkForDraft();
+    }
   }
 
   final List<String> _sections = [
@@ -57,184 +62,47 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
     'Final Details',
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Survey' : 'Baseline Survey Form'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        actions: [
-          if (_currentSection > 0)
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                setState(() {
-                  _currentSection--;
-                });
-              },
+  Future<void> _checkForDraft() async {
+    final draft = await _storageService.getDraft();
+    if (draft != null && mounted) {
+      bool? shouldRestore = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Resume Survey?'),
+          content: const Text('You have an unsaved draft. Would you like to resume where you left off?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('No, Start New'),
             ),
-          if (_currentSection < _sections.length - 1)
-            IconButton(
-              icon: const Icon(Icons.arrow_forward),
-              onPressed: () {
-                String? error = ValidationHelper.validateSection(_currentSection, _surveyData);
-                if (error != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(error),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
-                setState(() {
-                  _currentSection++;
-                });
-              },
-            ),
-        ],
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            // Progress indicator
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).colorScheme.surfaceContainerHighest,
-                    const Color(0xFFF0F4F7),
-                  ],
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                ),
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Text(
-                    'Section ${_currentSection + 1} of ${_sections.length}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: LinearProgressIndicator(
-                      value: (_currentSection + 1) / _sections.length,
-                      backgroundColor: Theme.of(context).colorScheme.outline,
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
-                      minHeight: 6,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _sections[_currentSection],
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Form content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: _buildSectionContent(),
-              ),
-            ),
-            // Navigation buttons
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x33B0BEC5),
-                    blurRadius: 8,
-                    offset: Offset(0, -4),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (_currentSection > 0)
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            _currentSection--;
-                          });
-                        },
-                        icon: const Icon(Icons.arrow_back, size: 18),
-                        label: const Text('Previous', style: TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
-                      ),
-                    ),
-                  if (_currentSection > 0)
-                    const SizedBox(width: 16),
-                  if (_currentSection < _sections.length - 1)
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          String? error = ValidationHelper.validateSection(_currentSection, _surveyData);
-                          if (error != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(error),
-                                backgroundColor: Theme.of(context).colorScheme.error,
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
-                            return;
-                          }
-                          setState(() {
-                            _currentSection++;
-                          });
-                        },
-                        icon: const Icon(Icons.arrow_forward, size: 18),
-                        label: const Text('Next', style: TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    )
-                  else
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: _submitSurvey,
-                        icon: const Icon(Icons.save, size: 18),
-                        label: Text(_isEditing ? 'Update' : 'Submit', style: const TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4CAF50),
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Yes, Resume'),
             ),
           ],
         ),
-      ),
-    );
+      );
+
+      if (shouldRestore == true && mounted) {
+        setState(() {
+          _surveyData = draft;
+          // You might want to jump to the last edited section if tracked, 
+          // or just start at 0. For now, we start at 0 with filled data.
+        });
+      } else {
+        // User chose not to restore, clear the old draft
+        await _storageService.clearDraft();
+      }
+    }
   }
+
+  Future<void> _saveDraft() async {
+    if (!_isEditing) {
+      await _storageService.saveDraft(_surveyData);
+    }
+  }
+
+  // ... (existing helper methods)
 
   Widget _buildSectionContent() {
     switch (_currentSection) {
@@ -301,6 +169,8 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
           await _storageService.updateSurvey(_surveyData);
         } else {
           await _storageService.saveSurvey(_surveyData);
+          // Clear draft after successful submission
+          await _storageService.clearDraft();
         }
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -323,5 +193,195 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
       }
     }
   }
-}
 
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) async {
+        if (didPop) {
+          await _saveDraft();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_isEditing ? 'Edit Survey' : 'Baseline Survey Form'),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          actions: [
+            if (_currentSection > 0)
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  _saveDraft();
+                  setState(() {
+                    _currentSection--;
+                  });
+                },
+              ),
+            if (_currentSection < _sections.length - 1)
+              IconButton(
+                icon: const Icon(Icons.arrow_forward),
+                onPressed: () {
+                  String? error = ValidationHelper.validateSection(_currentSection, _surveyData);
+                  if (error != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(error),
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+                  _saveDraft();
+                  setState(() {
+                    _currentSection++;
+                  });
+                },
+              ),
+          ],
+        ),
+        body: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // Progress indicator
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                      const Color(0xFFF0F4F7),
+                    ],
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Text(
+                      'Section ${_currentSection + 1} of ${_sections.length}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: (_currentSection + 1) / _sections.length,
+                        backgroundColor: Theme.of(context).colorScheme.outline,
+                        valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                        minHeight: 6,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _sections[_currentSection],
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Form content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: _buildSectionContent(),
+                ),
+              ),
+              // Navigation buttons
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x33B0BEC5),
+                      blurRadius: 8,
+                      offset: Offset(0, -4),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (_currentSection > 0)
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            _saveDraft();
+                            setState(() {
+                              _currentSection--;
+                            });
+                          },
+                          icon: const Icon(Icons.arrow_back, size: 18),
+                          label: const Text('Previous', style: TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
+                        ),
+                      ),
+                    if (_currentSection > 0)
+                      const SizedBox(width: 16),
+                    if (_currentSection < _sections.length - 1)
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            String? error = ValidationHelper.validateSection(_currentSection, _surveyData);
+                            if (error != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(error),
+                                  backgroundColor: Theme.of(context).colorScheme.error,
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                              return;
+                            }
+                            _saveDraft();
+                            setState(() {
+                              _currentSection++;
+                            });
+                          },
+                          icon: const Icon(Icons.arrow_forward, size: 18),
+                          label: const Text('Next', style: TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: _submitSurvey,
+                          icon: const Icon(Icons.save, size: 18),
+                          label: Text(_isEditing ? 'Update' : 'Submit', style: const TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4CAF50),
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
