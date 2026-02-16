@@ -46,6 +46,7 @@ export const processAnalytics = (surveys) => {
         'Own Business': 0,
         'Private Job': 0,
         'Govt Job': 0,
+        'Housewife': 0,
         'Unemployed': 0,
         'Other': 0
     };
@@ -204,7 +205,8 @@ export const processAnalytics = (surveys) => {
                 else if (occ.includes('business')) occupationCount['Own Business']++;
                 else if (occ.includes('private')) occupationCount['Private Job']++;
                 else if (occ.includes('gov')) occupationCount['Govt Job']++;
-                else if (occ.includes('unemploy') || occ.includes('student') || occ.includes('housewife')) occupationCount['Unemployed']++;
+                else if (occ.includes('housewife')) occupationCount['Housewife']++;
+                else if (occ.includes('unemploy') || occ.includes('student')) occupationCount['Unemployed']++;
                 else occupationCount['Other']++;
             });
         }

@@ -574,6 +574,14 @@ class FamilyCompositionSection extends StatefulWidget {
 }
 
 class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
+  String? _getValidHealthStatus(String? status) {
+    if (status == null || status.trim().isEmpty) return null;
+    final normalized = status.trim().toLowerCase();
+    if (normalized == 'healthy') return 'Healthy';
+    if (normalized == 'unhealthy') return 'Unhealthy';
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -661,6 +669,9 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                       DropdownMenuItem(value: 'Mother', child: Text('Mother')),
                       DropdownMenuItem(value: 'Husband', child: Text('Husband')),
                       DropdownMenuItem(value: 'Wife', child: Text('Wife')),
+                      DropdownMenuItem(value: 'Son', child: Text('Son')),
+                      DropdownMenuItem(value: 'Daughter', child: Text('Daughter')),
+                      DropdownMenuItem(value: 'Daughter-in-law', child: Text('Daughter-in-law')),
                       DropdownMenuItem(value: 'Brother', child: Text('Brother')),
                       DropdownMenuItem(value: 'Sister', child: Text('Sister')),
                       DropdownMenuItem(value: 'Uncle', child: Text('Uncle')),
@@ -737,6 +748,7 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                       DropdownMenuItem(value: 'Own Business', child: Text('Own Business')),
                       DropdownMenuItem(value: 'Private job', child: Text('Private job')),
                       DropdownMenuItem(value: 'Government job', child: Text('Government job')),
+                      DropdownMenuItem(value: 'Housewife', child: Text('Housewife')),
                       DropdownMenuItem(value: 'Unemployment', child: Text('Unemployment')),
                     ],
                     onChanged: (value) => setState(() => member.occupation = value ?? ''),
@@ -751,6 +763,7 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                           decoration: const InputDecoration(
                             labelText: 'Income',
                             border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                           ),
                           onChanged: (value) {
                             member.income = double.tryParse(value);
@@ -759,13 +772,20 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: TextFormField(
-                          initialValue: member.healthStatus,
+                        child: DropdownButtonFormField<String>(
+                          value: _getValidHealthStatus(member.healthStatus),
+                          isExpanded: true,
+                          isDense: true,
                           decoration: const InputDecoration(
-                            labelText: 'General health status',
+                            labelText: 'Health',
                             border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.fromLTRB(10, 12, 8, 12),
                           ),
-                          onChanged: (value) => member.healthStatus = value,
+                          items: const [
+                            DropdownMenuItem(value: 'Healthy', child: Text('Healthy')),
+                            DropdownMenuItem(value: 'Unhealthy', child: Text('Unhealthy')),
+                          ],
+                          onChanged: (value) => setState(() => member.healthStatus = value ?? ''),
                         ),
                       ),
                     ],
@@ -895,6 +915,42 @@ class TransportCommunicationSection extends StatefulWidget {
 }
 
 class _TransportCommunicationSectionState extends State<TransportCommunicationSection> {
+  final _otherLanguageController = TextEditingController();
+  bool _isOtherLanguage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOtherLanguage();
+  }
+
+  @override
+  void didUpdateWidget(TransportCommunicationSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.surveyData != oldWidget.surveyData) {
+      _checkOtherLanguage();
+    }
+  }
+
+  void _checkOtherLanguage() {
+    final current = widget.surveyData.motherTongue;
+    if (current != null && current != 'Gujarati' && current != 'Hindi') {
+      _isOtherLanguage = true;
+      _otherLanguageController.text = current;
+    } else {
+      _isOtherLanguage = false;
+      _otherLanguageController.text = '';
+    }
+  }
+
+  String? get _motherTongueGroupValue {
+    final val = widget.surveyData.motherTongue;
+    if (val == 'Gujarati') return 'Gujarati';
+    if (val == 'Hindi') return 'Hindi';
+    if (val != null && val.isNotEmpty) return 'Others';
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -1054,27 +1110,52 @@ class _TransportCommunicationSectionState extends State<TransportCommunicationSe
         RadioListTile<String>(
           title: const Text('a. Gujarati'),
           value: 'Gujarati',
-          groupValue: widget.surveyData.motherTongue,
+          groupValue: _motherTongueGroupValue,
           onChanged: (value) {
-            setState(() => widget.surveyData.motherTongue = value);
+            setState(() {
+              widget.surveyData.motherTongue = value;
+              _isOtherLanguage = false;
+              _otherLanguageController.clear();
+            });
           },
         ),
         RadioListTile<String>(
           title: const Text('b. Hindi'),
           value: 'Hindi',
-          groupValue: widget.surveyData.motherTongue,
+          groupValue: _motherTongueGroupValue,
           onChanged: (value) {
-            setState(() => widget.surveyData.motherTongue = value);
+            setState(() {
+              widget.surveyData.motherTongue = value;
+              _isOtherLanguage = false;
+              _otherLanguageController.clear();
+            });
           },
         ),
         RadioListTile<String>(
           title: const Text('c. Others (Specify)'),
           value: 'Others',
-          groupValue: widget.surveyData.motherTongue,
+          groupValue: _motherTongueGroupValue,
           onChanged: (value) {
-            setState(() => widget.surveyData.motherTongue = value);
+            setState(() {
+              _isOtherLanguage = true;
+              widget.surveyData.motherTongue = ''; // Reset to empty until typed
+            });
           },
         ),
+        if (_isOtherLanguage)
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
+            child: TextFormField(
+              controller: _otherLanguageController,
+              decoration: const InputDecoration(
+                labelText: 'Specify Language',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                widget.surveyData.motherTongue = value;
+              },
+            ),
+          ),
         const SizedBox(height: 16),
         const Text(
           '8.3 LANGUAGE KNOWN:',
@@ -1121,6 +1202,12 @@ class _TransportCommunicationSectionState extends State<TransportCommunicationSe
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _otherLanguageController.dispose();
+    super.dispose();
   }
 }
 
