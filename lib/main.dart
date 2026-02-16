@@ -6,6 +6,7 @@ import 'services/sync_service.dart'; // Import SyncService
 import 'screens/student_dashboard_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/faq_screen.dart';
+import 'screens/annexures_screen.dart';
 
 
 void main() async {
@@ -133,17 +134,20 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.blue.shade700,
         foregroundColor: Colors.white,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/logo.jpg',
-              height: 120, // Adjusted height for logo
-            ),
-            const SizedBox(height: 30),
-            const Text(
-              'MANIKAKA TOPAWALA INSTITUTE OF NURSING',
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Center(
+            child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/logo.jpg',
+                height: 120, // Adjusted height for logo
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                'MANIKAKA TOPAWALA INSTITUTE OF NURSING',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -176,7 +180,7 @@ class HomeScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 40),
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -240,9 +244,23 @@ class HomeScreen extends StatelessWidget {
               icon: const Icon(Icons.help_outline),
               label: const Text('Need Help? Read FAQs'),
             ),
-          ],
+            const SizedBox(height: 10),
+            TextButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AnnexuresScreen()),
+                );
+              },
+              icon: const Icon(Icons.book),
+              label: const Text('View Annexures'),
+            ),
+            const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
+    ),
     );
   }
 }

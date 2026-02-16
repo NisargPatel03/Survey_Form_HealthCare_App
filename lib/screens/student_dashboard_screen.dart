@@ -6,6 +6,7 @@ import '../services/sync_service.dart';
 import 'survey_form_screen.dart';
 import 'survey_detail_screen.dart';
 import 'faq_screen.dart';
+import 'annexures_screen.dart';
 
 class StudentDashboardScreen extends StatefulWidget {
   final String studentId;
@@ -224,6 +225,16 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               );
             },
             tooltip: 'Help & FAQs',
+          ),
+          IconButton(
+            icon: const Icon(Icons.book),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AnnexuresScreen()),
+              );
+            },
+            tooltip: 'Annexures',
           ),
           IconButton(
             icon: const Icon(Icons.logout),
