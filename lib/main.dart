@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart'; // Import Supabase
 import 'services/sync_service.dart'; // Import SyncService
 import 'screens/student_dashboard_screen.dart';
 import 'screens/splash_screen.dart';
+import 'screens/faq_screen.dart';
 
 
 void main() async {
@@ -227,6 +228,17 @@ class HomeScreen extends StatelessWidget {
                 ),
                 backgroundColor: const Color(0xFF2196F3), // Blue color
               ),
+            ),
+            const SizedBox(height: 20),
+            TextButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const FAQScreen()),
+                );
+              },
+              icon: const Icon(Icons.help_outline),
+              label: const Text('Need Help? Read FAQs'),
             ),
           ],
         ),

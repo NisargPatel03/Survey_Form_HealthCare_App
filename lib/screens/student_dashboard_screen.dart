@@ -5,6 +5,7 @@ import '../services/storage_service.dart';
 import '../services/sync_service.dart';
 import 'survey_form_screen.dart';
 import 'survey_detail_screen.dart';
+import 'faq_screen.dart';
 
 class StudentDashboardScreen extends StatefulWidget {
   final String studentId;
@@ -213,6 +214,16 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: _loadSurveys,
             tooltip: 'Refresh',
+          ),
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FAQScreen()),
+              );
+            },
+            tooltip: 'Help & FAQs',
           ),
           IconButton(
             icon: const Icon(Icons.logout),
