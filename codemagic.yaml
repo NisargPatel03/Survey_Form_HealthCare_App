@@ -29,7 +29,7 @@ workflows:
           # This command will generate Podfile if needed and install pods
           flutter build ios --release --no-codesign
     artifacts:
-      - build/ios/ipa/*.ipa
-      - build/ios/runner/*.app
-      - /tmp/xcodebuild_logs/*.log
-      - *.log
+      - "build/ios/ipa/*.ipa"
+      - "build/ios/runner/*.app"
+      - "/tmp/xcodebuild_logs/*.log"
+      - "*.log"
