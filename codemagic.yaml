@@ -1,0 +1,35 @@
+workflows:
+  ios-workflow:
+    name: iOS Build
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter packages get
+      - name: Install Pods
+        script: |
+          find . -name "Podfile" || true
+          if [ -d "ios" ]; then
+            cd ios
+            # Only run pod install if Podfile exists, otherwise let build command handle it
+            if [ -f "Podfile" ]; then
+              pod install
+            else
+              echo "Podfile not found, skipping explicit pod install."
+            fi
+            cd ..
+          fi
+      - name: Build iOS
+        script: |
+          # This command will generate Podfile if needed and install pods
+          flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/runner/*.app
+      - /tmp/xcodebuild_logs/*.log
+      - *.log
