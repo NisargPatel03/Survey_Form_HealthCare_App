@@ -162,7 +162,7 @@ class ValidationHelper {
 
   // Section 16: Health Services
   static String? _validateHealthServices(SurveyData data) {
-    if (_isEmpty(data.treatmentLocation)) return "Section 16: Treatment Location is required (30)";
+    if (data.treatmentLocations.isEmpty) return "Section 16: Treatment Location is required (30)";
     if (data.officialHealthAgenciesAdequate == null) return "Section 16: Official Health Agencies question required (31)";
     if (data.officialHealthAgenciesAdequate == false && _isEmpty(data.healthAgenciesReason)) return "Section 16: Health Agencies Reason is required";
     if (data.hasHealthInsurance == null) return "Section 16: Health Insurance question required (32)";

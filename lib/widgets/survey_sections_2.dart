@@ -103,6 +103,24 @@ class _DietaryPatternSectionState extends State<DietaryPatternSection> {
                   ),
                   if (info.available) ...[
                     const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: info.frequency.isNotEmpty ? info.frequency : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Frequency',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'Daily', child: Text('Daily')),
+                        DropdownMenuItem(value: 'Occasionally', child: Text('Occasionally')),
+                        DropdownMenuItem(value: 'Never', child: Text('Never')),
+                      ],
+                      onChanged: (value) {
+                         setState(() => info.frequency = value ?? '');
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     const Text(
                       'Food Preparation and Storage:',
                       style: TextStyle(
@@ -240,12 +258,37 @@ class _ExpenditureSectionState extends State<ExpenditureSection> {
       for (var item in widget.surveyData.expenditureItems) {
         item.percentage = (item.amount / total) * 100;
       }
-      setState(() {});
+    }
+  }
+
+  void _calculateSavings() {
+    double totalIncome = widget.surveyData.totalIncome ?? 0.0;
+    double totalExpenditureExceptSavings = 0.0;
+    ExpenditureItem? savingsItem;
+
+    for (var item in widget.surveyData.expenditureItems) {
+      if (item.item == 'Savings') {
+        savingsItem = item;
+      } else {
+        totalExpenditureExceptSavings += item.amount;
+      }
+    }
+
+    if (savingsItem != null) {
+      double calculatedSavings = totalIncome - totalExpenditureExceptSavings;
+      // Allow negative savings (deficit) or clamp to 0? Usually savings can't be negative, but debt can increase.
+      // If negative, maybe savings is 0 and debt increases? But prompt just says "Savings will be autocalculated".
+      // I'll set it to calculated value, if negative, it means they are overspending.
+      savingsItem.amount = calculatedSavings; 
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Recalculate savings before build to ensure up-to-date
+    _calculateSavings(); 
+    _calculatePercentages();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -279,8 +322,10 @@ class _ExpenditureSectionState extends State<ExpenditureSection> {
                           ),
                           onChanged: (value) {
                             item.amount = double.tryParse(value) ?? 0.0;
-                            _calculatePercentages();
+                            // Recalculation happens in build or setState
+                            setState(() {}); 
                           },
+                          readOnly: item.item == 'Savings', // Savings is auto-calculated
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -326,7 +371,7 @@ class _ExpenditureSectionState extends State<ExpenditureSection> {
                   const Text('Total Expenditure:', style: TextStyle(fontSize: 16)),
                   Flexible(
                     child: Text(
-                      'Rs. ${widget.surveyData.expenditureItems.fold<double>(0.0, (sum, item) => sum + item.amount).toStringAsFixed(2)}',
+                      'Rs. ${widget.surveyData.expenditureItems.where((i) => i.item != 'Savings').fold<double>(0.0, (sum, item) => sum + item.amount).toStringAsFixed(2)}',
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -340,13 +385,13 @@ class _ExpenditureSectionState extends State<ExpenditureSection> {
                   const Text('Income Left:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   Flexible(
                     child: Text(
-                      'Rs. ${((widget.surveyData.totalIncome ?? 0) - widget.surveyData.expenditureItems.fold<double>(0.0, (sum, item) => sum + item.amount)).toStringAsFixed(2)}',
+                      'Rs. ${((widget.surveyData.totalIncome ?? 0) - widget.surveyData.expenditureItems.where((i) => i.item != 'Savings').fold<double>(0.0, (sum, item) => sum + item.amount)).toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: ((widget.surveyData.totalIncome ?? 0) - widget.surveyData.expenditureItems.fold<double>(0.0, (sum, item) => sum + item.amount)) < 0
+                        color: ((widget.surveyData.totalIncome ?? 0) - widget.surveyData.expenditureItems.where((i) => i.item != 'Savings').fold<double>(0.0, (sum, item) => sum + item.amount)) < 0
                             ? Colors.redAccent
-                            : Colors.white,
+                            : Colors.black,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -407,10 +452,10 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
                     [
                       'Malnutrition', 'Anemia', 'Hypertension', 'Stroke', 'Rheumatic Heart Disease',
                       'Coronary Heart Disease', 'Cancer', 'Diabetes mellitus', 'Blindness',
-                      'Accidents', 'Mental illness', 'Obesity', 'Iodine Deficiency',
-                      'Fluorosis', 'Epilepsy'
+                      'Fluorosis', 'Epilepsy', 'Others'
                     ],
                     widget.surveyData.nonCommunicableDiseases,
+                    isNonCommunicable: true,
                   ),
                   _buildDiseaseChecklist(
                     'Communicable Diseases',
@@ -423,9 +468,10 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
                       'Food poisoning', 'Hook worm infection', 'Dengue', 'Malaria',
                       'Filariasis', 'Rabies', 'Yellow fever', 'Japanese encephalitis',
                       'Brucellosis', 'Plague', 'Anthrax', 'Trachoma', 'Tetanus',
-                      'Leprosy', 'STD & RTI', 'Yaws', 'HIV/AIDS'
+                      'Leprosy', 'STD & RTI', 'Yaws', 'HIV/AIDS', 'Others'
                     ],
                     widget.surveyData.communicableDiseases,
+                    isNonCommunicable: false,
                   ),
                   _buildHealthConditionList(
                     '11. IS THERE ANY CASE OF FEVER',
@@ -459,8 +505,9 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
   Widget _buildDiseaseChecklist(
     String title,
     List<String> diseases,
-    List<String> selectedDiseases,
-  ) {
+    List<String> selectedDiseases, {
+    required bool isNonCommunicable,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -473,20 +520,44 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
             itemCount: diseases.length,
             itemBuilder: (context, index) {
               final disease = diseases[index];
-              return CheckboxListTile(
-                title: Text(disease),
-                value: selectedDiseases.contains(disease),
-                onChanged: (value) {
-                  setState(() {
-                    if (value ?? false) {
-                      if (!selectedDiseases.contains(disease)) {
-                        selectedDiseases.add(disease);
-                      }
-                    } else {
-                      selectedDiseases.remove(disease);
-                    }
-                  });
-                },
+              return Column(
+                children: [
+                   CheckboxListTile(
+                    title: Text(disease),
+                    value: selectedDiseases.contains(disease),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value ?? false) {
+                          if (!selectedDiseases.contains(disease)) {
+                            selectedDiseases.add(disease);
+                          }
+                        } else {
+                          selectedDiseases.remove(disease);
+                        }
+                      });
+                    },
+                  ),
+                  if (disease == 'Others' && selectedDiseases.contains('Others'))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: TextFormField(
+                        initialValue: isNonCommunicable 
+                            ? widget.surveyData.nonCommunicableOther 
+                            : widget.surveyData.communicableOther,
+                        decoration: const InputDecoration(
+                          labelText: 'Specify Others',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          if (isNonCommunicable) {
+                            widget.surveyData.nonCommunicableOther = value;
+                          } else {
+                            widget.surveyData.communicableOther = value;
+                          }
+                        },
+                      ),
+                    ),
+                ],
               );
             },
           ),
@@ -679,17 +750,17 @@ class _FamilyHealthAttitudeSectionState extends State<FamilyHealthAttitudeSectio
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: widget.surveyData.healthKnowledgeAttitude?.isEmpty ?? true
-              ? null
-              : widget.surveyData.healthKnowledgeAttitude,
+          value: ['Inadequate', 'Moderate', 'Adequate'].contains(widget.surveyData.healthKnowledgeAttitude)
+              ? widget.surveyData.healthKnowledgeAttitude
+              : null,
           decoration: const InputDecoration(
             labelText: 'Select',
             border: OutlineInputBorder(),
           ),
           items: const [
-            DropdownMenuItem(value: 'Poor', child: Text('Poor', style: TextStyle(fontSize: 15))),
-            DropdownMenuItem(value: 'Good', child: Text('Good', style: TextStyle(fontSize: 15))),
-            DropdownMenuItem(value: 'Excellent', child: Text('Excellent', style: TextStyle(fontSize: 15))),
+            DropdownMenuItem(value: 'Inadequate', child: Text('Inadequate', style: TextStyle(fontSize: 15))),
+            DropdownMenuItem(value: 'Moderate', child: Text('Moderate', style: TextStyle(fontSize: 15))),
+            DropdownMenuItem(value: 'Adequate', child: Text('Adequate', style: TextStyle(fontSize: 15))),
           ],
           onChanged: (value) {
             setState(() => widget.surveyData.healthKnowledgeAttitude = value);
@@ -702,17 +773,17 @@ class _FamilyHealthAttitudeSectionState extends State<FamilyHealthAttitudeSectio
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: widget.surveyData.nutritionKnowledgeAttitude?.isEmpty ?? true
-              ? null
-              : widget.surveyData.nutritionKnowledgeAttitude,
+          value: ['Inadequate', 'Moderate', 'Adequate'].contains(widget.surveyData.nutritionKnowledgeAttitude)
+              ? widget.surveyData.nutritionKnowledgeAttitude
+              : null,
           decoration: const InputDecoration(
             labelText: 'Select',
             border: OutlineInputBorder(),
           ),
           items: const [
-            DropdownMenuItem(value: 'Poor', child: Text('Poor', style: TextStyle(fontSize: 15))),
-            DropdownMenuItem(value: 'Good', child: Text('Good', style: TextStyle(fontSize: 15))),
-            DropdownMenuItem(value: 'Excellent', child: Text('Excellent', style: TextStyle(fontSize: 15))),
+            DropdownMenuItem(value: 'Inadequate', child: Text('Inadequate', style: TextStyle(fontSize: 15))),
+            DropdownMenuItem(value: 'Moderate', child: Text('Moderate', style: TextStyle(fontSize: 15))),
+            DropdownMenuItem(value: 'Adequate', child: Text('Adequate', style: TextStyle(fontSize: 15))),
           ],
           onChanged: (value) {
             setState(() => widget.surveyData.nutritionKnowledgeAttitude = value);

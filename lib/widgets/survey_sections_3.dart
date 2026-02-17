@@ -186,7 +186,8 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
               setState(() {
                 widget.surveyData.births.add(BirthRecord(
                   gender: '',
-                  parents: '',
+                  fatherName: '',
+                  motherName: '',
                   remarks: '',
                 ));
               });
@@ -268,12 +269,21 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
-                        initialValue: birth.parents,
+                        initialValue: birth.fatherName,
                         decoration: const InputDecoration(
-                          labelText: 'Parents',
+                          labelText: 'Father Name',
                           border: OutlineInputBorder(),
                         ),
-                        onChanged: (value) => birth.parents = value,
+                        onChanged: (value) => birth.fatherName = value,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        initialValue: birth.motherName,
+                        decoration: const InputDecoration(
+                          labelText: 'Mother Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) => birth.motherName = value,
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -306,7 +316,8 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
               setState(() {
                 widget.surveyData.deaths.add(DeathRecord(
                   gender: '',
-                  parents: '',
+                  fatherName: '',
+                  motherName: '',
                   remarks: '',
                 ));
               });
@@ -375,12 +386,21 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
-                        initialValue: death.parents,
+                        initialValue: death.fatherName,
                         decoration: const InputDecoration(
-                          labelText: 'Parents',
+                          labelText: 'Father Name',
                           border: OutlineInputBorder(),
                         ),
-                        onChanged: (value) => death.parents = value,
+                        onChanged: (value) => death.fatherName = value,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        initialValue: death.motherName,
+                        decoration: const InputDecoration(
+                          labelText: 'Mother Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) => death.motherName = value,
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -412,8 +432,10 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
             onPressed: () {
               setState(() {
                 widget.surveyData.marriages.add(MarriageRecord(
-                  name: '',
-                  age: 0,
+                  groomName: '',
+                  groomAge: 0,
+                  brideName: '',
+                  brideAge: 0,
                   remarks: '',
                 ));
               });
@@ -449,23 +471,44 @@ class _VitalStatisticsSectionState extends State<VitalStatisticsSection> {
                         ],
                       ),
                       TextFormField(
-                        initialValue: marriage.name,
+                        initialValue: marriage.groomName,
                         decoration: const InputDecoration(
-                          labelText: 'Name',
+                          labelText: 'Groom Name',
                           border: OutlineInputBorder(),
                         ),
-                        onChanged: (value) => marriage.name = value,
+                        onChanged: (value) => marriage.groomName = value,
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
-                        initialValue: marriage.age.toString(),
+                        initialValue: marriage.groomAge.toString(),
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
-                          labelText: 'Age',
+                          labelText: 'Groom Age',
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (value) {
-                          marriage.age = int.tryParse(value) ?? 0;
+                          marriage.groomAge = int.tryParse(value) ?? 0;
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        initialValue: marriage.brideName,
+                        decoration: const InputDecoration(
+                          labelText: 'Bride Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) => marriage.brideName = value,
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        initialValue: marriage.brideAge.toString(),
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Bride Age',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          marriage.brideAge = int.tryParse(value) ?? 0;
                         },
                       ),
                       const SizedBox(height: 8),

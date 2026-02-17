@@ -198,7 +198,7 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
           await _saveDraft();
         }

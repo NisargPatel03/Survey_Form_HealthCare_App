@@ -116,7 +116,7 @@ class SurveyDetailScreen extends StatelessWidget {
             ]),
             const SizedBox(height: 16),
             _buildSection('Health Services', [
-              _buildInfoRow('Treatment Location', survey.treatmentLocation),
+              _buildInfoRow('Treatment Location', survey.treatmentLocations.join(', ')),
               _buildInfoRow('Health Agencies Adequate', survey.officialHealthAgenciesAdequate?.toString()),
               _buildInfoRow('Has Health Insurance', survey.hasHealthInsurance?.toString()),
               _buildInfoRow('Medicine Purchase Location', survey.medicinePurchaseLocation),

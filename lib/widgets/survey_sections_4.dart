@@ -141,18 +141,27 @@ class _EligibleCouplesSectionState extends State<EligibleCouplesSection> {
                       },
                     ),
                     const SizedBox(height: 8),
-                    CheckboxListTile(
+                    const Text('Priority:', style: TextStyle(fontWeight: FontWeight.w500)),
+                    RadioListTile<int>(
                       title: const Text('I Priority'),
-                      value: couple.priority1,
+                      value: 1,
+                      groupValue: couple.priority1 ? 1 : (couple.priority2 ? 2 : 0),
                       onChanged: (value) {
-                        setState(() => couple.priority1 = value ?? false);
+                        setState(() {
+                          couple.priority1 = true;
+                          couple.priority2 = false;
+                        });
                       },
                     ),
-                    CheckboxListTile(
+                    RadioListTile<int>(
                       title: const Text('II Priority'),
-                      value: couple.priority2,
+                      value: 2,
+                      groupValue: couple.priority1 ? 1 : (couple.priority2 ? 2 : 0),
                       onChanged: (value) {
-                        setState(() => couple.priority2 = value ?? false);
+                        setState(() {
+                          couple.priority1 = false;
+                          couple.priority2 = true;
+                        });
                       },
                     ),
                   ],
@@ -164,17 +173,44 @@ class _EligibleCouplesSectionState extends State<EligibleCouplesSection> {
             ),
             const SizedBox(height: 16),
             const Text(
-              '19.1 Using contraceptive method? If yes, specify:',
+              '19.1 Using contraceptive method?',
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
-            TextFormField(
-              controller: _contraceptiveController,
-              decoration: const InputDecoration(
-                labelText: 'Contraceptive Method',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) => widget.surveyData.contraceptiveMethod = value,
+            Row(
+              children: [
+                Radio<bool>(
+                  value: true,
+                  groupValue: widget.surveyData.usesContraceptives,
+                  onChanged: (value) {
+                    setState(() => widget.surveyData.usesContraceptives = value);
+                  },
+                ),
+                const Text('Yes'),
+                Radio<bool>(
+                  value: false,
+                  groupValue: widget.surveyData.usesContraceptives,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.surveyData.usesContraceptives = value;
+                      widget.surveyData.contraceptiveMethod = '';
+                      _contraceptiveController.clear();
+                    });
+                  },
+                ),
+                const Text('No'),
+              ],
             ),
+            if (widget.surveyData.usesContraceptives == true) ...[
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _contraceptiveController,
+                decoration: const InputDecoration(
+                  labelText: 'Specify Method',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => widget.surveyData.contraceptiveMethod = value,
+              ),
+            ],
             const SizedBox(height: 16),
             const Text(
               '19.2 Intending to undergo',
@@ -188,10 +224,17 @@ class _EligibleCouplesSectionState extends State<EligibleCouplesSection> {
               },
             ),
             CheckboxListTile(
-              title: const Text('18.2.2 Tubal ligation'),
-              value: widget.surveyData.intendingTubalLigation ?? false,
+              title: const Text('18.2.2 Tubal ligation/Tubectomy'),
+              value: widget.surveyData.intendingTubectomy ?? false,
               onChanged: (value) {
-                setState(() => widget.surveyData.intendingTubalLigation = value);
+                setState(() => widget.surveyData.intendingTubectomy = value);
+              },
+            ),
+            CheckboxListTile(
+              title: const Text('18.2.3 Any other method'),
+              value: widget.surveyData.intendingAnyOtherMethod ?? false,
+              onChanged: (value) {
+                setState(() => widget.surveyData.intendingAnyOtherMethod = value);
               },
             ),
             const SizedBox(height: 16),

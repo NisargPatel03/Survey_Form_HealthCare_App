@@ -101,7 +101,7 @@ void main() {
       // data.houseSprayDate...
 
       // Section 16
-      data.treatmentLocation = 'Hospital';
+      data.treatmentLocations.add('Hospital');
       data.officialHealthAgenciesAdequate = true;
       data.hasHealthInsurance = true;
       data.healthInsuranceDetails = 'LIC';

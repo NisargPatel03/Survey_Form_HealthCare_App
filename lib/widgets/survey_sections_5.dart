@@ -15,6 +15,7 @@ class _HealthServicesSectionState extends State<HealthServicesSection> {
   final _healthAgenciesReasonController = TextEditingController();
   final _healthInsuranceController = TextEditingController();
   final _medicineLocationController = TextEditingController();
+  final _techoNoController = TextEditingController();
 
   @override
   void initState() {
@@ -22,6 +23,7 @@ class _HealthServicesSectionState extends State<HealthServicesSection> {
     _healthAgenciesReasonController.text = widget.surveyData.healthAgenciesReason ?? '';
     _healthInsuranceController.text = widget.surveyData.healthInsuranceDetails ?? '';
     _medicineLocationController.text = widget.surveyData.medicinePurchaseLocation ?? '';
+    _techoNoController.text = widget.surveyData.techoNo ?? '';
   }
 
   @override
@@ -31,6 +33,7 @@ class _HealthServicesSectionState extends State<HealthServicesSection> {
       _healthAgenciesReasonController.text = widget.surveyData.healthAgenciesReason ?? '';
       _healthInsuranceController.text = widget.surveyData.healthInsuranceDetails ?? '';
       _medicineLocationController.text = widget.surveyData.medicinePurchaseLocation ?? '';
+      _techoNoController.text = widget.surveyData.techoNo ?? '';
     }
   }
 
@@ -40,39 +43,59 @@ class _HealthServicesSectionState extends State<HealthServicesSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '30. If any one falls ill where do they go for treatment?',
+          '30. If any one falls ill where do they go for treatment? (Multiple Selection)',
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
-        RadioListTile<String>(
+        CheckboxListTile(
           title: const Text('30.1 Hospital / Community Health Centre'),
-          value: 'Hospital / Community Health Centre',
-          groupValue: widget.surveyData.treatmentLocation,
+          value: widget.surveyData.treatmentLocations.contains('Hospital / Community Health Centre'),
           onChanged: (value) {
-            setState(() => widget.surveyData.treatmentLocation = value);
+            setState(() {
+              if (value == true) {
+                widget.surveyData.treatmentLocations.add('Hospital / Community Health Centre');
+              } else {
+                widget.surveyData.treatmentLocations.remove('Hospital / Community Health Centre');
+              }
+            });
           },
         ),
-        RadioListTile<String>(
+        CheckboxListTile(
           title: const Text('30.2 Primary Health Centre/ Sub Health Centre'),
-          value: 'Primary Health Centre/ Sub Health Centre',
-          groupValue: widget.surveyData.treatmentLocation,
+          value: widget.surveyData.treatmentLocations.contains('Primary Health Centre/ Sub Health Centre'),
           onChanged: (value) {
-            setState(() => widget.surveyData.treatmentLocation = value);
+            setState(() {
+              if (value == true) {
+                widget.surveyData.treatmentLocations.add('Primary Health Centre/ Sub Health Centre');
+              } else {
+                widget.surveyData.treatmentLocations.remove('Primary Health Centre/ Sub Health Centre');
+              }
+            });
           },
         ),
-        RadioListTile<String>(
+        CheckboxListTile(
           title: const Text('30.3 Private Nursing Home'),
-          value: 'Private Nursing Home',
-          groupValue: widget.surveyData.treatmentLocation,
+          value: widget.surveyData.treatmentLocations.contains('Private Nursing Home'),
           onChanged: (value) {
-            setState(() => widget.surveyData.treatmentLocation = value);
+            setState(() {
+              if (value == true) {
+                widget.surveyData.treatmentLocations.add('Private Nursing Home');
+              } else {
+                widget.surveyData.treatmentLocations.remove('Private Nursing Home');
+              }
+            });
           },
         ),
-        RadioListTile<String>(
+        CheckboxListTile(
           title: const Text('30.4 Indigenous Doctor/ Local vaidya / Homeopathy / Ayurvedic'),
-          value: 'Indigenous Doctor/ Local vaidya / Homeopathy / Ayurvedic',
-          groupValue: widget.surveyData.treatmentLocation,
+          value: widget.surveyData.treatmentLocations.contains('Indigenous Doctor/ Local vaidya / Homeopathy / Ayurvedic'),
           onChanged: (value) {
-            setState(() => widget.surveyData.treatmentLocation = value);
+            setState(() {
+              if (value == true) {
+                widget.surveyData.treatmentLocations.add('Indigenous Doctor/ Local vaidya / Homeopathy / Ayurvedic');
+              } else {
+                widget.surveyData.treatmentLocations.remove('Indigenous Doctor/ Local vaidya / Homeopathy / Ayurvedic');
+              }
+            });
           },
         ),
         const SizedBox(height: 16),
@@ -143,6 +166,15 @@ class _HealthServicesSectionState extends State<HealthServicesSection> {
           onChanged: (value) => widget.surveyData.healthInsuranceDetails = value,
         ),
         const SizedBox(height: 16),
+        TextFormField(
+          controller: _techoNoController,
+          decoration: const InputDecoration(
+            labelText: '33. Techo No.',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (value) => widget.surveyData.techoNo = value,
+        ),
+        const SizedBox(height: 16),
         const Text(
           '38. Where do they go to purchase the prescribed drug.',
           style: TextStyle(fontWeight: FontWeight.w500),
@@ -193,6 +225,7 @@ class _HealthServicesSectionState extends State<HealthServicesSection> {
     _healthAgenciesReasonController.dispose();
     _healthInsuranceController.dispose();
     _medicineLocationController.dispose();
+    _techoNoController.dispose();
     super.dispose();
   }
 }

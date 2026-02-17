@@ -13,7 +13,7 @@ class BasicInformationSection extends StatefulWidget {
 
 class _BasicInformationSectionState extends State<BasicInformationSection> {
   final _areaNameController = TextEditingController();
-  final _healthCentreController = TextEditingController();
+  // final _healthCentreController = TextEditingController(); // Removed
   final _headOfFamilyController = TextEditingController();
   final _subCasteController = TextEditingController();
   final _houseNoController = TextEditingController();
@@ -23,7 +23,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
   void initState() {
     super.initState();
     _areaNameController.text = widget.surveyData.areaName ?? '';
-    _healthCentreController.text = widget.surveyData.healthCentreName ?? '';
+    // _healthCentreController.text = widget.surveyData.healthCentreName ?? ''; // Removed
     _headOfFamilyController.text = widget.surveyData.headOfFamily ?? '';
     _subCasteController.text = widget.surveyData.subCaste ?? '';
     _houseNoController.text = widget.surveyData.houseNo ?? '';
@@ -35,7 +35,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
     super.didUpdateWidget(oldWidget);
     if (widget.surveyData != oldWidget.surveyData) {
       _areaNameController.text = widget.surveyData.areaName ?? '';
-      _healthCentreController.text = widget.surveyData.healthCentreName ?? '';
+      // _healthCentreController.text = widget.surveyData.healthCentreName ?? ''; // Removed
       _headOfFamilyController.text = widget.surveyData.headOfFamily ?? '';
       _subCasteController.text = widget.surveyData.subCaste ?? '';
       _houseNoController.text = widget.surveyData.houseNo ?? '';
@@ -126,14 +126,23 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: _healthCentreController,
+        DropdownButtonFormField<String>(
+          value: ['SC', 'HWCs', 'PHC', 'CHC', 'UHC'].contains(widget.surveyData.healthCentreName)
+              ? widget.surveyData.healthCentreName
+              : null,
           decoration: const InputDecoration(
             labelText: 'Health Centre Name',
             border: OutlineInputBorder(),
           ),
-          onChanged: (value) => widget.surveyData.healthCentreName = value,
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          items: const [
+            DropdownMenuItem(value: 'SC', child: Text('SC')),
+            DropdownMenuItem(value: 'HWCs', child: Text('HWCs')),
+            DropdownMenuItem(value: 'PHC', child: Text('PHC')),
+            DropdownMenuItem(value: 'CHC', child: Text('CHC')),
+            DropdownMenuItem(value: 'UHC', child: Text('UHC')),
+          ],
+          onChanged: (value) => setState(() => widget.surveyData.healthCentreName = value),
+          validator: (value) => value == null ? 'Required' : null,
         ),
         const SizedBox(height: 16),
         const Text(
@@ -229,7 +238,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
   @override
   void dispose() {
     _areaNameController.dispose();
-    _healthCentreController.dispose();
+    // _healthCentreController.dispose(); // Removed
     _headOfFamilyController.dispose();
     _subCasteController.dispose();
     super.dispose();
@@ -305,10 +314,11 @@ class _HousingConditionSectionState extends State<HousingConditionSection> {
           },
         ),
         const SizedBox(height: 16),
-        const Text(
+        Text(
           '6.2 Rooms:',
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
+        const SizedBox(height: 8),
         TextFormField(
           controller: _roomsController,
           keyboardType: TextInputType.number,
@@ -464,6 +474,17 @@ class _HousingConditionSectionState extends State<HousingConditionSection> {
             setState(() => widget.surveyData.waterSupply = value);
           },
         ),
+        if (widget.surveyData.waterSupply == 'Others') ...[
+          const SizedBox(height: 8),
+          TextFormField(
+            initialValue: widget.surveyData.waterSupplyOther,
+            decoration: const InputDecoration(
+              labelText: 'Specify Other Water Supply',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (value) => widget.surveyData.waterSupplyOther = value,
+          ),
+        ],
         const SizedBox(height: 16),
         const Text(
           '6.7 Kitchen:',
@@ -657,14 +678,18 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                     onChanged: (value) => member.name = value,
                   ),
                   const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: member.relationship.isNotEmpty ? member.relationship : null,
+                    DropdownButtonFormField<String>(
+                    value: ['HOF', 'Father', 'Mother', 'Husband', 'Wife', 'Son', 'Daughter', 
+                            'Daughter-in-law', 'Brother', 'Sister', 'Uncle', 'Aunty', 
+                            'Grand Son', 'Grand Daughter', 'Other'].contains(member.relationship)
+                        ? member.relationship
+                        : null,
                     decoration: const InputDecoration(
                       labelText: 'Relationship With Head of the Family',
                       border: OutlineInputBorder(),
                     ),
                     items: const [
-                      DropdownMenuItem(value: 'Hof', child: Text('Hof')),
+                      DropdownMenuItem(value: 'HOF', child: Text('HOF')),
                       DropdownMenuItem(value: 'Father', child: Text('Father')),
                       DropdownMenuItem(value: 'Mother', child: Text('Mother')),
                       DropdownMenuItem(value: 'Husband', child: Text('Husband')),
@@ -750,6 +775,7 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                       DropdownMenuItem(value: 'Government job', child: Text('Government job')),
                       DropdownMenuItem(value: 'Housewife', child: Text('Housewife')),
                       DropdownMenuItem(value: 'Unemployment', child: Text('Unemployment')),
+                      DropdownMenuItem(value: 'Retired', child: Text('Retired')),
                     ],
                     onChanged: (value) => setState(() => member.occupation = value ?? ''),
                   ),
@@ -811,97 +837,179 @@ class IncomeSection extends StatefulWidget {
 }
 
 class _IncomeSectionState extends State<IncomeSection> {
-  final _incomeController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _incomeController.text = widget.surveyData.totalIncome?.toString() ?? '';
+  // Kuppuswamy Scale Logic
+  int _getEducationScore(String? education) {
+    if (education == null) return 0;
+    final edu = education.toLowerCase();
+    if (edu.contains('professional') || edu.contains('post graduate')) return 7;
+    if (edu.contains('graduate')) return 6;
+    if (edu.contains('diploma')) return 5;
+    if (edu.contains('high secondary') || edu.contains('high school')) return 4;
+    if (edu.contains('secondary') || edu.contains('middle')) return 3;
+    if (edu.contains('primary') || edu.contains('literate')) return 2;
+    if (edu.contains('illiterate')) return 1;
+    return 0;
   }
 
-  @override
-  void didUpdateWidget(IncomeSection oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.surveyData != oldWidget.surveyData) {
-      _incomeController.text = widget.surveyData.totalIncome?.toString() ?? '';
+  int _getOccupationScore(String? occupation) {
+    // Mapping survey options to Kuppuswamy categories
+    if (occupation == null) return 0;
+    final occ = occupation.toLowerCase();
+    // Assuming mapping based on prompt categories
+    // Professional -> 10, Semiprofessional -> 6, Clerical/Shop/Farm -> 5, Skilled -> 4, Semiskilled -> 3, Unskilled -> 2, Unemployed -> 1
+    if (occ.contains('government job') || occ.contains('private job')) return 6; // Assiming Semiprofessional/Clerical mix - taking 6 for now or 5? Let's use 6 for 'White collar'ish
+    // Better mapping:
+    // Farmer -> 5 (Farm owner)
+    // Laborer -> 2 (Unskilled)
+    // Own Business -> 5 (Shop owner)
+    // Housewife -> ? (Not usually scored, assumes husband's score or 0? Prompt doesn't specify. Treating as unemployed logic or N/A). 
+    // Unemployed -> 1
+    // Retired -> 1
+    if (occ.contains('laborer')) return 2;
+    if (occ.contains('farmer') || occ.contains('business')) return 5;
+    if (occ == 'government job') return 10; // Assuming Officer? Or 6? Let's go with 6 to be safe, or 10 if specific. Prompt says "Professional 10". 
+    // Let's rely on string match if they selected "Professional" but options are different. 
+    // The options are: Laborer, Farmer, Own Business, Private job, Government job, Housewife, Unemployment, Retired.
+    
+    // Strict mapping to prompt's table:
+    if (occ == 'government job') return 6; // Semiprofessional
+    if (occ == 'private job') return 5; // Clerical
+    if (occ == 'own business') return 5; // Shop owner
+    if (occ == 'farmer') return 5; // Farm owner
+    if (occ == 'laborer') return 2; // Unskilled
+    if (occ == 'unemployment' || occ == 'retired' || occ == 'housewife') return 1;
+    return 1;
+  }
+
+  int _getIncomeScore(double income) {
+    if (income >= 2000) return 12;
+    if (income >= 1000) return 10;
+    if (income >= 750) return 6;
+    if (income >= 500) return 4;
+    if (income >= 300) return 3;
+    if (income >= 101) return 2;
+    return 1;
+  }
+
+  CalculationResult _calculateKuppuswamy() {
+    // Find Head of Family
+    final hof = widget.surveyData.familyMembers.firstWhere(
+      (m) => m.relationship.toUpperCase() == 'HOF',
+      orElse: () => FamilyMember(name: '', relationship: '', age: 0, gender: '', education: '', occupation: '', healthStatus: ''), // Dummy
+    );
+
+    if (hof.name.isEmpty) return CalculationResult(0, 0, 0, 0, 'Unknown');
+
+    final eduScore = _getEducationScore(hof.education);
+    final occScore = _getOccupationScore(hof.occupation);
+    
+    // Calculate Total Income
+    double totalIncome = 0;
+    for (var m in widget.surveyData.familyMembers) {
+      totalIncome += (m.income ?? 0);
     }
+    
+    final incScore = _getIncomeScore(totalIncome);
+    final totalScore = eduScore + occScore + incScore;
+
+    String socialClass = 'Unknown';
+    if (totalScore >= 26) socialClass = 'I (Upper)';
+    else if (totalScore >= 16) socialClass = 'II (Upper High)'; // Prompt says II
+    else if (totalScore >= 11) socialClass = 'III (Upper Middle)'; // Prompt says III
+    else if (totalScore >= 5) socialClass = 'IV (Lower Middle)'; // Prompt says IV
+    else socialClass = 'V (Lower)'; // Prompt says V
+
+    // Store in SurveyData
+    widget.surveyData.totalIncome = totalIncome;
+    widget.surveyData.socioEconomicClass = socialClass;
+
+    return CalculationResult(eduScore, occScore, incScore, totalScore, socialClass);
   }
 
   @override
   Widget build(BuildContext context) {
+    final result = _calculateKuppuswamy();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '7.A. TOTAL INCOME OF FAMILY/MONTH',
+          '7.A. TOTAL FAMILY INCOME',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: _incomeController,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Total Income (Rs.)',
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (value) {
-            widget.surveyData.totalIncome = double.tryParse(value);
-          },
+        Container(
+           padding: const EdgeInsets.all(12),
+           color: Colors.grey[200],
+           width: double.infinity,
+           child: Text(
+             'Rs. ${widget.surveyData.totalIncome?.toStringAsFixed(2) ?? "0.00"}',
+             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+           ),
         ),
         const SizedBox(height: 16),
         const Text(
-          '7.B SOCIO-ECONOMIC CLASS',
+          '7.B. TOTAL FAMILY INCOME/MONTH',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        RadioListTile<String>(
-          title: const Text('a. Below Rs.1000'),
-          value: 'Below Rs.1000',
-          groupValue: widget.surveyData.socioEconomicClass,
-          onChanged: (value) {
-            setState(() => widget.surveyData.socioEconomicClass = value);
-          },
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: widget.surveyData.monthlyIncomeRange,
+          decoration: const InputDecoration(
+            labelText: 'Select Income Range',
+            border: OutlineInputBorder(),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'Below Rs.1000', child: Text('a. Below Rs.1000')),
+            DropdownMenuItem(value: 'Rs. 1000 - 1500', child: Text('b. Rs. 1000 - 1500')),
+            DropdownMenuItem(value: 'Rs. 1501 - 2000', child: Text('c. Rs. 1501 - 2000')),
+            DropdownMenuItem(value: 'Rs. 2001 - 2500', child: Text('d. Rs. 2001 - 2500')),
+            DropdownMenuItem(value: 'Rs. 2501 and above', child: Text('e. Rs. 2501 and above')),
+          ],
+          onChanged: (value) => setState(() => widget.surveyData.monthlyIncomeRange = value),
+          validator: (value) => value == null ? 'Required' : null,
         ),
-        RadioListTile<String>(
-          title: const Text('b. Rs. 1000 - 1500'),
-          value: 'Rs. 1000 - 1500',
-          groupValue: widget.surveyData.socioEconomicClass,
-          onChanged: (value) {
-            setState(() => widget.surveyData.socioEconomicClass = value);
-          },
+        const SizedBox(height: 16),
+        const Text(
+          '7.C. SOCIO-ECONOMIC CLASS (Kuppuswamy)',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        RadioListTile<String>(
-          title: const Text('c. Rs. 1501 - 2000'),
-          value: 'Rs. 1501 - 2000',
-          groupValue: widget.surveyData.socioEconomicClass,
-          onChanged: (value) {
-            setState(() => widget.surveyData.socioEconomicClass = value);
-          },
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (widget.surveyData.familyMembers.any((m) => m.relationship.toUpperCase() == 'HOF'))
+                  ...[
+                     Text('HOF Education Score: ${result.eduScore}'),
+                     Text('HOF Occupation Score: ${result.occScore}'),
+                     Text('Family Income Score: ${result.incScore}'),
+                     const Divider(),
+                     Text('Total Score: ${result.totalScore}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                     const SizedBox(height: 8),
+                     Text('Class: ${result.socialClass}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+                  ]
+                else
+                  const Text('Please add a Head of Family (HOF) in Section 3 to calculate socio-economic class.', style: TextStyle(color: Colors.red)),
+              ],
+            ),
+          ),
         ),
-        RadioListTile<String>(
-          title: const Text('d. Rs. 2001 - 2500'),
-          value: 'Rs. 2001 - 2500',
-          groupValue: widget.surveyData.socioEconomicClass,
-          onChanged: (value) {
-            setState(() => widget.surveyData.socioEconomicClass = value);
-          },
-        ),
-        RadioListTile<String>(
-          title: const Text('e. Rs. 2501 and above'),
-          value: 'Rs. 2501 and above',
-          groupValue: widget.surveyData.socioEconomicClass,
-          onChanged: (value) {
-            setState(() => widget.surveyData.socioEconomicClass = value);
-          },
-        ),
+        // Radio buttons removed as it is auto-calculated
       ],
     );
   }
+}
 
-  @override
-  void dispose() {
-    _incomeController.dispose();
-    super.dispose();
-  }
+class CalculationResult {
+  final int eduScore;
+  final int occScore;
+  final int incScore;
+  final int totalScore;
+  final String socialClass;
+
+  CalculationResult(this.eduScore, this.occScore, this.incScore, this.totalScore, this.socialClass);
 }
 
 // Section 5: Transport & Communication

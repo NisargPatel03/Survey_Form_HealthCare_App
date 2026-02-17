@@ -19,6 +19,7 @@ class SurveyData {
   String? ventilation; // Adequate/Inadequate/No Ventilation
   String? lighting; // Electricity/Gas lamp/Oil lamp
   String? waterSupply; // Tap/Hand pump/Well/Open Tank/Others
+  String? waterSupplyOther;
   String? kitchen; // Separate/Corner of the room/Veranda
   String? drainage; // Adequate/Inadequate/No Drainage
   String? lavatory; // Own Latrine/Public Latrine/Open air defecation
@@ -68,9 +69,12 @@ class SurveyData {
 
   // Section 19: Eligible Couples
   List<EligibleCouple> eligibleCouples = [];
+  String? monthlyIncomeRange;
+  bool? usesContraceptives;
   String? contraceptiveMethod;
   bool? intendingVasectomy;
-  bool? intendingTubalLigation;
+  bool? intendingTubectomy;
+  bool? intendingAnyOtherMethod;
   String? notInterestedReason;
 
   // Section 20: Malnutrition
@@ -100,7 +104,7 @@ class SurveyData {
   int? numberOfStrayDogs;
 
   // Section 30: Treatment Location
-  String? treatmentLocation;
+  List<String> treatmentLocations = [];
 
   // Section 31-32: Health Services
   bool? officialHealthAgenciesAdequate;
@@ -120,8 +124,9 @@ class SurveyData {
   String? aadharNumber;
   bool isApproved = false;
   List<String> nonCommunicableDiseases = [];
-
+  String? nonCommunicableOther;
   List<String> communicableDiseases = [];
+  String? communicableOther;
   String? familyStrengthOther;
   String? familyWeaknessOther;
   String? applicableProgrammeOther;
@@ -138,6 +143,7 @@ class SurveyData {
   DateTime? surveyDate;
   String? studentName;
   String? studentSignature;
+  String? techoNo;
 
   Map<String, dynamic> toJson() {
     return {
@@ -157,6 +163,7 @@ class SurveyData {
       'ventilation': ventilation,
       'lighting': lighting,
       'waterSupply': waterSupply,
+      'waterSupplyOther': waterSupplyOther,
       'kitchen': kitchen,
       'drainage': drainage,
       'lavatory': lavatory,
@@ -184,10 +191,12 @@ class SurveyData {
       'marriages': marriages.map((m) => m.toJson()).toList(),
       'immunizationRecords': immunizationRecords.map((i) => i.toJson()).toList(),
       'eligibleCouples': eligibleCouples.map((e) => e.toJson()).toList(),
+      'monthlyIncomeRange': monthlyIncomeRange,
+      'usesContraceptives': usesContraceptives,
       'contraceptiveMethod': contraceptiveMethod,
       'intendingVasectomy': intendingVasectomy,
-      'intendingTubalLigation': intendingTubalLigation,
-      'notInterestedReason': notInterestedReason,
+      'intendingTubectomy': intendingTubectomy,
+      'intendingAnyOtherMethod': intendingAnyOtherMethod,
       'malnutritionCases': malnutritionCases.map((m) => m.toJson()).toList(),
       'sewageDisposalHygienic': sewageDisposalHygienic,
       'sewageDisposalReason': sewageDisposalReason,
@@ -210,7 +219,7 @@ class SurveyData {
       'breedingPlaceInsectsRodents': breedingPlaceInsectsRodents,
       'strayDogs': strayDogs,
       'numberOfStrayDogs': numberOfStrayDogs,
-      'treatmentLocation': treatmentLocation,
+      'treatmentLocations': treatmentLocations,
       'officialHealthAgenciesAdequate': officialHealthAgenciesAdequate,
       'healthAgenciesReason': healthAgenciesReason,
       'hasHealthInsurance': hasHealthInsurance,
@@ -228,10 +237,13 @@ class SurveyData {
       'aadharNumber': aadharNumber,
       'isApproved': isApproved,
       'nonCommunicableDiseases': nonCommunicableDiseases,
+      'nonCommunicableOther': nonCommunicableOther,
       'communicableDiseases': communicableDiseases,
+      'communicableOther': communicableOther,
       'surveyDate': surveyDate?.toIso8601String(),
       'studentName': studentName,
       'studentSignature': studentSignature,
+      'techoNo': techoNo,
     };
   }
 
@@ -258,6 +270,7 @@ class SurveyData {
     survey.ventilation = json['ventilation'];
     survey.lighting = json['lighting'];
     survey.waterSupply = json['waterSupply'];
+    survey.waterSupplyOther = json['waterSupplyOther'];
     survey.kitchen = json['kitchen'];
     survey.drainage = json['drainage'];
     survey.lavatory = json['lavatory'];
@@ -290,6 +303,7 @@ class SurveyData {
       survey.dietaryPattern = (json['dietaryPattern'] as Map).map((k, v) => MapEntry(
             k.toString(),
             DietaryInfo(
+              frequency: v['frequency'] ?? '',
               available: v['available'] ?? false,
               used: v['used'] ?? false,
               traditional: v['traditional'] ?? false,
@@ -388,7 +402,8 @@ class SurveyData {
                     ? DateTime.parse(b['dateOfBirth'])
                     : null,
                 gender: b['gender'] ?? '',
-                parents: b['parents'] ?? '',
+                fatherName: b['fatherName'] ?? '',
+                motherName: b['motherName'] ?? '',
                 remarks: b['remarks'] ?? '',
               ))
           .toList();
@@ -401,7 +416,8 @@ class SurveyData {
                     ? DateTime.parse(d['dateOfDeath'])
                     : null,
                 gender: d['gender'] ?? '',
-                parents: d['parents'] ?? '',
+                fatherName: d['fatherName'] ?? '',
+                motherName: d['motherName'] ?? '',
                 remarks: d['remarks'] ?? '',
               ))
           .toList();
@@ -410,8 +426,10 @@ class SurveyData {
     if (json['marriages'] != null) {
       survey.marriages = (json['marriages'] as List)
           .map((m) => MarriageRecord(
-                name: m['name'] ?? '',
-                age: m['age'] ?? 0,
+                groomName: m['groomName'] ?? '',
+                groomAge: m['groomAge'] ?? 0,
+                brideName: m['brideName'] ?? '',
+                brideAge: m['brideAge'] ?? 0,
                 dateOfMarriage: m['dateOfMarriage'] != null
                     ? DateTime.parse(m['dateOfMarriage'])
                     : null,
@@ -453,9 +471,12 @@ class SurveyData {
           .toList();
     }
     
+    survey.monthlyIncomeRange = json['monthlyIncomeRange'];
+    survey.usesContraceptives = json['usesContraceptives'];
     survey.contraceptiveMethod = json['contraceptiveMethod'];
     survey.intendingVasectomy = json['intendingVasectomy'];
-    survey.intendingTubalLigation = json['intendingTubalLigation'];
+    survey.intendingTubectomy = json['intendingTubectomy'];
+    survey.intendingAnyOtherMethod = json['intendingAnyOtherMethod'];
     survey.notInterestedReason = json['notInterestedReason'];
     
     // Malnutrition
@@ -497,7 +518,7 @@ class SurveyData {
     survey.strayDogs = json['strayDogs'];
     survey.numberOfStrayDogs = json['numberOfStrayDogs'];
     
-    survey.treatmentLocation = json['treatmentLocation'];
+    survey.treatmentLocations = List<String>.from(json['treatmentLocations'] ?? []);
     survey.officialHealthAgenciesAdequate = json['officialHealthAgenciesAdequate'];
     survey.healthAgenciesReason = json['healthAgenciesReason'];
     survey.hasHealthInsurance = json['hasHealthInsurance'];
@@ -512,13 +533,16 @@ class SurveyData {
     survey.aadharNumber = json['aadharNumber'];
     survey.isApproved = json['isApproved'] ?? false;
     survey.nonCommunicableDiseases = List<String>.from(json['nonCommunicableDiseases'] ?? []);
+    survey.nonCommunicableOther = json['nonCommunicableOther'];
     survey.communicableDiseases = List<String>.from(json['communicableDiseases'] ?? []);
+    survey.communicableOther = json['communicableOther'];
     
     if (json['surveyDate'] != null) {
       survey.surveyDate = DateTime.parse(json['surveyDate']);
     }
     survey.studentName = json['studentName'];
     survey.studentSignature = json['studentSignature'];
+    survey.techoNo = json['techoNo'];
     
     survey.familyStrengthOther = json['familyStrengthOther'];
     survey.familyWeaknessOther = json['familyWeaknessOther'];
@@ -564,13 +588,15 @@ class FamilyMember {
 }
 
 class DietaryInfo {
+  String frequency; // Daily/Never/Occasionally
   bool available;
-  bool used;
+  bool used; // This might be redundant if frequency covers it, but keeping for now
   bool traditional;
   bool ideal;
   bool unhygienic;
 
   DietaryInfo({
+    this.frequency = '',
     this.available = false,
     this.used = false,
     this.traditional = false,
@@ -580,6 +606,7 @@ class DietaryInfo {
 
   Map<String, dynamic> toJson() {
     return {
+      'frequency': frequency,
       'available': available,
       'used': used,
       'traditional': traditional,
@@ -664,13 +691,15 @@ class PregnantWoman {
 class BirthRecord {
   DateTime? dateOfBirth;
   String gender;
-  String parents;
+  String fatherName;
+  String motherName;
   String remarks;
 
   BirthRecord({
     this.dateOfBirth,
     required this.gender,
-    required this.parents,
+    required this.fatherName,
+    required this.motherName,
     required this.remarks,
   });
 
@@ -678,7 +707,8 @@ class BirthRecord {
     return {
       'dateOfBirth': dateOfBirth?.toIso8601String(),
       'gender': gender,
-      'parents': parents,
+      'fatherName': fatherName,
+      'motherName': motherName,
       'remarks': remarks,
     };
   }
@@ -687,13 +717,15 @@ class BirthRecord {
 class DeathRecord {
   DateTime? dateOfDeath;
   String gender;
-  String parents;
+  String fatherName;
+  String motherName;
   String remarks;
 
   DeathRecord({
     this.dateOfDeath,
     required this.gender,
-    required this.parents,
+    required this.fatherName,
+    required this.motherName,
     required this.remarks,
   });
 
@@ -701,29 +733,36 @@ class DeathRecord {
     return {
       'dateOfDeath': dateOfDeath?.toIso8601String(),
       'gender': gender,
-      'parents': parents,
+      'fatherName': fatherName,
+      'motherName': motherName,
       'remarks': remarks,
     };
   }
 }
 
 class MarriageRecord {
-  String name;
-  int age;
+  String groomName;
+  int groomAge;
+  String brideName;
+  int brideAge;
   DateTime? dateOfMarriage;
   String remarks;
 
   MarriageRecord({
-    required this.name,
-    required this.age,
+    required this.groomName,
+    required this.groomAge,
+    required this.brideName,
+    required this.brideAge,
     this.dateOfMarriage,
     required this.remarks,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
-      'age': age,
+      'groomName': groomName,
+      'groomAge': groomAge,
+      'brideName': brideName,
+      'brideAge': brideAge,
       'dateOfMarriage': dateOfMarriage?.toIso8601String(),
       'remarks': remarks,
     };
