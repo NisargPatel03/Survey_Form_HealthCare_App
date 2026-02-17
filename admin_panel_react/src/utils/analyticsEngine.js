@@ -153,8 +153,11 @@ export const processAnalytics = (surveys) => {
         }
 
         // Vital Stats
-        if (data.intendingTubalLigation) vitalStats['Tubectomy']++;
+        // Handle both old 'intendingTubalLigation' and new 'intendingTubectomy'
+        if (data.intendingTubalLigation || data.intendingTubectomy) vitalStats['Tubectomy']++;
         if (data.intendingVasectomy) vitalStats['Vasectomy']++;
+        if (data.intendingAnyOtherMethod) vitalStats['Other Method'] = (vitalStats['Other Method'] || 0) + 1; // New tracker if needed, or just ignore for main stats
+
         if (data.contraceptiveMethod && data.contraceptiveMethod !== 'None') vitalStats['Temporary Contraceptives']++;
 
         if (data.births) vitalStats['Births (Last 1yr)'] += data.births.length;

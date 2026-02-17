@@ -143,6 +143,7 @@ const SurveyDetailsModal = ({ survey, onClose }) => {
                     <Section title="4. Economy">
                         <div className="grid grid-cols-2 gap-4 mb-4 bg-green-50 p-4 rounded-lg">
                             <div><span className="text-gray-600 block text-xs">Total Income</span><span className="font-bold text-lg text-green-700">{data.totalIncome}</span></div>
+                            <div><span className="text-gray-600 block text-xs">Monthly Range</span><span className="font-bold text-lg text-green-700">{data.monthlyIncomeRange || 'N/A'}</span></div>
                             <div><span className="text-gray-600 block text-xs">Class</span><span className="font-bold text-lg text-green-700">{data.socioEconomicClass}</span></div>
                         </div>
                         {data.expenditureItems && data.expenditureItems.length > 0 && (
@@ -227,7 +228,12 @@ const SurveyDetailsModal = ({ survey, onClose }) => {
                             Transport: data.transportOptions?.join(', '),
                             Languages: data.languagesKnown?.join(', '),
                             FamilyStrengths: data.familyStrengths?.join(', '),
-                            Contraceptive: data.contraceptiveMethod
+                            Contraceptive: data.contraceptiveMethod,
+                            IntendingMethods: [
+                                (data.intendingTubalLigation || data.intendingTubectomy) ? 'Tubectomy' : null,
+                                data.intendingVasectomy ? 'Vasectomy' : null,
+                                data.intendingAnyOtherMethod ? 'Other Method' : null
+                            ].filter(Boolean).join(', ') || 'None'
                         }} />
                     </Section>
 
