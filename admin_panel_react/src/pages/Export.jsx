@@ -1,9 +1,15 @@
 import React from 'react';
 import { useSurveys } from '../hooks/useSurveys';
-import { FaFileCsv, FaDownload } from 'react-icons/fa';
+import { generateMastersheetExcel } from '../utils/MastersheetGenerator';
+import { FaFileCsv, FaDownload, FaFileExcel } from 'react-icons/fa';
 
 const Export = () => {
     const { surveys, loading, error } = useSurveys();
+
+    const handleDownloadMastersheet = () => {
+        if (!surveys || surveys.length === 0) return;
+        generateMastersheetExcel(surveys);
+    };
 
     const handleDownloadCSV = () => {
         if (!surveys || surveys.length === 0) return;
@@ -72,8 +78,18 @@ const Export = () => {
                     className="inline-flex items-center px-6 py-3 bg-primary hover:bg-secondary text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
                     <FaDownload className="mr-2" />
-                    Download CSV
+                    Download Raw CSV
                 </button>
+
+                <div className="mt-4">
+                    <button
+                        onClick={handleDownloadMastersheet}
+                        className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    >
+                        <FaDownload className="mr-2" />
+                        Download Mastersheet (Aggregate)
+                    </button>
+                </div>
 
                 <div className="mt-8 text-left bg-gray-50 p-4 rounded-lg border border-gray-200">
                     <h4 className="font-semibold text-gray-700 mb-2">Note:</h4>
