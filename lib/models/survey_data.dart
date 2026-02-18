@@ -2,6 +2,7 @@ class SurveyData {
   SurveyData();
 
   // Section 1: Basic Information
+  String? facilityType;
   String? areaName;
   String? areaType; // Rural/Urban
   String? healthCentreName;
@@ -148,6 +149,7 @@ class SurveyData {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'facilityType': facilityType,
       'areaName': areaName,
       'areaType': areaType,
       'healthCentreName': healthCentreName,
@@ -253,6 +255,7 @@ class SurveyData {
     survey.id = json['id'];
 
     // Basic info
+    survey.facilityType = json['facilityType'];
     survey.areaName = json['areaName'];
     survey.areaType = json['areaType'];
     survey.healthCentreName = json['healthCentreName'];

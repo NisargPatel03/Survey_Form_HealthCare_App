@@ -257,12 +257,45 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
     'Not proper use of food hygiene',
   ];
 
-  final List<String> _programmeOptions = [
-    'National vector house disease control programme',
-    'Suatish khazat district',
-    'Kuvkman khazat region',
-    'Madhu wants local know young',
-  ];
+  String? _selectedCategory;
+
+  final Map<String, List<String>> _programmeCategories = {
+    '1. Maternal and Child Health': [
+      'Janani Suraksha Yojana (JSY)',
+      'Janani Shishu Suraksha Karyakram (JSSK)',
+      'Pradhan Mantri Matru Vandana Yojana (PMMVY)',
+      'National Immunization Program (UIP / RI)',
+    ],
+    '2. Communicable Disease Control': [
+      'National Vector Borne Disease Control Programme (NVBDCP)',
+      'Revised National Tuberculosis Control Program (RNTCP / NTEP)',
+      'National Leprosy Eradication Programme (NLEP)',
+      'National AIDS Control Programme (NACP)',
+    ],
+    '3. Non-Communicable Disease (NCD) Control': [
+      'National Programme for Prevention and Control of Cancer, Diabetes, Cardiovascular Diseases and Stroke (NPCDCS)',
+      'Ayushman Bharat – Health and Wellness Centers (AB-HWC)',
+    ],
+    '4. Nutrition and Anaemia Control': [
+      'National Iron Plus Initiative (NIPI)',
+      'Poshan Abhiyan / National Nutrition Mission',
+    ],
+    '5. Family Planning and Reproductive Health': [
+      'National Family Planning Program',
+      'Rural Health & Urban Family Welfare Program',
+    ],
+    '6. Health Insurance and Financial Protection': [
+      'Ayushman Bharat – Pradhan Mantri Jan Arogya Yojana (PMJAY)',
+    ],
+    '7. School and Community Health Programs': [
+      'Rashtriya Bal Swasthya Karyakram (RBSK)',
+      'Rashtriya Kishor Swasthya Karyakram (RKSK)',
+    ],
+    '8. Water, Sanitation, and Hygiene': [
+      'National Rural Health Mission (NRHM) / National Health Mission (NHM)',
+      'Swachh Bharat Mission (SBM)',
+    ],
+  };
 
   final _strengthOtherController = TextEditingController();
   final _weaknessOtherController = TextEditingController();
@@ -369,21 +402,70 @@ class _FamilyAssessmentSectionState extends State<FamilyAssessmentSection> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          ..._programmeOptions.map((option) {
-            return CheckboxListTile(
-              title: Text(option),
-              value: widget.surveyData.applicableProgrammes.contains(option),
-              onChanged: (value) {
-                setState(() {
-                  if (value ?? false) {
-                    widget.surveyData.applicableProgrammes.add(option);
-                  } else {
-                    widget.surveyData.applicableProgrammes.remove(option);
-                  }
-                });
-              },
-            );
-          }).toList(),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value: _selectedCategory,
+            decoration: const InputDecoration(
+              labelText: 'Select Category',
+              border: OutlineInputBorder(),
+            ),
+            isExpanded: true,
+            items: _programmeCategories.keys.map((category) {
+              return DropdownMenuItem(
+                value: category,
+                child: Text(category, overflow: TextOverflow.ellipsis),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedCategory = value;
+              });
+            },
+          ),
+          const SizedBox(height: 8),
+          if (_selectedCategory != null) ...[
+             Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: _programmeCategories[_selectedCategory]!.map((option) {
+                  return CheckboxListTile(
+                    title: Text(option),
+                    value: widget.surveyData.applicableProgrammes.contains(option),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value ?? false) {
+                          widget.surveyData.applicableProgrammes.add(option);
+                        } else {
+                          widget.surveyData.applicableProgrammes.remove(option);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+             ),
+             const SizedBox(height: 8),
+          ],
+          const Text(
+            'Selected Programmes:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Wrap(
+            spacing: 8.0,
+            children: widget.surveyData.applicableProgrammes.map((programme) {
+              return Chip(
+                label: Text(programme),
+                onDeleted: () {
+                  setState(() {
+                    widget.surveyData.applicableProgrammes.remove(programme);
+                  });
+                },
+              );
+            }).toList(),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextFormField(

@@ -12,17 +12,30 @@ class BasicInformationSection extends StatefulWidget {
 }
 
 class _BasicInformationSectionState extends State<BasicInformationSection> {
-  final _areaNameController = TextEditingController();
+  // final _areaNameController = TextEditingController(); // Removed in favor of Dropdown
   // final _healthCentreController = TextEditingController(); // Removed
   final _headOfFamilyController = TextEditingController();
   final _subCasteController = TextEditingController();
   final _houseNoController = TextEditingController();
   final _aadharController = TextEditingController();
 
+  List<String> _getAreaOptions() {
+    switch (widget.surveyData.facilityType) {
+      case 'Primary Health Centers (PHCs)':
+        return ['Changa', 'Piplav', 'Bandhani', 'Morad', 'Sihol', 'Nar', 'Ajarpura', 'Navli'];
+      case 'Community Health Centers (CHCs)':
+        return ['Sarsa', 'Tarapur', 'Mahelav'];
+      case 'Urban Health Centers (UHCs)':
+        return ['Nehrubaugh', 'PP Unit Anand', 'Bakrol'];
+      default:
+        return [];
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _areaNameController.text = widget.surveyData.areaName ?? '';
+    // _areaNameController.text = widget.surveyData.areaName ?? ''; // Removed
     // _healthCentreController.text = widget.surveyData.healthCentreName ?? ''; // Removed
     _headOfFamilyController.text = widget.surveyData.headOfFamily ?? '';
     _subCasteController.text = widget.surveyData.subCaste ?? '';
@@ -34,7 +47,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
   void didUpdateWidget(BasicInformationSection oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.surveyData != oldWidget.surveyData) {
-      _areaNameController.text = widget.surveyData.areaName ?? '';
+      // _areaNameController.text = widget.surveyData.areaName ?? ''; // Removed
       // _healthCentreController.text = widget.surveyData.healthCentreName ?? ''; // Removed
       _headOfFamilyController.text = widget.surveyData.headOfFamily ?? '';
       _subCasteController.text = widget.surveyData.subCaste ?? '';
@@ -90,14 +103,53 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
           },
         ),
         const SizedBox(height: 16),
-        TextFormField(
-          controller: _areaNameController,
+        const SizedBox(height: 16),
+        DropdownButtonFormField<String>(
+          value: ['Primary Health Centers (PHCs)', 'Community Health Centers (CHCs)', 'Urban Health Centers (UHCs)']
+                  .contains(widget.surveyData.facilityType)
+              ? widget.surveyData.facilityType
+              : null,
           decoration: const InputDecoration(
-            labelText: 'Area Name',
+            labelText: 'Facility Type',
             border: OutlineInputBorder(),
           ),
-          onChanged: (value) => widget.surveyData.areaName = value,
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          items: const [
+            DropdownMenuItem(
+              value: 'Primary Health Centers (PHCs)',
+              child: Text('PHCs'),
+            ),
+            DropdownMenuItem(
+              value: 'Community Health Centers (CHCs)',
+              child: Text('CHCs'),
+            ),
+            DropdownMenuItem(
+              value: 'Urban Health Centers (UHCs)',
+              child: Text('UHCs'),
+            ),
+          ],
+          onChanged: (value) {
+            setState(() {
+              widget.surveyData.facilityType = value;
+              widget.surveyData.areaName = null; // Reset area name when facility type changes
+            });
+          },
+          validator: (value) => value == null ? 'Required' : null,
+        ),
+        const SizedBox(height: 16),
+        DropdownButtonFormField<String>(
+          value: widget.surveyData.areaName,
+          decoration: const InputDecoration(
+            labelText: 'Community Area',
+            border: OutlineInputBorder(),
+          ),
+          items: _getAreaOptions().map((String area) {
+            return DropdownMenuItem<String>(
+              value: area,
+              child: Text(area),
+            );
+          }).toList(),
+          onChanged: (value) => setState(() => widget.surveyData.areaName = value),
+          validator: (value) => value == null ? 'Required' : null,
         ),
         const SizedBox(height: 16),
         const Text(
@@ -237,7 +289,7 @@ class _BasicInformationSectionState extends State<BasicInformationSection> {
 
   @override
   void dispose() {
-    _areaNameController.dispose();
+    // _areaNameController.dispose(); // Removed
     // _healthCentreController.dispose(); // Removed
     _headOfFamilyController.dispose();
     _subCasteController.dispose();

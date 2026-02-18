@@ -97,9 +97,9 @@ const SurveyDetailsModal = ({ survey, onClose }) => {
                         </div>
                     )}
 
-                    {/* Section 1: Basic Info */}
                     <Section title="1. Basic Information" defaultOpen>
                         <KeyValueGrid data={{
+                            FacilityType: data.facilityType,
                             HeadOfFamily: data.headOfFamily,
                             AreaName: data.areaName,
                             AreaType: data.areaType,
