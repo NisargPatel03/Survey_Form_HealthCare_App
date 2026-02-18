@@ -146,16 +146,57 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       }
   }
 
-  Future<void> _showApprovalDialog(SurveyData survey) async {
+  Future<void> _showApproveRejectDialog(SurveyData survey) async {
+    // 1. Show selection dialog
+    final action = await showDialog<String>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Select Action'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(context, 'approve'),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Approve Survey', style: TextStyle(fontSize: 16, color: Colors.green)),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(context, 'reject'),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Reject Survey', style: TextStyle(fontSize: 16, color: Colors.red)),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (action == null) return;
+
+    // 2. Ask for Passkey
+    final isAuthorized = await _promptForPasskey(action);
+    if (!isAuthorized) return;
+
+    // 3. Perform Action
+    if (action == 'approve') {
+       await _approveSurvey(survey);
+    } else if (action == 'reject') {
+       await _deleteSurvey(survey);
+    }
+  }
+
+  Future<bool> _promptForPasskey(String action) async {
     final passwordController = TextEditingController();
-    final confirmed = await showDialog<bool>(
+    final actionLabel = action == 'approve' ? 'Approve' : 'Reject';
+    
+    final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Approve Survey'),
+        title: Text('$actionLabel Survey'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Enter Teacher Password to approve:'),
+            Text('Enter Teacher Password to $action:'),
             const SizedBox(height: 8),
             TextField(
               controller: passwordController,
@@ -174,7 +215,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-               if (passwordController.text == 'admin123') { // Simple password
+               if (passwordController.text == 'admin123') { 
                  Navigator.pop(context, true);
                } else {
                  ScaffoldMessenger.of(context).showSnackBar(
@@ -182,16 +223,17 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                  );
                }
             },
-            child: const Text('Approve'),
+            child: Text(actionLabel),
           ),
         ],
       ),
     );
+    return result ?? false;
+  }
 
-    if (confirmed == true) {
+  Future<void> _approveSurvey(SurveyData survey) async {
       survey.isApproved = true;
-      // We need to save this update to storage
-       if (survey.id != null) {
+      if (survey.id != null) {
          await _storageService.updateSurvey(survey);
          _loadSurveys();
          if (mounted) {
@@ -199,8 +241,12 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
              const SnackBar(content: Text('Survey Approved Successfully')),
            );
          }
-       }
-    }
+      } else {
+         // Handle case where ID is null if needed, though unlikely for saved survey
+          ScaffoldMessenger.of(context).showSnackBar(
+             const SnackBar(content: Text('Error: Survey ID not found')),
+           );
+      }
   }
 
   @override
@@ -342,9 +388,9 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                                             )
                                           else
                                             ActionChip(
-                                              label: const Text('Approve'),
+                                              label: const Text('Approve / Reject'),
                                               backgroundColor: Colors.orange,
-                                              onPressed: () => _showApprovalDialog(survey),
+                                              onPressed: () => _showApproveRejectDialog(survey),
                                             ),
                                         ],
                                       ),
@@ -394,19 +440,6 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                                               }
                                               // Edit Logic
                                               await _handleEdit(survey);
-                                            },
-                                          ),
-                                          IconButton(
-                                            icon: Icon(Icons.delete, color: survey.isApproved ? Colors.grey : Colors.red),
-                                            tooltip: 'Delete',
-                                            onPressed: () {
-                                              if (survey.isApproved) {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  const SnackBar(content: Text('Approved surveys cannot be deleted')),
-                                                );
-                                                return;
-                                              }
-                                              _deleteSurvey(survey);
                                             },
                                           ),
                                         ],
