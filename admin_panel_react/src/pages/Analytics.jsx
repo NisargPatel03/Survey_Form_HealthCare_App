@@ -19,21 +19,41 @@ const Analytics = () => {
         startDate: '',
         endDate: '',
         areaType: 'All',
+        communityArea: 'All',
         village: 'All',
         year: 'All',
         month: 'All'
     });
     const [showFilters, setShowFilters] = useState(false);
 
+    // -- Constants --
+    const FACILITY_MAPPING = {
+        'Primary Health Centers (PHCs)': ['Changa', 'Piplav', 'Bandhani', 'Morad', 'Sihol', 'Nar', 'Ajarpura', 'Navli'],
+        'Community Health Centers (CHCs)': ['Sarsa', 'Tarapur', 'Mahelav'],
+        'Urban Health Centers (UHCs)': ['Nehrubaugh', 'PP Unit Anand', 'Bakrol']
+    };
+
     // -- Derived Filter Options --
     const filterOptions = useMemo(() => {
-        if (!surveys) return { villages: [], years: [] };
+        // Use static keys for Community Areas to ensure dropdown shows ALL options
+        const communityAreas = Object.keys(FACILITY_MAPPING);
 
-        const villages = [...new Set(surveys.map(s => s.data?.areaName).filter(Boolean))].sort();
-        const years = [...new Set(surveys.map(s => new Date(s.created_at).getFullYear()))].sort((a, b) => b - a);
+        // Village options depend on selected Community Area (Master List)
+        let villages = [];
+        if (filters.communityArea !== 'All' && FACILITY_MAPPING[filters.communityArea]) {
+            villages = FACILITY_MAPPING[filters.communityArea];
+        } else {
+            // If All Areas selected, show all possible villages from the mapping
+            // We can also append any extra villages found in data if they aren't in the mapping (rare case)
+            const mappedVillages = Object.values(FACILITY_MAPPING).flat();
+            const dataVillages = surveys ? [...new Set(surveys.map(s => s.data?.areaName).filter(Boolean))] : [];
+            villages = [...new Set([...mappedVillages, ...dataVillages])].sort();
+        }
 
-        return { villages, years };
-    }, [surveys]);
+        const years = surveys ? [...new Set(surveys.map(s => new Date(s.created_at).getFullYear()))].sort((a, b) => b - a) : [];
+
+        return { communityAreas, villages, years };
+    }, [surveys, filters.communityArea]);
 
     // -- Filtering Logic --
     const filteredSurveys = useMemo(() => {
@@ -53,6 +73,18 @@ const Analytics = () => {
             if (filters.areaType !== 'All') {
                 const type = (data.areaType || '').toLowerCase();
                 if (type !== filters.areaType.toLowerCase()) return false;
+            }
+
+            // Community Area (Facility Type)
+            if (filters.communityArea !== 'All') {
+                const facility = (data.facilityType || '');
+                const village = (data.areaName || '');
+
+                // Smart Filter: Match exact facility type OR if missing, match if village belongs to this facility (using Master Mapping)
+                const matchesFacility = facility === filters.communityArea;
+                const matchesVillageInFacility = FACILITY_MAPPING[filters.communityArea]?.includes(village);
+
+                if (!matchesFacility && !matchesVillageInFacility) return false;
             }
 
             // Village
@@ -81,12 +113,17 @@ const Analytics = () => {
 
     // -- Handlers --
     const handleFilterChange = (key, value) => {
-        setFilters(prev => ({ ...prev, [key]: value }));
+        if (key === 'communityArea') {
+            // Reset village when community area changes
+            setFilters(prev => ({ ...prev, [key]: value, village: 'All' }));
+        } else {
+            setFilters(prev => ({ ...prev, [key]: value }));
+        }
     };
 
     const clearFilters = () => {
         setFilters({
-            startDate: '', endDate: '', areaType: 'All',
+            startDate: '', endDate: '', areaType: 'All', communityArea: 'All',
             village: 'All', year: 'All', month: 'All'
         });
     };
@@ -111,14 +148,16 @@ const Analytics = () => {
                     </p>
                 </div>
 
-                <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className={`flex items-center px-4 py-2 rounded-lg font-medium transition ${showFilters ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50 border'
-                        }`}
-                >
-                    <FaFilter className="mr-2" />
-                    {showFilters ? 'Hide Filters' : 'Filter Data'}
-                </button>
+                <div className="flex gap-2 items-center">
+                    <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className={`flex items-center px-4 py-2 rounded-lg font-medium transition ${showFilters ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50 border'
+                            }`}
+                    >
+                        <FaFilter className="mr-2" />
+                        {showFilters ? 'Hide Filters' : 'Filter Data'}
+                    </button>
+                </div>
             </div>
 
             {/* Filter Bar */}
@@ -157,7 +196,20 @@ const Analytics = () => {
                             </select>
                         </div>
 
-                        {/* Row 2: Village, Year, Month */}
+                        {/* Row 2: Comm. Area, Village, Year, Month */}
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Community Area</label>
+                            <select
+                                className="w-full border rounded p-2 text-sm"
+                                value={filters.communityArea}
+                                onChange={(e) => handleFilterChange('communityArea', e.target.value)}
+                            >
+                                <option value="All">All Community Areas</option>
+                                {filterOptions.communityAreas.map(c => (
+                                    <option key={c} value={c}>{c}</option>
+                                ))}
+                            </select>
+                        </div>
                         <div>
                             <label className="block text-xs font-semibold text-gray-500 mb-1">Village</label>
                             <select
@@ -184,6 +236,7 @@ const Analytics = () => {
                                 ))}
                             </select>
                         </div>
+                        {/* Month Filter moved below or wrapped if needed, logically belongs here */}
                         <div>
                             <label className="block text-xs font-semibold text-gray-500 mb-1">Month</label>
                             <select
