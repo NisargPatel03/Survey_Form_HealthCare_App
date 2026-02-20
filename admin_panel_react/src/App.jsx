@@ -9,6 +9,7 @@ import Analytics from './pages/Analytics';
 import FamilyDirectory from './pages/FamilyDirectory';
 import Export from './pages/Export';
 import MapHealth from './pages/MapHealth';
+import SurveyorAnalytics from './pages/SurveyorAnalytics';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       }>
         <Route index element={<Dashboard />} />
         <Route path="analytics" element={<Analytics />} />
+        <Route path="operations" element={<SurveyorAnalytics />} />
         <Route path="map" element={<MapHealth />} />
         <Route path="families" element={<FamilyDirectory />} />
         <Route path="export" element={<Export />} />

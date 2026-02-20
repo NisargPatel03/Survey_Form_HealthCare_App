@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaChartPie, FaUsers, FaFileDownload, FaBars, FaTimes, FaMapMarkedAlt, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaChartPie, FaUsers, FaFileDownload, FaBars, FaTimes, FaMapMarkedAlt, FaSignOutAlt, FaClipboardList } from 'react-icons/fa';
 
 
 const Layout = () => {
@@ -25,6 +25,7 @@ const Layout = () => {
         { path: '/analytics', name: 'Analytics', icon: <FaChartPie /> },
         { path: '/map', name: 'Health Map', icon: <FaMapMarkedAlt /> },
         { path: '/families', name: 'Family Directory', icon: <FaUsers /> },
+        { path: '/operations', name: 'Operations', icon: <FaClipboardList /> },
         { path: '/export', name: 'Export Data', icon: <FaFileDownload /> },
     ];
 
