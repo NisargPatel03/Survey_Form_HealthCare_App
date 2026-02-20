@@ -67,8 +67,18 @@ const StatsTable = ({ title, data }) => {
                     doc.setTextColor(0, 0, 0);
                     doc.text(`Details: ${label} (${count} cases)`, 14, finalY);
 
-                    const detailColumns = ["HOF Name", "Contact Number", "Survey Date"];
-                    const detailRows = cases.map(c => [c.hof, c.contact, c.date]);
+                    // Reorder and include new fields as per request
+                    // "who conduct the survey that is student id, posting period also add"
+                    // "the contact number for that family member will be the hof conatct number"
+                    const detailColumns = ["HOF Name", "Family Contact", "Survey Date", "Student ID", "Posting Start", "Posting End"];
+                    const detailRows = cases.map(c => [
+                        c.hof,
+                        c.contact,
+                        c.date,
+                        c.studentName,
+                        c.postingStart,
+                        c.postingEnd
+                    ]);
 
                     autoTable(doc, {
                         head: [detailColumns],
@@ -76,7 +86,7 @@ const StatsTable = ({ title, data }) => {
                         startY: finalY + 5,
                         theme: 'striped',
                         headStyles: { fillColor: [220, 38, 38] }, // Red header for diseases
-                        styles: { fontSize: 9 },
+                        styles: { fontSize: 8 }, // Slightly smaller font to fit 6 columns
                     });
 
                     finalY = doc.lastAutoTable.finalY + 10;

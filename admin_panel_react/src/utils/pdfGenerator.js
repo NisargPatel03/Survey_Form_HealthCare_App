@@ -18,13 +18,20 @@ export const generateHealthCard = (survey) => {
     doc.setFontSize(12);
     doc.text('Community Health Nursing - Family Health Card', 105, 22, { align: 'center' });
 
-    // -- Family Info --
+    // -- Family & Survey Info --
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(12);
+    doc.setFontSize(11); // Slightly smaller to fit everything
     doc.text(`Head of Family: ${data.headOfFamily || 'N/A'}`, 14, 40);
     doc.text(`Area: ${data.areaName || 'N/A'}  |  Type: ${data.areaType || 'N/A'}`, 14, 46);
     doc.text(`Contact: ${data.contactNumber || 'N/A'}`, 14, 52);
-    doc.text(`Generated On: ${new Date().toLocaleDateString()}`, 150, 40);
+
+    // Add the new details on the right side
+    doc.text(`Survey Date: ${data.surveyDate ? new Date(data.surveyDate).toLocaleDateString() : 'N/A'}`, 120, 40);
+    doc.text(`Student ID: ${data.studentName || 'N/A'}`, 120, 46);
+
+    const postingStart = data.postingPeriodStart ? new Date(data.postingPeriodStart).toLocaleDateString() : 'N/A';
+    const postingEnd = data.postingPeriodEnd ? new Date(data.postingPeriodEnd).toLocaleDateString() : 'N/A';
+    doc.text(`Posting: ${postingStart} - ${postingEnd}`, 120, 52);
 
     // -- Family Members Table --
     const members = data.familyMembers || [];

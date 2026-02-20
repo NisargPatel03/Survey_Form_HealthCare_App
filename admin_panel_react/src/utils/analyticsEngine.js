@@ -96,12 +96,15 @@ export const processAnalytics = (surveys) => {
     const diseaseDetails = {};
 
     // Helper to add details
-    const trackDetail = (diseaseName, data, surveyDate) => {
+    const trackDetail = (diseaseName, data, surveyDate, studentName) => {
         if (!diseaseDetails[diseaseName]) diseaseDetails[diseaseName] = [];
         diseaseDetails[diseaseName].push({
             hof: data.headOfFamily || 'N/A',
             contact: data.contactNumber || 'N/A',
-            date: surveyDate ? new Date(surveyDate).toLocaleDateString() : 'N/A'
+            date: surveyDate ? new Date(surveyDate).toLocaleDateString() : 'N/A',
+            studentName: studentName || 'N/A',
+            postingStart: data.postingPeriodStart ? new Date(data.postingPeriodStart).toLocaleDateString() : 'N/A',
+            postingEnd: data.postingPeriodEnd ? new Date(data.postingPeriodEnd).toLocaleDateString() : 'N/A'
         });
     };
 
@@ -220,28 +223,28 @@ export const processAnalytics = (surveys) => {
         const commDiseases = data.communicableDiseases || [];
         commDiseases.forEach(d => {
             communicableCounts[d] = (communicableCounts[d] || 0) + 1;
-            trackDetail(d, data, sDate);
+            trackDetail(d, data, sDate, data.studentName);
         });
 
         // 2. Non-Communicable
         const nonCommDiseases = data.nonCommunicableDiseases || [];
         nonCommDiseases.forEach(d => {
             nonCommunicableCounts[d] = (nonCommunicableCounts[d] || 0) + 1;
-            trackDetail(d, data, sDate);
+            trackDetail(d, data, sDate, data.studentName);
         });
 
         // 3. Symptoms (Fever, Skin, Cough)
         if (data.feverCases && data.feverCases.length > 0) {
             symptomCounts['Fever'] += data.feverCases.length;
-            trackDetail('Fever', data, sDate);
+            trackDetail('Fever', data, sDate, data.studentName);
         }
         if (data.skinDiseases && data.skinDiseases.length > 0) {
             symptomCounts['Skin Disease'] += data.skinDiseases.length;
-            trackDetail('Skin Disease', data, sDate);
+            trackDetail('Skin Disease', data, sDate, data.studentName);
         }
         if (data.coughCases && data.coughCases.length > 0) {
             symptomCounts['Cough'] += data.coughCases.length;
-            trackDetail('Cough', data, sDate);
+            trackDetail('Cough', data, sDate, data.studentName);
         }
 
         // 4. Other Illnesses
@@ -249,7 +252,7 @@ export const processAnalytics = (surveys) => {
         others.forEach(d => {
             const name = (typeof d === 'string') ? d : (d.name || d.illness || 'Unknown');
             otherIllnessCounts[name] = (otherIllnessCounts[name] || 0) + 1;
-            trackDetail(name, data, sDate);
+            trackDetail(name, data, sDate, data.studentName);
         });
 
     });
