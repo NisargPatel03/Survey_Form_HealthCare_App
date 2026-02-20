@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AnnexuresScreen extends StatefulWidget {
   const AnnexuresScreen({super.key});
@@ -84,6 +85,30 @@ class _AnnexuresScreenState extends State<AnnexuresScreen> {
     return file.path;
   }
 
+  void _sharePdf() async {
+    if (_localPath == null) return;
+    try {
+      // ignore: deprecated_member_use
+      final result = await Share.shareXFiles(
+        [XFile(_localPath!)],
+        text: 'Download/Share $_selectedPdfName',
+      );
+      if (result.status == ShareResultStatus.success) {
+         if(mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+             const SnackBar(content: Text('File shared/saved successfully')),
+          );
+         }
+      }
+    } catch (e) {
+      if(mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text('Error sharing PDF: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,6 +116,13 @@ class _AnnexuresScreenState extends State<AnnexuresScreen> {
         title: const Text('Annexures'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.download),
+            tooltip: 'Download / Share PDF',
+            onPressed: (_isLoading || _localPath == null) ? null : _sharePdf,
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60.0),
           child: Container(
