@@ -107,7 +107,9 @@ const SurveyDetailsModal = ({ survey, onClose }) => {
                             Religion: data.religion,
                             Caste: data.subCaste,
                             FamilyType: data.familyType,
-                            Contact: data.contactNumber
+                            Contact: data.contactNumber,
+                            PostingPeriodStart: data.postingPeriodStart ? new Date(data.postingPeriodStart).toLocaleDateString() : null,
+                            PostingPeriodEnd: data.postingPeriodEnd ? new Date(data.postingPeriodEnd).toLocaleDateString() : null,
                         }} />
                     </Section>
 

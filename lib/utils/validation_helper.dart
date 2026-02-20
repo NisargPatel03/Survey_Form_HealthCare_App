@@ -185,6 +185,9 @@ class ValidationHelper {
   // Section 18: Final Details
   static String? _validateFinalDetails(SurveyData data) {
     if (_isEmpty(data.contactNumber)) return "Section 18: Contact Number is required";
+    if (data.contactNumber!.trim().length != 10) return "Section 18: Contact Number must be exactly 10 digits";
+    if (data.postingPeriodStart == null) return "Section 18: Start Date of Posting Period is required";
+    if (data.postingPeriodEnd == null) return "Section 18: End Date of Posting Period is required";
     if (data.surveyDate == null) return "Section 18: Survey Date is required";
     if (_isEmpty(data.studentName)) return "Section 18: Student Name is required";
     if (_isEmpty(data.studentSignature)) return "Section 18: Student Signature is required";

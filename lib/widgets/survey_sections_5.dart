@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/survey_data.dart';
 
 // Section 16: Health Services
@@ -529,11 +530,58 @@ class _FinalDetailsSectionState extends State<FinalDetailsSection> {
         TextFormField(
           controller: _contactController,
           keyboardType: TextInputType.phone,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(10),
+          ],
           decoration: const InputDecoration(
-            labelText: 'Contact Number',
+            labelText: 'Contact Number (10 digits)',
             border: OutlineInputBorder(),
+            counterText: '',
           ),
           onChanged: (value) => widget.surveyData.contactNumber = value,
+        ),
+        const SizedBox(height: 24),
+        const Text(
+          'Posting Period:',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        ListTile(
+          title: const Text('Start Date of Posting Period'),
+          subtitle: Text(widget.surveyData.postingPeriodStart != null
+              ? '${widget.surveyData.postingPeriodStart!.day}/${widget.surveyData.postingPeriodStart!.month}/${widget.surveyData.postingPeriodStart!.year}'
+              : 'Not set'),
+          trailing: const Icon(Icons.calendar_today),
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              initialDate: widget.surveyData.postingPeriodStart ?? DateTime.now(),
+              firstDate: DateTime(2020),
+              lastDate: DateTime(2030),
+            );
+            if (date != null) {
+              setState(() => widget.surveyData.postingPeriodStart = date);
+            }
+          },
+        ),
+        ListTile(
+          title: const Text('End Date of Posting Period'),
+          subtitle: Text(widget.surveyData.postingPeriodEnd != null
+              ? '${widget.surveyData.postingPeriodEnd!.day}/${widget.surveyData.postingPeriodEnd!.month}/${widget.surveyData.postingPeriodEnd!.year}'
+              : 'Not set'),
+          trailing: const Icon(Icons.calendar_today),
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              initialDate: widget.surveyData.postingPeriodEnd ?? widget.surveyData.postingPeriodStart ?? DateTime.now(),
+              firstDate: widget.surveyData.postingPeriodStart ?? DateTime(2020),
+              lastDate: DateTime(2030),
+            );
+            if (date != null) {
+              setState(() => widget.surveyData.postingPeriodEnd = date);
+            }
+          },
         ),
         const SizedBox(height: 24),
         const Text(
@@ -550,7 +598,7 @@ class _FinalDetailsSectionState extends State<FinalDetailsSection> {
           onTap: () async {
             final date = await showDatePicker(
               context: context,
-              initialDate: DateTime.now(),
+              initialDate: widget.surveyData.surveyDate ?? DateTime.now(),
               firstDate: DateTime(2020),
               lastDate: DateTime.now(),
             );

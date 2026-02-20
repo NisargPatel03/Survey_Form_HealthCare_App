@@ -142,6 +142,8 @@ class SurveyData {
   // Metadata
   int? id;
   DateTime? surveyDate;
+  DateTime? postingPeriodStart;
+  DateTime? postingPeriodEnd;
   String? studentName;
   String? studentSignature;
   String? techoNo;
@@ -243,6 +245,8 @@ class SurveyData {
       'communicableDiseases': communicableDiseases,
       'communicableOther': communicableOther,
       'surveyDate': surveyDate?.toIso8601String(),
+      'postingPeriodStart': postingPeriodStart?.toIso8601String(),
+      'postingPeriodEnd': postingPeriodEnd?.toIso8601String(),
       'studentName': studentName,
       'studentSignature': studentSignature,
       'techoNo': techoNo,
@@ -542,6 +546,12 @@ class SurveyData {
     
     if (json['surveyDate'] != null) {
       survey.surveyDate = DateTime.parse(json['surveyDate']);
+    }
+    if (json['postingPeriodStart'] != null) {
+      survey.postingPeriodStart = DateTime.parse(json['postingPeriodStart']);
+    }
+    if (json['postingPeriodEnd'] != null) {
+      survey.postingPeriodEnd = DateTime.parse(json['postingPeriodEnd']);
     }
     survey.studentName = json['studentName'];
     survey.studentSignature = json['studentSignature'];
