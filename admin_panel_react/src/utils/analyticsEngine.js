@@ -218,42 +218,45 @@ export const processAnalytics = (surveys) => {
         }
 
         // -- Diseases Split --
+        if (data.familyMembers && Array.isArray(data.familyMembers)) {
+            data.familyMembers.forEach(member => {
+                // 1. Communicable
+                const commDiseases = member.communicableDiseases || [];
+                commDiseases.forEach(d => {
+                    communicableCounts[d] = (communicableCounts[d] || 0) + 1;
+                    trackDetail(d, data, sDate, data.studentName);
+                });
 
-        // 1. Communicable
-        const commDiseases = data.communicableDiseases || [];
-        commDiseases.forEach(d => {
-            communicableCounts[d] = (communicableCounts[d] || 0) + 1;
-            trackDetail(d, data, sDate, data.studentName);
-        });
+                // 2. Non-Communicable
+                const nonCommDiseases = member.nonCommunicableDiseases || [];
+                nonCommDiseases.forEach(d => {
+                    nonCommunicableCounts[d] = (nonCommunicableCounts[d] || 0) + 1;
+                    trackDetail(d, data, sDate, data.studentName);
+                });
 
-        // 2. Non-Communicable
-        const nonCommDiseases = data.nonCommunicableDiseases || [];
-        nonCommDiseases.forEach(d => {
-            nonCommunicableCounts[d] = (nonCommunicableCounts[d] || 0) + 1;
-            trackDetail(d, data, sDate, data.studentName);
-        });
+                // 3. Symptoms (Fever, Skin, Cough)
+                if (member.feverCases && member.feverCases.length > 0) {
+                    symptomCounts['Fever'] += member.feverCases.length;
+                    trackDetail('Fever', data, sDate, data.studentName);
+                }
+                if (member.skinDiseases && member.skinDiseases.length > 0) {
+                    symptomCounts['Skin Disease'] += member.skinDiseases.length;
+                    trackDetail('Skin Disease', data, sDate, data.studentName);
+                }
+                if (member.coughCases && member.coughCases.length > 0) {
+                    symptomCounts['Cough'] += member.coughCases.length;
+                    trackDetail('Cough', data, sDate, data.studentName);
+                }
 
-        // 3. Symptoms (Fever, Skin, Cough)
-        if (data.feverCases && data.feverCases.length > 0) {
-            symptomCounts['Fever'] += data.feverCases.length;
-            trackDetail('Fever', data, sDate, data.studentName);
+                // 4. Other Illnesses
+                const others = member.otherIllnesses || [];
+                others.forEach(d => {
+                    const name = (typeof d === 'string') ? d : (d.name || d.disease || 'Unknown');
+                    otherIllnessCounts[name] = (otherIllnessCounts[name] || 0) + 1;
+                    trackDetail(name, data, sDate, data.studentName);
+                });
+            });
         }
-        if (data.skinDiseases && data.skinDiseases.length > 0) {
-            symptomCounts['Skin Disease'] += data.skinDiseases.length;
-            trackDetail('Skin Disease', data, sDate, data.studentName);
-        }
-        if (data.coughCases && data.coughCases.length > 0) {
-            symptomCounts['Cough'] += data.coughCases.length;
-            trackDetail('Cough', data, sDate, data.studentName);
-        }
-
-        // 4. Other Illnesses
-        const others = data.otherIllnesses || [];
-        others.forEach(d => {
-            const name = (typeof d === 'string') ? d : (d.name || d.illness || 'Unknown');
-            otherIllnessCounts[name] = (otherIllnessCounts[name] || 0) + 1;
-            trackDetail(name, data, sDate, data.studentName);
-        });
 
     });
 

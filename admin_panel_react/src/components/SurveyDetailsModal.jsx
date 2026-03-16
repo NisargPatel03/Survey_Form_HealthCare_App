@@ -165,22 +165,61 @@ const SurveyDetailsModal = ({ survey, onClose }) => {
                     {/* Section 11-14: Diseases */}
                     <Section title="5. Morbidity & Health Conditions">
                         <div className="space-y-4">
-                            <div>
-                                <h5 className="font-semibold text-xs text-red-600 uppercase mb-1">Communicable Diseases</h5>
-                                <div className="flex flex-wrap gap-1">
-                                    {data.communicableDiseases?.length > 0 ? (
-                                        data.communicableDiseases.map((d, i) => <span key={i} className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs px-2">{d}</span>)
-                                    ) : <span className="text-gray-500 text-sm">None reported</span>}
-                                </div>
-                            </div>
-                            <div>
-                                <h5 className="font-semibold text-xs text-orange-600 uppercase mb-1">Non-Communicable Diseases</h5>
-                                <div className="flex flex-wrap gap-1">
-                                    {data.nonCommunicableDiseases?.length > 0 ? (
-                                        data.nonCommunicableDiseases.map((d, i) => <span key={i} className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs px-2">{d}</span>)
-                                    ) : <span className="text-gray-500 text-sm">None reported</span>}
-                                </div>
-                            </div>
+                            {data.familyMembers?.map((m, mIdx) => {
+                                const hasCommunicable = m.communicableDiseases?.length > 0;
+                                const hasNonCommunicable = m.nonCommunicableDiseases?.length > 0;
+                                const hasFever = m.feverCases?.length > 0;
+                                const hasSkin = m.skinDiseases?.length > 0;
+                                const hasCough = m.coughCases?.length > 0;
+                                const hasOther = m.otherIllnesses?.length > 0;
+
+                                if (!hasCommunicable && !hasNonCommunicable && !hasFever && !hasSkin && !hasCough && !hasOther) {
+                                    return null;
+                                }
+
+                                return (
+                                    <div key={mIdx} className="border-l-4 border-indigo-400 pl-4 mb-4">
+                                        <h4 className="font-bold text-gray-800 mb-2">{m.name} ({m.relationship})</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {hasCommunicable && (
+                                                <div>
+                                                    <h5 className="font-semibold text-xs text-red-600 uppercase mb-1">Communicable</h5>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {m.communicableDiseases.map((d, i) => <span key={i} className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">{d}</span>)}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {hasNonCommunicable && (
+                                                <div>
+                                                    <h5 className="font-semibold text-xs text-orange-600 uppercase mb-1">Non-Communicable</h5>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {m.nonCommunicableDiseases.map((d, i) => <span key={i} className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs">{d}</span>)}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {hasFever && (
+                                                <div>
+                                                    <h5 className="font-semibold text-xs text-blue-600 uppercase mb-1">Fever Cases</h5>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {m.feverCases.map((f, i) => <span key={i} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">{f.disease || 'Fever'}</span>)}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {hasCough && (
+                                                <div>
+                                                    <h5 className="font-semibold text-xs text-purple-600 uppercase mb-1">Cough Cases</h5>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {m.coughCases.map((c, i) => <span key={i} className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">{c.disease || 'Cough'}</span>)}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            {!data.familyMembers?.some(m => m.communicableDiseases?.length > 0 || m.nonCommunicableDiseases?.length > 0 || m.feverCases?.length > 0 || m.skinDiseases?.length > 0 || m.coughCases?.length > 0 || m.otherIllnesses?.length > 0) && (
+                                <p className="text-gray-500 text-sm">No morbidity details reported for any family member.</p>
+                            )}
                         </div>
                     </Section>
 

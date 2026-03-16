@@ -52,11 +52,13 @@ class _AnalyticsChartsState extends State<AnalyticsCharts> {
           final seClass = survey.socioEconomicClass ?? 'Unknown';
           socioCounts[seClass] = (socioCounts[seClass] ?? 0) + 1;
 
-          // 2. Diseases
-          healthCounts['Fever'] = (healthCounts['Fever']!) + survey.feverCases.length;
-          healthCounts['Cough'] = (healthCounts['Cough']!) + survey.coughCases.length;
-          healthCounts['Skin'] = (healthCounts['Skin']!) + survey.skinDiseases.length;
-          healthCounts['Other'] = (healthCounts['Other']!) + survey.otherIllnesses.length;
+          // 2. Diseases (Nested in FamilyMembers)
+          for (var member in survey.familyMembers) {
+            healthCounts['Fever'] = (healthCounts['Fever']!) + member.feverCases.length;
+            healthCounts['Cough'] = (healthCounts['Cough']!) + member.coughCases.length;
+            healthCounts['Skin'] = (healthCounts['Skin']!) + member.skinDiseases.length;
+            healthCounts['Other'] = (healthCounts['Other']!) + member.otherIllnesses.length;
+          }
         }
       }
 

@@ -169,10 +169,6 @@ class SurveyData {
       'languagesKnown': languagesKnown,
       'dietaryPattern': dietaryPattern.map((k, v) => MapEntry(k, v.toJson())),
       'expenditureItems': expenditureItems.map((e) => e.toJson()).toList(),
-      'feverCases': feverCases.map((f) => f.toJson()).toList(),
-      'skinDiseases': skinDiseases.map((s) => s.toJson()).toList(),
-      'coughCases': coughCases.map((c) => c.toJson()).toList(),
-      'otherIllnesses': otherIllnesses.map((o) => o.toJson()).toList(),
       'healthKnowledgeAttitude': healthKnowledgeAttitude,
       'nutritionKnowledgeAttitude': nutritionKnowledgeAttitude,
       'healthServiceUtilization': healthServiceUtilization,
@@ -227,8 +223,6 @@ class SurveyData {
       'houseNo': houseNo,
       'aadharNumber': aadharNumber,
       'isApproved': isApproved,
-      'nonCommunicableDiseases': nonCommunicableDiseases,
-      'communicableDiseases': communicableDiseases,
       'surveyDate': surveyDate?.toIso8601String(),
       'studentName': studentName,
       'studentSignature': studentSignature,
@@ -274,6 +268,38 @@ class SurveyData {
                 occupation: m['occupation'] ?? '',
                 income: m['income']?.toDouble(),
                 healthStatus: m['healthStatus'] ?? '',
+                nonCommunicableDiseases: List<String>.from(m['nonCommunicableDiseases'] ?? []),
+                communicableDiseases: List<String>.from(m['communicableDiseases'] ?? []),
+                nonCommunicableOther: m['nonCommunicableOther'],
+                communicableOther: m['communicableOther'],
+                feverCases: (m['feverCases'] as List?)?.map((f) => HealthCondition(
+                      name: f['name'] ?? '',
+                      age: f['age'] ?? 0,
+                      disease: f['disease'] ?? '',
+                      treatment: f['treatment'] ?? '',
+                      remarks: f['remarks'] ?? '',
+                    )).toList(),
+                skinDiseases: (m['skinDiseases'] as List?)?.map((s) => HealthCondition(
+                      name: s['name'] ?? '',
+                      age: s['age'] ?? 0,
+                      disease: s['disease'] ?? '',
+                      treatment: s['treatment'] ?? '',
+                      remarks: s['remarks'] ?? '',
+                    )).toList(),
+                coughCases: (m['coughCases'] as List?)?.map((c) => HealthCondition(
+                      name: c['name'] ?? '',
+                      age: c['age'] ?? 0,
+                      disease: c['disease'] ?? '',
+                      treatment: c['treatment'] ?? '',
+                      remarks: c['remarks'] ?? '',
+                    )).toList(),
+                otherIllnesses: (m['otherIllnesses'] as List?)?.map((o) => HealthCondition(
+                      name: o['name'] ?? '',
+                      age: o['age'] ?? 0,
+                      disease: o['disease'] ?? '',
+                      treatment: o['treatment'] ?? '',
+                      remarks: o['remarks'] ?? '',
+                    )).toList(),
               ))
           .toList();
     }
@@ -306,55 +332,6 @@ class SurveyData {
                 item: e['item'] ?? '',
                 amount: e['amount']?.toDouble() ?? 0.0,
                 percentage: e['percentage']?.toDouble() ?? 0.0,
-              ))
-          .toList();
-    }
-    
-    // Health conditions
-    if (json['feverCases'] != null) {
-      survey.feverCases = (json['feverCases'] as List)
-          .map((f) => HealthCondition(
-                name: f['name'] ?? '',
-                age: f['age'] ?? 0,
-                disease: f['disease'] ?? '',
-                treatment: f['treatment'] ?? '',
-                remarks: f['remarks'] ?? '',
-              ))
-          .toList();
-    }
-    
-    if (json['skinDiseases'] != null) {
-      survey.skinDiseases = (json['skinDiseases'] as List)
-          .map((s) => HealthCondition(
-                name: s['name'] ?? '',
-                age: s['age'] ?? 0,
-                disease: s['disease'] ?? '',
-                treatment: s['treatment'] ?? '',
-                remarks: s['remarks'] ?? '',
-              ))
-          .toList();
-    }
-    
-    if (json['coughCases'] != null) {
-      survey.coughCases = (json['coughCases'] as List)
-          .map((c) => HealthCondition(
-                name: c['name'] ?? '',
-                age: c['age'] ?? 0,
-                disease: c['disease'] ?? '',
-                treatment: c['treatment'] ?? '',
-                remarks: c['remarks'] ?? '',
-              ))
-          .toList();
-    }
-    
-    if (json['otherIllnesses'] != null) {
-      survey.otherIllnesses = (json['otherIllnesses'] as List)
-          .map((o) => HealthCondition(
-                name: o['name'] ?? '',
-                age: o['age'] ?? 0,
-                disease: o['disease'] ?? '',
-                treatment: o['treatment'] ?? '',
-                remarks: o['remarks'] ?? '',
               ))
           .toList();
     }
@@ -510,9 +487,6 @@ class SurveyData {
     survey.contactNumber = json['contactNumber'];
     survey.houseNo = json['houseNo'];
     survey.aadharNumber = json['aadharNumber'];
-    survey.isApproved = json['isApproved'] ?? false;
-    survey.nonCommunicableDiseases = List<String>.from(json['nonCommunicableDiseases'] ?? []);
-    survey.communicableDiseases = List<String>.from(json['communicableDiseases'] ?? []);
     
     if (json['surveyDate'] != null) {
       survey.surveyDate = DateTime.parse(json['surveyDate']);
@@ -538,6 +512,17 @@ class FamilyMember {
   double? income;
   String healthStatus;
 
+  // Added nested diseases directly within Family Member
+  List<String> nonCommunicableDiseases = [];
+  String? nonCommunicableOther;
+  List<String> communicableDiseases = [];
+  String? communicableOther;
+
+  List<HealthCondition> feverCases = [];
+  List<HealthCondition> skinDiseases = [];
+  List<HealthCondition> coughCases = [];
+  List<HealthCondition> otherIllnesses = [];
+
   FamilyMember({
     required this.name,
     required this.relationship,
@@ -547,7 +532,22 @@ class FamilyMember {
     required this.occupation,
     this.income,
     required this.healthStatus,
-  });
+    List<String>? nonCommunicableDiseases,
+    this.nonCommunicableOther,
+    List<String>? communicableDiseases,
+    this.communicableOther,
+    List<HealthCondition>? feverCases,
+    List<HealthCondition>? skinDiseases,
+    List<HealthCondition>? coughCases,
+    List<HealthCondition>? otherIllnesses,
+  }) {
+    this.nonCommunicableDiseases = nonCommunicableDiseases ?? [];
+    this.communicableDiseases = communicableDiseases ?? [];
+    this.feverCases = feverCases ?? [];
+    this.skinDiseases = skinDiseases ?? [];
+    this.coughCases = coughCases ?? [];
+    this.otherIllnesses = otherIllnesses ?? [];
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -559,6 +559,14 @@ class FamilyMember {
       'occupation': occupation,
       'income': income,
       'healthStatus': healthStatus,
+      'nonCommunicableDiseases': nonCommunicableDiseases,
+      'nonCommunicableOther': nonCommunicableOther,
+      'communicableDiseases': communicableDiseases,
+      'communicableOther': communicableOther,
+      'feverCases': feverCases.map((f) => f.toJson()).toList(),
+      'skinDiseases': skinDiseases.map((s) => s.toJson()).toList(),
+      'coughCases': coughCases.map((c) => c.toJson()).toList(),
+      'otherIllnesses': otherIllnesses.map((o) => o.toJson()).toList(),
     };
   }
 }

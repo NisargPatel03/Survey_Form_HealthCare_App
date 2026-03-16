@@ -583,11 +583,13 @@ class _ImmunizationSectionState extends State<ImmunizationSection> {
     'OPV 1',
     'OPV 2',
     'OPV 3',
-    'OPV Booster',
+    'OPV Booster-1',
+    'OPV Booster-2',
     'Pentavalent 1',
     'Pentavalent 2',
     'Pentavalent 3',
-    'Pentavalent Booster',
+    'Pentavalent Booster-1',
+    'Pentavalent Booster-2',
     'Measles & Rubella',
   ];
 

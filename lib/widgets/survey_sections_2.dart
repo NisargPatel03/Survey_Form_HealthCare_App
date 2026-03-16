@@ -417,8 +417,29 @@ class HealthConditionsSection extends StatefulWidget {
 }
 
 class _HealthConditionsSectionState extends State<HealthConditionsSection> {
+  int? _selectedMemberIndex;
+
   @override
   Widget build(BuildContext context) {
+    if (widget.surveyData.familyMembers.isEmpty) {
+      return const SizedBox(
+        height: 100,
+        child: Center(
+          child: Text(
+            "Please add family members in Section 3 first.",
+            style: TextStyle(color: Colors.red, fontSize: 16),
+          ),
+        ),
+      );
+    }
+    
+    _selectedMemberIndex ??= 0;
+    if (_selectedMemberIndex! >= widget.surveyData.familyMembers.length) {
+      _selectedMemberIndex = 0;
+    }
+    
+    final selectedMember = widget.surveyData.familyMembers[_selectedMemberIndex!];
+
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
       child: DefaultTabController(
@@ -427,23 +448,42 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Health Conditions:',
+              '8. Health Conditions:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-          TabBar(
-            isScrollable: true,
-            labelColor: Theme.of(context).colorScheme.primary, // Ensure visible label color
-            unselectedLabelColor: Colors.grey,
-            tabs: const [
-              Tab(text: 'Non-Communicable'),
-              Tab(text: 'Communicable'),
-              Tab(text: 'Fever'),
-              Tab(text: 'Skin Disease'),
-              Tab(text: 'Cough'),
-              Tab(text: 'Other Illness'),
-            ],
-          ),
+            DropdownButtonFormField<int>(
+              value: _selectedMemberIndex,
+              decoration: const InputDecoration(
+                labelText: 'Select Family Member',
+                border: OutlineInputBorder(),
+              ),
+              items: widget.surveyData.familyMembers.asMap().entries.map((entry) {
+                return DropdownMenuItem<int>(
+                  value: entry.key,
+                  child: Text('${entry.value.name} (${entry.value.relationship})'),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedMemberIndex = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            TabBar(
+              isScrollable: true,
+              labelColor: Theme.of(context).colorScheme.primary,
+              unselectedLabelColor: Colors.grey,
+              tabs: const [
+                Tab(text: 'Non-Communicable'),
+                Tab(text: 'Communicable'),
+                Tab(text: 'Fever'),
+                Tab(text: 'Skin Disease'),
+                Tab(text: 'Cough'),
+                Tab(text: 'Other Illness'),
+              ],
+            ),
             Expanded(
               child: TabBarView(
                 children: [
@@ -454,7 +494,8 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
                       'Coronary Heart Disease', 'Cancer', 'Diabetes mellitus', 'Blindness',
                       'Fluorosis', 'Epilepsy', 'Others'
                     ],
-                    widget.surveyData.nonCommunicableDiseases,
+                    selectedMember.nonCommunicableDiseases,
+                    selectedMember,
                     isNonCommunicable: true,
                   ),
                   _buildDiseaseChecklist(
@@ -470,28 +511,33 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
                       'Brucellosis', 'Plague', 'Anthrax', 'Trachoma', 'Tetanus',
                       'Leprosy', 'STD & RTI', 'Yaws', 'HIV/AIDS', 'Others'
                     ],
-                    widget.surveyData.communicableDiseases,
+                    selectedMember.communicableDiseases,
+                    selectedMember,
                     isNonCommunicable: false,
                   ),
                   _buildHealthConditionList(
                     '11. IS THERE ANY CASE OF FEVER',
-                    widget.surveyData.feverCases,
-                    (list) => widget.surveyData.feverCases = list,
+                    selectedMember.feverCases,
+                    (list) => selectedMember.feverCases = list,
+                    selectedMember,
                   ),
                   _buildHealthConditionList(
                     '12. DOES ANYONE HAVE ANY SKIN DISEASE',
-                    widget.surveyData.skinDiseases,
-                    (list) => widget.surveyData.skinDiseases = list,
+                    selectedMember.skinDiseases,
+                    (list) => selectedMember.skinDiseases = list,
+                    selectedMember,
                   ),
                   _buildHealthConditionList(
                     '13. DOES ANY ONE HAVE COUGH FOR MORE THAN 2 WEEKS',
-                    widget.surveyData.coughCases,
-                    (list) => widget.surveyData.coughCases = list,
+                    selectedMember.coughCases,
+                    (list) => selectedMember.coughCases = list,
+                    selectedMember,
                   ),
                   _buildHealthConditionList(
                     '14. DOES ANY ONE HAVE ANY OTHER ILLNESS',
-                    widget.surveyData.otherIllnesses,
-                    (list) => widget.surveyData.otherIllnesses = list,
+                    selectedMember.otherIllnesses,
+                    (list) => selectedMember.otherIllnesses = list,
+                    selectedMember,
                   ),
                 ],
               ),
@@ -505,7 +551,8 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
   Widget _buildDiseaseChecklist(
     String title,
     List<String> diseases,
-    List<String> selectedDiseases, {
+    List<String> selectedDiseases,
+    FamilyMember selectedMember, {
     required bool isNonCommunicable,
   }) {
     return Column(
@@ -542,17 +589,17 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: TextFormField(
                         initialValue: isNonCommunicable 
-                            ? widget.surveyData.nonCommunicableOther 
-                            : widget.surveyData.communicableOther,
+                            ? selectedMember.nonCommunicableOther 
+                            : selectedMember.communicableOther,
                         decoration: const InputDecoration(
                           labelText: 'Specify Others',
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (value) {
                           if (isNonCommunicable) {
-                            widget.surveyData.nonCommunicableOther = value;
+                            selectedMember.nonCommunicableOther = value;
                           } else {
-                            widget.surveyData.communicableOther = value;
+                            selectedMember.communicableOther = value;
                           }
                         },
                       ),
@@ -570,6 +617,7 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
     String title,
     List<HealthCondition> conditions,
     Function(List<HealthCondition>) onUpdate,
+    FamilyMember selectedMember,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,13 +627,13 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text(title)),
+              Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold))),
               ElevatedButton.icon(
                 onPressed: () {
                   setState(() {
                     conditions.add(HealthCondition(
-                      name: '',
-                      age: 0,
+                      name: selectedMember.name,
+                      age: selectedMember.age,
                       disease: '',
                       treatment: '',
                       remarks: '',
@@ -626,11 +674,13 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
                       ),
                       TextFormField(
                         initialValue: condition.name,
+                        readOnly: true,
                         decoration: const InputDecoration(
                           labelText: 'Name',
                           border: OutlineInputBorder(),
+                          fillColor: Color(0xFFF5F5F5),
+                          filled: true,
                         ),
-                        onChanged: (value) => condition.name = value,
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -638,14 +688,13 @@ class _HealthConditionsSectionState extends State<HealthConditionsSection> {
                           Expanded(
                             child: TextFormField(
                               initialValue: condition.age.toString(),
-                              keyboardType: TextInputType.number,
+                              readOnly: true,
                               decoration: const InputDecoration(
                                 labelText: 'Age',
                                 border: OutlineInputBorder(),
+                                fillColor: Color(0xFFF5F5F5),
+                                filled: true,
                               ),
-                              onChanged: (value) {
-                                condition.age = int.tryParse(value) ?? 0;
-                              },
                             ),
                           ),
                           const SizedBox(width: 8),

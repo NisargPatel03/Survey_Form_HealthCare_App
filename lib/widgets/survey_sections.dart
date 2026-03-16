@@ -825,6 +825,7 @@ class _FamilyCompositionSectionState extends State<FamilyCompositionSection> {
                       DropdownMenuItem(value: 'Own Business', child: Text('Own Business')),
                       DropdownMenuItem(value: 'Private job', child: Text('Private job')),
                       DropdownMenuItem(value: 'Government job', child: Text('Government job')),
+                      DropdownMenuItem(value: 'Student', child: Text('Student')),
                       DropdownMenuItem(value: 'Housewife', child: Text('Housewife')),
                       DropdownMenuItem(value: 'Unemployment', child: Text('Unemployment')),
                       DropdownMenuItem(value: 'Retired', child: Text('Retired')),
@@ -929,6 +930,7 @@ class _IncomeSectionState extends State<IncomeSection> {
     if (occ == 'own business') return 5; // Shop owner
     if (occ == 'farmer') return 5; // Farm owner
     if (occ == 'laborer') return 2; // Unskilled
+    if (occ == 'student') return 1; // Unemployed/Student score 1
     if (occ == 'unemployment' || occ == 'retired' || occ == 'housewife') return 1;
     return 1;
   }
@@ -1360,6 +1362,41 @@ class _TransportCommunicationSectionState extends State<TransportCommunicationSe
             });
           },
         ),
+        CheckboxListTile(
+          title: const Text('d. Others (specify)'),
+          value: widget.surveyData.languagesKnown.any((lang) => 
+              !['Gujarati Read / Write', 'Hindi Read / Write', 'English Read / Write'].contains(lang)),
+          onChanged: (value) {
+            setState(() {
+              if (value ?? false) {
+                _isOtherLanguage = true;
+              } else {
+                _isOtherLanguage = false;
+                widget.surveyData.languagesKnown.removeWhere((lang) => 
+                    !['Gujarati Read / Write', 'Hindi Read / Write', 'English Read / Write'].contains(lang));
+                _otherLanguageController.clear();
+              }
+            });
+          },
+        ),
+        if (_isOtherLanguage)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextFormField(
+              controller: _otherLanguageController,
+              decoration: const InputDecoration(
+                labelText: 'Specify Other Language',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                final standardLanguages = ['Gujarati Read / Write', 'Hindi Read / Write', 'English Read / Write'];
+                widget.surveyData.languagesKnown.removeWhere((lang) => !standardLanguages.contains(lang));
+                if (value.trim().isNotEmpty) {
+                  widget.surveyData.languagesKnown.add(value.trim());
+                }
+              },
+            ),
+          ),
       ],
     );
   }
