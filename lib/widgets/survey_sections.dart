@@ -1077,31 +1077,50 @@ class TransportCommunicationSection extends StatefulWidget {
 }
 
 class _TransportCommunicationSectionState extends State<TransportCommunicationSection> {
-  final _otherLanguageController = TextEditingController();
-  bool _isOtherLanguage = false;
+  final _otherMotherTongueController = TextEditingController();
+  final _otherLanguageKnownController = TextEditingController();
+  bool _isOtherMotherTongue = false;
+  bool _isOtherLanguageKnown = false;
 
   @override
   void initState() {
     super.initState();
-    _checkOtherLanguage();
+    _checkOtherMotherTongue();
+    _checkOtherLanguageKnown();
   }
 
   @override
   void didUpdateWidget(TransportCommunicationSection oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.surveyData != oldWidget.surveyData) {
-      _checkOtherLanguage();
+      _checkOtherMotherTongue();
+      _checkOtherLanguageKnown();
     }
   }
 
-  void _checkOtherLanguage() {
+  void _checkOtherMotherTongue() {
     final current = widget.surveyData.motherTongue;
     if (current != null && current != 'Gujarati' && current != 'Hindi') {
-      _isOtherLanguage = true;
-      _otherLanguageController.text = current;
+      _isOtherMotherTongue = true;
+      _otherMotherTongueController.text = current;
     } else {
-      _isOtherLanguage = false;
-      _otherLanguageController.text = '';
+      _isOtherMotherTongue = false;
+      _otherMotherTongueController.text = '';
+    }
+  }
+
+  void _checkOtherLanguageKnown() {
+    final hasOther = widget.surveyData.languagesKnown.any((lang) => 
+        !['Gujarati Read / Write', 'Hindi Read / Write', 'English Read / Write'].contains(lang));
+    
+    if (hasOther) {
+      _isOtherLanguageKnown = true;
+      final otherLangs = widget.surveyData.languagesKnown.where((lang) => 
+          !['Gujarati Read / Write', 'Hindi Read / Write', 'English Read / Write'].contains(lang)).toList();
+      _otherLanguageKnownController.text = otherLangs.isNotEmpty ? otherLangs.first : '';
+    } else {
+      _isOtherLanguageKnown = false;
+      _otherLanguageKnownController.text = '';
     }
   }
 
@@ -1276,8 +1295,8 @@ class _TransportCommunicationSectionState extends State<TransportCommunicationSe
           onChanged: (value) {
             setState(() {
               widget.surveyData.motherTongue = value;
-              _isOtherLanguage = false;
-              _otherLanguageController.clear();
+              _isOtherMotherTongue = false;
+              _otherMotherTongueController.clear();
             });
           },
         ),
@@ -1288,8 +1307,8 @@ class _TransportCommunicationSectionState extends State<TransportCommunicationSe
           onChanged: (value) {
             setState(() {
               widget.surveyData.motherTongue = value;
-              _isOtherLanguage = false;
-              _otherLanguageController.clear();
+              _isOtherMotherTongue = false;
+              _otherMotherTongueController.clear();
             });
           },
         ),
@@ -1299,16 +1318,16 @@ class _TransportCommunicationSectionState extends State<TransportCommunicationSe
           groupValue: _motherTongueGroupValue,
           onChanged: (value) {
             setState(() {
-              _isOtherLanguage = true;
+              _isOtherMotherTongue = true;
               widget.surveyData.motherTongue = ''; // Reset to empty until typed
             });
           },
         ),
-        if (_isOtherLanguage)
+        if (_isOtherMotherTongue)
           Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
             child: TextFormField(
-              controller: _otherLanguageController,
+              controller: _otherMotherTongueController,
               decoration: const InputDecoration(
                 labelText: 'Specify Language',
                 border: OutlineInputBorder(),
@@ -1369,21 +1388,21 @@ class _TransportCommunicationSectionState extends State<TransportCommunicationSe
           onChanged: (value) {
             setState(() {
               if (value ?? false) {
-                _isOtherLanguage = true;
+                _isOtherLanguageKnown = true;
               } else {
-                _isOtherLanguage = false;
+                _isOtherLanguageKnown = false;
                 widget.surveyData.languagesKnown.removeWhere((lang) => 
                     !['Gujarati Read / Write', 'Hindi Read / Write', 'English Read / Write'].contains(lang));
-                _otherLanguageController.clear();
+                _otherLanguageKnownController.clear();
               }
             });
           },
         ),
-        if (_isOtherLanguage)
+        if (_isOtherLanguageKnown)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextFormField(
-              controller: _otherLanguageController,
+              controller: _otherLanguageKnownController,
               decoration: const InputDecoration(
                 labelText: 'Specify Other Language',
                 border: OutlineInputBorder(),
@@ -1403,7 +1422,8 @@ class _TransportCommunicationSectionState extends State<TransportCommunicationSe
 
   @override
   void dispose() {
-    _otherLanguageController.dispose();
+    _otherMotherTongueController.dispose();
+    _otherLanguageKnownController.dispose();
     super.dispose();
   }
 }
