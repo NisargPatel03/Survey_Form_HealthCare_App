@@ -147,6 +147,9 @@ class SurveyData {
   String? studentName;
   String? studentSignature;
   String? techoNo;
+  String? academicYear;
+  String? semester;
+  String? courseName;
 
   Map<String, dynamic> toJson() {
     return {
@@ -250,6 +253,9 @@ class SurveyData {
       'studentName': studentName,
       'studentSignature': studentSignature,
       'techoNo': techoNo,
+      'academicYear': academicYear,
+      'semester': semester,
+      'courseName': courseName,
     };
   }
 
@@ -588,6 +594,9 @@ class SurveyData {
     survey.studentName = json['studentName'];
     survey.studentSignature = json['studentSignature'];
     survey.techoNo = json['techoNo'];
+    survey.academicYear = json['academicYear'];
+    survey.semester = json['semester'];
+    survey.courseName = json['courseName'];
     
     survey.familyStrengthOther = json['familyStrengthOther'];
     survey.familyWeaknessOther = json['familyWeaknessOther'];

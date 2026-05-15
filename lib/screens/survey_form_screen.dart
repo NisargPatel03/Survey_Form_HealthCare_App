@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/survey_data.dart';
 import '../services/storage_service.dart';
 import '../widgets/survey_sections.dart';
@@ -33,11 +34,24 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
     _surveyData = widget.existingSurvey ?? SurveyData();
     if (!_isEditing && widget.studentId != null) {
       _surveyData.studentName = widget.studentId;
+      _loadAcademicDetails();
     }
     
     // Check for draft if starting a new survey
     if (!_isEditing) {
       _checkForDraft();
+    }
+  }
+
+  Future<void> _loadAcademicDetails() async {
+    if (widget.studentId == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _surveyData.academicYear = prefs.getString('academicYear_${widget.studentId}');
+        _surveyData.semester = prefs.getString('semester_${widget.studentId}');
+        _surveyData.courseName = prefs.getString('courseName_${widget.studentId}');
+      });
     }
   }
 

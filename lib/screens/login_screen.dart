@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import 'student_dashboard_screen.dart';
+import 'academic_details_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -207,14 +209,30 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _passwordController.text,
         );
         if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => StudentDashboardScreen(
-                studentId: _studentIdController.text.toUpperCase(),
+          final prefs = await SharedPreferences.getInstance();
+          final studentId = _studentIdController.text.toUpperCase();
+          final hasAcademicYear = prefs.getString('academicYear_$studentId') != null;
+          final hasSemester = prefs.getString('semester_$studentId') != null;
+
+          if (!hasAcademicYear || !hasSemester) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AcademicDetailsScreen(
+                  studentId: studentId,
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StudentDashboardScreen(
+                  studentId: studentId,
+                ),
+              ),
+            );
+          }
         }
       }
     } on AuthException catch (e) {
