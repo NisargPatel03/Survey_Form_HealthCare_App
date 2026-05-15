@@ -1,0 +1,351 @@
+{
+  "title": "Family Care Plan",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Department of Community Health Nursing",
+  "sections": [
+    {
+      "section": "Student & Submission Information",
+      "fields": [
+        {
+          "key": "student_name",
+          "label": "Name of Student",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "student_id",
+          "label": "Student ID No.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "semester_year",
+          "label": "Semester / Year",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "topic",
+          "label": "Topic",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "date_of_submission",
+          "label": "Date of Submission",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "I. Introduction",
+      "fields": [
+        {
+          "key": "introduction_self",
+          "label": "Self Introduction",
+          "type": "textarea",
+          "hint": "Brief self-introduction mentioning institute and purpose of the care plan",
+          "required": true
+        },
+        {
+          "key": "objectives_for_student",
+          "label": "Objectives – For Student",
+          "type": "textarea",
+          "hint": "List the learning objectives from the student's perspective",
+          "required": true
+        },
+        {
+          "key": "objectives_for_family",
+          "label": "Objectives – For Family",
+          "type": "textarea",
+          "hint": "List the objectives aimed at the family's health outcomes",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "II. Health Problems Identified",
+      "fields": [
+        {
+          "key": "actual_health_problems",
+          "label": "Actual Health Problems",
+          "type": "array",
+          "itemLabel": "Problem",
+          "minItems": 1,
+          "maxItems": 5,
+          "required": true
+        },
+        {
+          "key": "potential_health_problems",
+          "label": "Potential Health Problems",
+          "type": "array",
+          "itemLabel": "Problem",
+          "minItems": 1,
+          "maxItems": 5,
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "III. Family Nursing Diagnosis",
+      "fields": [
+        {
+          "key": "individual_diagnosis",
+          "label": "Individual Nursing Diagnosis",
+          "type": "array",
+          "itemLabel": "Diagnosis",
+          "minItems": 1,
+          "maxItems": 3,
+          "required": true
+        },
+        {
+          "key": "family_diagnosis",
+          "label": "Family Nursing Diagnosis",
+          "type": "array",
+          "itemLabel": "Diagnosis",
+          "minItems": 1,
+          "maxItems": 3,
+          "required": true
+        },
+        {
+          "key": "community_diagnosis",
+          "label": "Community Diagnosis",
+          "type": "array",
+          "itemLabel": "Diagnosis",
+          "minItems": 1,
+          "maxItems": 2,
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "IV. Family Care Plan Table",
+      "hint": "Fill one row per nursing diagnosis. Multiple entries can be added.",
+      "fields": [
+        {
+          "key": "care_plan_entries",
+          "label": "Care Plan Entries",
+          "type": "array",
+          "required": true,
+          "itemSchema": {
+            "assessment": {
+              "label": "Assessment",
+              "type": "textarea",
+              "required": true
+            },
+            "nursing_diagnosis": {
+              "label": "Nursing Diagnosis",
+              "type": "textarea",
+              "required": true
+            },
+            "goal": {
+              "label": "Goal",
+              "type": "textarea",
+              "required": true
+            },
+            "planning": {
+              "label": "Planning",
+              "type": "textarea",
+              "required": true
+            },
+            "implementation": {
+              "label": "Implementation",
+              "type": "textarea",
+              "required": true
+            },
+            "rationale": {
+              "label": "Rationale",
+              "type": "textarea",
+              "required": true
+            },
+            "evaluation": {
+              "label": "Evaluation",
+              "type": "textarea",
+              "required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "V. Nutritional Assessment",
+      "hint": "Record dietary intake for each meal of the day",
+      "fields": [
+        {
+          "key": "nutritional_assessment",
+          "label": "Nutritional Assessment",
+          "type": "array",
+          "required": true,
+          "itemSchema": {
+            "meal_time": {
+              "label": "Meal Time",
+              "type": "dropdown",
+              "options": [
+                "Early Morning",
+                "Breakfast",
+                "Mid Morning",
+                "Lunch",
+                "Evening Snack",
+                "Dinner",
+                "Bedtime"
+              ],
+              "required": true
+            },
+            "food_items_consumed": {
+              "label": "Food Items Consumed",
+              "type": "text",
+              "required": true
+            },
+            "quantity": {
+              "label": "Quantity (g/ml)",
+              "type": "number",
+              "required": true
+            },
+            "carbohydrates_g": {
+              "label": "Carbohydrates (g)",
+              "type": "number",
+              "required": false
+            },
+            "fats_g": {
+              "label": "Fats (g)",
+              "type": "number",
+              "required": false
+            },
+            "proteins_g": {
+              "label": "Proteins (g)",
+              "type": "number",
+              "required": false
+            },
+            "iron_mg": {
+              "label": "Iron (mg)",
+              "type": "number",
+              "required": false
+            },
+            "calcium_mg": {
+              "label": "Calcium (mg)",
+              "type": "number",
+              "required": false
+            },
+            "remarks": {
+              "label": "Remarks (Appetite / Digestion / Allergy)",
+              "type": "text",
+              "required": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "VI. Health Education",
+      "fields": [
+        {
+          "key": "health_education_diet",
+          "label": "1. Diet",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "health_education_medication",
+          "label": "2. Medication",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "health_education_exercise",
+          "label": "3. Physical Exercise",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "health_education_hygiene",
+          "label": "4. Hygiene",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "health_education_followup",
+          "label": "5. Follow Up",
+          "type": "textarea",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "VII. Summary & Conclusion",
+      "fields": [
+        {
+          "key": "summary",
+          "label": "Summary",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "conclusion",
+          "label": "Conclusion",
+          "type": "textarea",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "VIII. Bibliography",
+      "fields": [
+        {
+          "key": "bibliography",
+          "label": "Bibliography",
+          "type": "array",
+          "itemLabel": "Reference",
+          "minItems": 1,
+          "maxItems": 10,
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        {
+          "key": "evaluator_name",
+          "label": "Name of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "evaluator_signature",
+          "label": "Signature of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "date_of_evaluation",
+          "label": "Date of Evaluation",
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "remarks",
+          "label": "Remarks",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "marks",
+          "label": "Marks",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "community_profile":          { "label": "Community Profile",           "max_marks": 2 },
+            "introduction_and_objectives":{ "label": "Introduction & Objectives",   "max_marks": 2 },
+            "identification_of_needs":    { "label": "Identification of Needs/Problems", "max_marks": 4 },
+            "family_care_plan":           { "label": "Family Care Plan",            "max_marks": 10 },
+            "nutritional_assessment":     { "label": "Nutritional Assessment",      "max_marks": 2 },
+            "health_education":           { "label": "Health Education",            "max_marks": 5 },
+            "conclusion_and_summary":     { "label": "Conclusion and Summary",      "max_marks": 2 },
+            "bibliography":               { "label": "Bibliography",                "max_marks": 3 },
+            "total":                      { "label": "Total",                       "max_marks": 30 }
+          }
+        }
+      ]
+    }
+  ]
+}

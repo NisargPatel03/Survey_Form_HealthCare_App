@@ -10,6 +10,7 @@ import 'faq_screen.dart';
 import 'annexures_screen.dart';
 import 'academic_details_screen.dart';
 import '../models/course_requirement.dart';
+import 'dynamic_form_screen.dart';
 
 class StudentDashboardScreen extends StatefulWidget {
   final String studentId;
@@ -304,7 +305,33 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           ),
           title: Text(req.name, style: TextStyle(fontWeight: req.isSurvey ? FontWeight.bold : FontWeight.normal)),
           subtitle: Text(req.category),
-          trailing: Text('Qty: ${req.quantity}'),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Qty: ${req.quantity}'),
+              const SizedBox(width: 8),
+              Icon(Icons.arrow_forward_ios, size: 14, color: Colors.blue.shade300),
+            ],
+          ),
+          onTap: () {
+            if (req.isSurvey) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SurveyFormScreen(studentId: widget.studentId)),
+              ).then((_) => _loadSurveys());
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DynamicFormScreen(
+                    studentId: widget.studentId,
+                    courseName: _courseName ?? 'Unknown',
+                    requirementSrNo: req.srNo,
+                  ),
+                ),
+              );
+            }
+          },
         ),
       );
       if (i < requirements.length - 1 && requirements[i + 1].postingType == currentPostingType) {

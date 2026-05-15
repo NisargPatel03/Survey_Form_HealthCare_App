@@ -1,0 +1,205 @@
+{
+  "title": "Orientation Report",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Department of Community Health Nursing",
+  "sections": [
+    {
+      "section": "Student Information",
+      "fields": [
+        {
+          "key": "student_name",
+          "label": "Name of Student",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "student_id",
+          "label": "Student ID No.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "class_semester",
+          "label": "Class / Semester",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "center_name",
+          "label": "Name of Centre",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "center_type",
+          "label": "Type of Center",
+          "type": "dropdown",
+          "options": ["Sub-Center (SC)", "Primary Health Center (PHC)", "Community Health Center (CHC)", "Health and Wellness Center (HWCs)", "Anganwadi"],
+          "required": true
+        },
+        {
+          "key": "location",
+          "label": "Location",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "date_of_orientation",
+          "label": "Date of Orientation",
+          "type": "date",
+          "required": true
+        },
+        {
+          "key": "date_of_submission",
+          "label": "Date of Submission",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "1. Introduction",
+      "fields": [
+        {
+          "key": "introduction",
+          "label": "Introduction (Briefly describe the purpose of the orientation visit)",
+          "type": "textarea",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "2. Objectives of the Orientation",
+      "fields": [
+        {
+          "key": "general_objective",
+          "label": "A. General Objective",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "specific_objectives",
+          "label": "B. Specific Objectives",
+          "type": "textarea",
+          "hint": "List each specific objective separately",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "3. Physical Layout of Centre",
+      "fields": [
+        {
+          "key": "physical_layout_description",
+          "label": "Description of Physical Layout",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "physical_layout_sketch",
+          "label": "Sketch / Map of Layout",
+          "type": "file",
+          "accept": ["image/png", "image/jpeg", "application/pdf"],
+          "required": false
+        }
+      ]
+    },
+    {
+      "section": "4. Staffing Pattern",
+      "fields": [
+        {
+          "key": "staffing_pattern",
+          "label": "Staffing Pattern",
+          "type": "textarea",
+          "hint": "Describe the staff roles, designations, and count observed at the centre",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "5. Departments and Services Offered",
+      "fields": [
+        {
+          "key": "departments_and_services",
+          "label": "Departments and Services Offered",
+          "type": "textarea",
+          "hint": "List departments and describe their main functions",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "6. Records and Reports Maintained",
+      "fields": [
+        {
+          "key": "records_and_reports",
+          "label": "Records and Reports Maintained",
+          "type": "textarea",
+          "hint": "List all registers, records, and reports observed at the centre",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "7. Conclusion and References",
+      "fields": [
+        {
+          "key": "conclusion",
+          "label": "Conclusion (Summarize the learning outcomes and personal reflections)",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "references",
+          "label": "References",
+          "type": "textarea",
+          "hint": "List all references used (books, websites, guidelines, etc.)",
+          "required": false
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        {
+          "key": "evaluator_name",
+          "label": "Name of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "evaluator_signature",
+          "label": "Signature of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "date_of_evaluation",
+          "label": "Date of Evaluation",
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "remarks",
+          "label": "Remarks",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "marks",
+          "label": "Marks",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "introduction_and_objectives": { "label": "Introduction and Objectives", "max_marks": 5 },
+            "physical_layout_description": { "label": "Physical Layout Description", "max_marks": 5 },
+            "staffing_pattern": { "label": "Staffing Pattern", "max_marks": 5 },
+            "services_and_departmental_details": { "label": "Services and Departmental Details", "max_marks": 5 },
+            "records_and_reports_maintained": { "label": "Records and Reports Maintained", "max_marks": 5 },
+            "conclusion_and_references": { "label": "Conclusion and References", "max_marks": 5 },
+            "total": { "label": "Total", "max_marks": 30 }
+          }
+        }
+      ]
+    }
+  ]
+}

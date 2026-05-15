@@ -1,0 +1,307 @@
+{
+  "title": "Procedure Format",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "sections": [
+    {
+      "section": "Student & Submission Information",
+      "fields": [
+        {
+          "key": "student_name",
+          "label": "Name of Student",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "student_id",
+          "label": "Student ID",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "procedure_name",
+          "label": "Procedure Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "date_of_submission",
+          "label": "Date of Submission",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "1. Introduction",
+      "fields": [
+        {
+          "key": "introduction",
+          "label": "Introduction",
+          "type": "textarea",
+          "hint": "Briefly introduce the procedure and its relevance to Community Health Nursing",
+          "required": true
+        },
+        {
+          "key": "objectives",
+          "label": "Objectives",
+          "type": "array",
+          "itemLabel": "Objective",
+          "minItems": 1,
+          "maxItems": 10,
+          "hint": "List clear, specific objectives of the procedure",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "2. Client Baseline Data",
+      "fields": [
+        {
+          "key": "client_name",
+          "label": "Client Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "age",
+          "label": "Age",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "gender",
+          "label": "Gender",
+          "type": "dropdown",
+          "options": ["Male", "Female", "Other"],
+          "required": true
+        },
+        {
+          "key": "address",
+          "label": "Address",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "occupation",
+          "label": "Occupation",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "education",
+          "label": "Education",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "religion",
+          "label": "Religion",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "socioeconomic_status",
+          "label": "Socio-Economic Status",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "past_health_history",
+          "label": "Past Health History",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "present_complaint",
+          "label": "Present Complaint",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "known_allergies",
+          "label": "Known Allergies",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "current_medications",
+          "label": "Current Medications",
+          "type": "textarea",
+          "required": false
+        }
+      ]
+    },
+    {
+      "section": "3. Subjective and Objective Data",
+      "fields": [
+        {
+          "key": "subjective_data",
+          "label": "Subjective Data",
+          "type": "textarea",
+          "hint": "What the client reports — symptoms, complaints, feelings (e.g. 'Patient complains of chest pain')",
+          "required": true
+        },
+        {
+          "key": "objective_data",
+          "label": "Objective Data",
+          "type": "textarea",
+          "hint": "Measurable/observable findings — vitals, physical exam, lab values (e.g. BP: 140/90 mmHg, Temp: 99°F)",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "4. Purpose of the Procedure",
+      "fields": [
+        {
+          "key": "purpose_of_procedure",
+          "label": "Purpose of the Procedure",
+          "type": "textarea",
+          "hint": "Describe why this procedure is being performed for this client",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "5. Articles Used with Their Purpose",
+      "fields": [
+        {
+          "key": "articles_used",
+          "label": "Articles Used",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "itemSchema": {
+            "article_name": {
+              "label": "Article Name",
+              "type": "text",
+              "required": true
+            },
+            "purpose": {
+              "label": "Purpose",
+              "type": "text",
+              "required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "6. Steps of the Procedure with Rationale",
+      "hint": "List each step of the procedure along with its scientific rationale",
+      "fields": [
+        {
+          "key": "procedure_steps",
+          "label": "Procedure Steps",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "itemSchema": {
+            "step_number": {
+              "label": "Step No.",
+              "type": "number",
+              "required": true
+            },
+            "step_description": {
+              "label": "Step",
+              "type": "textarea",
+              "required": true
+            },
+            "rationale": {
+              "label": "Rationale",
+              "type": "textarea",
+              "required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "7. Recording and Reporting / Documentation",
+      "fields": [
+        {
+          "key": "recording_and_reporting",
+          "label": "Recording and Reporting / Documentation",
+          "type": "textarea",
+          "hint": "Describe what was recorded, reported, and documented after the procedure — include date, time, observations, and to whom it was reported",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "8. Nursing Responsibilities After the Procedure",
+      "fields": [
+        {
+          "key": "nursing_responsibilities",
+          "label": "Nursing Responsibilities After the Procedure",
+          "type": "array",
+          "itemLabel": "Responsibility",
+          "minItems": 1,
+          "hint": "List all post-procedure nursing responsibilities (client care, equipment disposal, documentation, follow-up, etc.)",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "9. References / Bibliography",
+      "fields": [
+        {
+          "key": "references",
+          "label": "References / Bibliography",
+          "type": "array",
+          "itemLabel": "Reference",
+          "minItems": 1,
+          "hint": "Use APA or Vancouver citation style",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        {
+          "key": "evaluator_name",
+          "label": "Name of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "evaluator_signature",
+          "label": "Signature of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "date_of_evaluation",
+          "label": "Date of Evaluation",
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "remarks",
+          "label": "Remarks",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "marks",
+          "label": "Marks",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "introduction_and_relevance":   { "label": "Introduction & Relevance to Community Health Nursing", "max_marks": 5 },
+            "clarity_of_objectives":        { "label": "Clarity of Objectives",                                "max_marks": 5 },
+            "client_baseline_data":         { "label": "Client Baseline Data (Demographics, Health History, Present Complaint)", "max_marks": 5 },
+            "purpose_of_procedure":         { "label": "Purpose of the Procedure",                             "max_marks": 5 },
+            "articles_used":                { "label": "Articles Used with Their Purpose",                     "max_marks": 5 },
+            "steps_with_rationale":         { "label": "Steps of Procedure with Rationale",                   "max_marks": 10 },
+            "recording_and_reporting":      { "label": "Recording and Reporting / Documentation",              "max_marks": 5 },
+            "nursing_responsibilities":     { "label": "Nursing Responsibilities After Procedure",             "max_marks": 5 },
+            "references":                   { "label": "References / Bibliography (APA/Vancouver style)",      "max_marks": 5 },
+            "total":                        { "label": "Total",                                                "max_marks": 50 }
+          }
+        }
+      ]
+    }
+  ]
+}
