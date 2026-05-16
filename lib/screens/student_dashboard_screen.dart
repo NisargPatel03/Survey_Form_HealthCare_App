@@ -326,6 +326,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                   builder: (context) => DynamicFormScreen(
                     studentId: widget.studentId,
                     courseName: _courseName ?? 'Unknown',
+                    semester: _semester ?? '5th Sem',
                     requirementSrNo: req.srNo,
                   ),
                 ),

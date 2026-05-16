@@ -1,0 +1,293 @@
+{
+  "title": "Primary Management and Care (Protocol-Based)",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "subtitle": "MoHFW Guidelines – SBA / IMNCI / NCD",
+  "sections": [
+    {
+      "section": "A. Student Details",
+      "fields": [
+        { "key": "student_name", "label": "Name of Student", "type": "text", "required": true },
+        { "key": "semester_class", "label": "Semester / Class", "type": "text", "required": true },
+        { "key": "student_id", "label": "Student ID No.", "type": "text", "required": true },
+        {
+          "key": "area_of_posting",
+          "label": "Area of Posting",
+          "type": "dropdown",
+          "options": ["Home", "SC", "PHC", "CHC"],
+          "required": true
+        },
+        { "key": "area_of_posting_name", "label": "Name of Posting Area", "type": "text", "hint": "Enter the specific name of the Home / SC / PHC / CHC", "required": true },
+        { "key": "village_area", "label": "Village / Area", "type": "text", "required": true },
+        { "key": "date", "label": "Date", "type": "date", "required": true },
+        { "key": "date_of_submission", "label": "Date of Submission", "type": "date", "required": true },
+        { "key": "place", "label": "Place", "type": "text", "required": false }
+      ]
+    },
+    {
+      "section": "B. Client Identification",
+      "fields": [
+        { "key": "client_name", "label": "Name of Client", "type": "text", "required": true },
+        { "key": "client_age", "label": "Age (Years)", "type": "number", "required": true },
+        {
+          "key": "client_gender",
+          "label": "Gender",
+          "type": "dropdown",
+          "options": ["Male", "Female", "Other"],
+          "required": true
+        },
+        {
+          "key": "setting",
+          "label": "Setting",
+          "type": "dropdown",
+          "options": ["Home", "Health Centre"],
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "C. Protocol Used",
+      "fields": [
+        {
+          "key": "protocol_used",
+          "label": "Protocol Used",
+          "type": "dropdown",
+          "options": ["IMNCI", "SBA", "NCD", "Other"],
+          "required": true
+        },
+        {
+          "key": "protocol_other_specify",
+          "label": "If Other, Specify",
+          "type": "text",
+          "hint": "Specify the protocol if 'Other' was selected",
+          "required": false
+        }
+      ]
+    },
+    {
+      "section": "D. Chief Complaint / Purpose",
+      "fields": [
+        {
+          "key": "chief_complaint",
+          "label": "Client Presented With",
+          "type": "textarea",
+          "hint": "Describe the chief complaint or purpose for which the client was seen",
+          "required": true
+        },
+        {
+          "key": "duration",
+          "label": "Duration",
+          "type": "text",
+          "hint": "e.g. 2 days, 1 week, since birth",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "E. Screening / Assessment (As Per Protocol)",
+      "fields": [
+        {
+          "key": "screening_assessment",
+          "label": "Screening and Assessment Table",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "hint": "Enter each screening component as per the selected protocol along with findings and remarks",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "screening_component": {
+              "label": "Screening Component (As per Protocol)",
+              "type": "text",
+              "hint": "e.g. Danger Signs, Feeding Assessment, Blood Pressure, Blood Sugar",
+              "required": true
+            },
+            "findings": {
+              "label": "Findings (What You Assessed / Observed)",
+              "type": "textarea",
+              "required": true
+            },
+            "remarks": {
+              "label": "Remarks",
+              "type": "textarea",
+              "required": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "F. Classification (As Per Protocol)",
+      "fields": [
+        {
+          "key": "classification",
+          "label": "Classification of Case",
+          "type": "textarea",
+          "hint": "Based on assessment, describe how the case was classified as per the selected protocol — e.g. Severe Pneumonia, Moderate Dehydration, High Risk Pregnancy, Stage 2 Hypertension",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "G. Primary Management and Care Provided",
+      "fields": [
+        {
+          "key": "management_and_care",
+          "label": "Management and Care Table",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "hint": "List each component of care as per the protocol, describe what the student delivered, and add remarks",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "components_of_care": {
+              "label": "Components of Care (According to Protocol)",
+              "type": "text",
+              "hint": "e.g. ORS Administration, Vitamin A, Iron Supplementation, Wound Care",
+              "required": true
+            },
+            "care_delivered_by_student": {
+              "label": "Care Delivered by Student",
+              "type": "textarea",
+              "required": true
+            },
+            "remarks": {
+              "label": "Remarks",
+              "type": "textarea",
+              "required": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "H. Health Advice / Counselling",
+      "fields": [
+        {
+          "key": "health_advice",
+          "label": "Health Advice and Counselling Table",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "hint": "List each advice component as per the protocol, the advice given by the student, and remarks",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "advice_component": {
+              "label": "Advice Component (As per Protocol)",
+              "type": "text",
+              "hint": "e.g. Breastfeeding Counselling, Danger Signs, Nutrition, Hand Hygiene, Follow-up",
+              "required": true
+            },
+            "advice_given_by_student": {
+              "label": "Advice Given by Student",
+              "type": "textarea",
+              "required": true
+            },
+            "remarks": {
+              "label": "Remarks",
+              "type": "textarea",
+              "required": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "I. Referral Decision",
+      "fields": [
+        {
+          "key": "referral_decision",
+          "label": "Referral Decision Table",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "hint": "List the referral criteria as per the protocol, the decision taken, and the reason",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "referral_criteria": {
+              "label": "Referral Criteria (As per Protocol)",
+              "type": "text",
+              "hint": "e.g. Danger signs present, Severe dehydration, High BP > 160/110",
+              "required": true
+            },
+            "decision_taken": {
+              "label": "Decision Taken",
+              "type": "dropdown",
+              "options": ["Referred", "Not Referred", "Referred with First Aid", "Follow-up Advised"],
+              "required": true
+            },
+            "reason": {
+              "label": "Reason",
+              "type": "textarea",
+              "hint": "Explain why the referral decision was or was not made",
+              "required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "J. Student Learning",
+      "fields": [
+        {
+          "key": "student_learning",
+          "label": "Student Learning",
+          "type": "textarea",
+          "hint": "Reflect on what you learned from this protocol-based care experience — clinical skills, decision-making, application of guidelines, and insights gained",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "K. Conclusion",
+      "fields": [
+        {
+          "key": "conclusion",
+          "label": "Conclusion",
+          "type": "textarea",
+          "hint": "Summarize the overall case, the care provided, its outcomes, and how this experience contributes to your competency in community health nursing",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        { "key": "evaluator_name", "label": "Name of Evaluator", "type": "text", "required": false },
+        { "key": "evaluator_signature", "label": "Signature of Evaluator", "type": "text", "required": false },
+        { "key": "date_of_evaluation", "label": "Date of Evaluation", "type": "date", "required": false },
+        { "key": "remarks", "label": "Remarks", "type": "textarea", "required": false },
+        {
+          "key": "marks",
+          "label": "Evaluation Criteria",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "identification_and_protocol_selection": { "label": "Identification & Protocol Selection",  "max_marks": 3  },
+            "screening_assessment_table":            { "label": "Screening / Assessment Table",         "max_marks": 6  },
+            "classification":                        { "label": "Classification",                       "max_marks": 2  },
+            "management_and_care_table":             { "label": "Management & Care Table",              "max_marks": 8  },
+            "health_advice_table":                   { "label": "Health Advice Table",                  "max_marks": 5  },
+            "referral_decision_reason":              { "label": "Referral Decision (Reason)",           "max_marks": 3  },
+            "presentation_and_conclusion":           { "label": "Presentation & Conclusion",            "max_marks": 3  },
+            "total":                                 { "label": "Total",                                "max_marks": 30 }
+          }
+        }
+      ]
+    }
+  ]
+}

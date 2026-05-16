@@ -63,7 +63,7 @@ class CourseRequirementsData {
     CourseRequirement(srNo: '4.8', postingType: 'I. Rural posting', category: '4. Procedure', name: 'Assessment of elderly', quantity: 1),
     CourseRequirement(srNo: '5.1', postingType: 'I. Rural posting', category: '5. Participation in outreach services in rural Area', name: 'Under five children health screening camp', quantity: 1),
     CourseRequirement(srNo: '5.2', postingType: 'I. Rural posting', category: '5. Participation in outreach services in rural Area', name: 'Geriatric health screening Camp', quantity: 1),
-    CourseRequirement(srNo: '5.3', postingType: 'I. Rural posting', category: '5. Participation in outreach services in rural Area', name: 'Community health survey report', quantity: 1, isSurvey: true),
+    CourseRequirement(srNo: '5.3', postingType: 'I. Rural posting', category: '5. Participation in outreach services in rural Area', name: 'Community health survey report', quantity: 1),
     CourseRequirement(srNo: '6.1', postingType: 'I. Rural posting', category: '6. Report', name: 'Interaction with ASHA worker', quantity: 1),
     CourseRequirement(srNo: '6.2', postingType: 'I. Rural posting', category: '6. Report', name: 'Interaction with Anganwadi Worker', quantity: 1),
     CourseRequirement(srNo: '6.3', postingType: 'I. Rural posting', category: '6. Report', name: 'Primary management and care based on protocols', quantity: 1),

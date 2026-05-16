@@ -8,12 +8,14 @@ import 'pdf_viewer_screen.dart';
 class DynamicFormScreen extends StatefulWidget {
   final String studentId;
   final String courseName;
+  final String semester;
   final String requirementSrNo;
 
   const DynamicFormScreen({
     super.key,
     required this.studentId,
     required this.courseName,
+    required this.semester,
     required this.requirementSrNo,
   });
 
@@ -32,7 +34,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
   Map<String, dynamic> _formData = {};
   bool _hasUnsavedChanges = false;
 
-  String get _draftKey => 'draft_${widget.studentId}_${widget.requirementSrNo}';
+  String get _draftKey => 'draft_${widget.semester}_${widget.studentId}_${widget.requirementSrNo}';
 
   Future<void> _saveDraft() async {
     final prefs = await SharedPreferences.getInstance();
@@ -54,7 +56,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
 
   Future<void> _loadForm() async {
     try {
-      final lookup = {
+      final lookup5th = {
         '1.1': '1_1_orientation_report.json',
         '2.1': '2_1_care_plan.json',
         '3.1': '3_1_care_study.json',
@@ -78,7 +80,46 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         '13.5': '13_visit_report.json',
         '13.6': '13_visit_report.json',
       };
+
+      final lookup7th = {
+        '1.1': '1_1_orientation_report.json',
+        '2.1': '3_1_care_study.json',
+        '3.1': '2_1_care_plan.json',
+        '3.2': '2_1_care_plan.json',
+        '4.1': 'procedure_format.json',
+        '4.2': 'procedure_format.json',
+        '4.3': 'procedure_format.json',
+        '4.4': 'procedure_format.json',
+        '4.5': 'procedure_format.json',
+        '4.6': 'procedure_format.json',
+        '4.7': 'procedure_format.json',
+        '4.8': 'procedure_format.json',
+        '5.1': '5_1_health_screening_camp_report.json',
+        '5.2': '5_1_health_screening_camp_report.json',
+        '5.3': '6_3_survey_report.json',
+        '6.1': '6_1_interaction_with_health_workers.json',
+        '6.2': '6_1_interaction_with_health_workers.json',
+        '6.3': '6_3_primary_management_and_care.json',
+        '7.1': '1_1_orientation_report.json',
+        '8.1': '2_1_care_plan.json',
+        '8.2': '2_1_care_plan.json',
+        '8.3': '2_1_care_plan.json',
+        '8.4': '2_1_care_plan.json',
+        '8.5': '2_1_care_plan.json',
+        '8.6': '2_1_care_plan.json',
+        '8.7': '2_1_care_plan.json',
+        '9.1': '11_1_individual_health_talk.json',
+        '9.2': '11_1_individual_health_talk.json',
+        '10.1': '5_1_group_health_talk.json',
+        '11.1': '11_1_disaster_mock_drill.json',
+        '12.1': '13_visit_report.json',
+        '12.2': '13_visit_report.json',
+        '12.3': '13_visit_report.json',
+        '12.4': '13_visit_report.json',
+        '13.1': '13_1_continuous_evaluation.json',
+      };
       
+      final lookup = widget.semester == '7th Sem' ? lookup7th : lookup5th;
       final schemaFile = lookup[widget.requirementSrNo];
       if (schemaFile == null) {
         setState(() {
@@ -91,7 +132,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       final String jsonString = await rootBundle.loadString('assets/forms/$schemaFile');
       final Map<String, dynamic> schema = jsonDecode(jsonString);
       
-      final existingData = await _submissionService.getSubmission(widget.studentId, widget.requirementSrNo);
+      final existingData = await _submissionService.getSubmission(widget.studentId, widget.courseName, widget.requirementSrNo);
       Map<String, dynamic> initialData = existingData ?? {};
 
       // Auto-load draft if it exists
@@ -418,7 +459,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
   }
 
   void _openPdf() {
-    final pdfLookup = {
+    final pdfLookup5th = {
       '1.1': {'Orientation Report': 'assets/pdfs/orientation_report.pdf'},
       '2.1': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
       '3.1': {'Family Care Study': 'assets/pdfs/family_care_study.pdf'},
@@ -484,6 +525,45 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       },
     };
 
+    final pdfLookup7th = {
+      '1.1': {'Orientation Report': 'assets/pdfs/orientation_report.pdf'},
+      '2.1': {'Family Care Study': 'assets/pdfs/family_care_study.pdf'},
+      '3.1': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '3.2': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '4.1': { 'Procedure Format': 'assets/pdfs/procedure_format.pdf', 'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf' },
+      '4.2': { 'Procedure Format': 'assets/pdfs/procedure_format.pdf', 'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf' },
+      '4.3': { 'Procedure Format': 'assets/pdfs/procedure_format.pdf', 'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf' },
+      '4.4': { 'Procedure Format': 'assets/pdfs/procedure_format.pdf', 'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf' },
+      '4.5': { 'Procedure Format': 'assets/pdfs/procedure_format.pdf', 'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf' },
+      '4.6': { 'Procedure Format': 'assets/pdfs/procedure_format.pdf', 'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf' },
+      '4.7': { 'Procedure Format': 'assets/pdfs/procedure_format.pdf', 'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf' },
+      '4.8': { 'Procedure Format': 'assets/pdfs/procedure_format.pdf', 'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf' },
+      '5.1': { '13 A Health Screening Camp': 'assets/pdfs/health_screening_camp_report_a.pdf', '13 B Guidelines': 'assets/pdfs/health_screening_camp_report_b.pdf' },
+      '5.2': { '13 A Health Screening Camp': 'assets/pdfs/health_screening_camp_report_a.pdf', '13 B Guidelines': 'assets/pdfs/health_screening_camp_report_b.pdf' },
+      '5.3': {'18 Survey Report (PDF version)': 'assets/pdfs/survey_report.pdf'},
+      '6.1': { '27 A Interaction with Health Workers': 'assets/pdfs/interaction_with_health_workers_a.pdf', '27 B Guidelines': 'assets/pdfs/interaction_with_health_workers_b.pdf' },
+      '6.2': { '27 A Interaction with Health Workers': 'assets/pdfs/interaction_with_health_workers_a.pdf', '27 B Guidelines': 'assets/pdfs/interaction_with_health_workers_b.pdf' },
+      '6.3': { '25 A Primary Management': 'assets/pdfs/primary_management_and_care_a.pdf', '25 B Guidelines': 'assets/pdfs/primary_management_and_care_b.pdf' },
+      '7.1': {'Orientation Report': 'assets/pdfs/orientation_report.pdf'},
+      '8.1': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '8.2': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '8.3': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '8.4': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '8.5': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '8.6': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '8.7': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '9.1': {'7 Individual Health Talk Format': 'assets/pdfs/individual_health_talk.pdf'},
+      '9.2': {'7 Individual Health Talk Format': 'assets/pdfs/individual_health_talk.pdf'},
+      '10.1': {'Group Health Talk': 'assets/pdfs/group_health_talk.pdf'},
+      '11.1': { '26 A Disaster Mock Drill': 'assets/pdfs/disaster_mock_drill_a.pdf', '26 B Guidelines': 'assets/pdfs/disaster_mock_drill_b.pdf' },
+      '12.1': { '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf', '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf' },
+      '12.2': { '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf', '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf' },
+      '12.3': { '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf', '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf' },
+      '12.4': { '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf', '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf' },
+      '13.1': { '24 Continuous Evaluation': 'assets/pdfs/continuous_evaluation.pdf' },
+    };
+
+    final pdfLookup = widget.semester == '7th Sem' ? pdfLookup7th : pdfLookup5th;
     final options = pdfLookup[widget.requirementSrNo];
     if (options != null && options.isNotEmpty) {
       if (options.length == 1) {
@@ -584,7 +664,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Text(
-                      'Form configuration not yet available for requirement ${widget.requirementSrNo}.\n\n(Configured: 1.1, 2.1, 3.1, 4.1, 4.2, 5.1, 6.1, 6.2, 6.3, 7.1, 8.1, 9.1, 10.1, 10.2, 11.1, 12.1, 13.1-13.6)',
+                      'Form configuration not yet available for requirement ${widget.requirementSrNo} (${widget.semester}).',
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),

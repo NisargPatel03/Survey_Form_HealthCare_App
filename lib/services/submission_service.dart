@@ -9,6 +9,7 @@ class SubmissionService {
         .from('requirement_submissions')
         .select('id')
         .eq('student_id', studentId)
+        .eq('course_name', courseName)
         .eq('requirement_sr_no', requirementSrNo)
         .maybeSingle();
 
@@ -28,12 +29,13 @@ class SubmissionService {
     }
   }
   
-  Future<Map<String, dynamic>?> getSubmission(String studentId, String requirementSrNo) async {
+  Future<Map<String, dynamic>?> getSubmission(String studentId, String courseName, String requirementSrNo) async {
     try {
       final response = await _supabase
           .from('requirement_submissions')
           .select()
           .eq('student_id', studentId)
+          .eq('course_name', courseName)
           .eq('requirement_sr_no', requirementSrNo)
           .maybeSingle();
           
@@ -46,12 +48,13 @@ class SubmissionService {
     return null;
   }
   
-  Future<bool> hasSubmitted(String studentId, String requirementSrNo) async {
+  Future<bool> hasSubmitted(String studentId, String courseName, String requirementSrNo) async {
     try {
       final response = await _supabase
           .from('requirement_submissions')
           .select('id')
           .eq('student_id', studentId)
+          .eq('course_name', courseName)
           .eq('requirement_sr_no', requirementSrNo)
           .maybeSingle();
       return response != null;

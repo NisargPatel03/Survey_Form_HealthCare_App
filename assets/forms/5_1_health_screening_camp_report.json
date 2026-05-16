@@ -1,0 +1,299 @@
+{
+  "title": "Health Screening Camp Report",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "sections": [
+    {
+      "section": "Student & Camp Information",
+      "fields": [
+        { "key": "student_name", "label": "Name of Student", "type": "text", "required": true },
+        { "key": "class_semester", "label": "Class / Semester", "type": "text", "required": true },
+        { "key": "student_id", "label": "ID Number", "type": "text", "required": true },
+        { "key": "date_of_camp", "label": "Date of Camp", "type": "date", "required": true },
+        { "key": "venue", "label": "Venue (Village / Community / School)", "type": "text", "required": true },
+        { "key": "organized_by", "label": "Organized By", "type": "text", "required": true },
+        { "key": "in_collaboration_with", "label": "In Collaboration With", "type": "text", "required": false },
+        { "key": "time_from", "label": "Time From", "type": "time", "required": true },
+        { "key": "time_to", "label": "Time To", "type": "time", "required": true },
+        { "key": "type_of_camp", "label": "Type of Camp", "type": "text", "hint": "e.g. General Health Screening, Eye Camp, Dental Camp, Mother & Child Health Camp", "required": true },
+        { "key": "date_of_submission", "label": "Date of Submission", "type": "date", "required": true }
+      ]
+    },
+    {
+      "section": "1. Introduction",
+      "fields": [
+        {
+          "key": "introduction",
+          "label": "Introduction",
+          "type": "textarea",
+          "hint": "Briefly describe the purpose of the health screening camp — why it was organized, the target community, and its significance",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "2. Objectives of the Camp",
+      "fields": [
+        {
+          "key": "general_objective",
+          "label": "A. General Objective",
+          "type": "textarea",
+          "hint": "State the broad overall goal of the health screening camp",
+          "required": true
+        },
+        {
+          "key": "specific_objectives",
+          "label": "B. Specific Objectives",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "itemLabel": "Objective",
+          "hint": "List the specific, measurable objectives of the camp",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "3. Planning and Preparation",
+      "fields": [
+        {
+          "key": "planning_and_preparation",
+          "label": "Planning and Preparation",
+          "type": "textarea",
+          "hint": "Describe how the camp was planned and prepared — coordination with authorities, community mobilization, materials arranged, roles assigned, and pre-camp activities",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "4. Services Provided During Camp",
+      "fields": [
+        {
+          "key": "services_provided",
+          "label": "Services Provided During Camp",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "hint": "List each service provided during the camp and describe how it was delivered",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "service_name": {
+              "label": "Service Name",
+              "type": "text",
+              "hint": "e.g. Blood Pressure Check, BMI Assessment, Vision Screening, Dental Check",
+              "required": true
+            },
+            "description": {
+              "label": "Description",
+              "type": "textarea",
+              "hint": "Describe how this service was provided and by whom",
+              "required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "5. Camp Statistics and Outcome",
+      "fields": [
+        {
+          "key": "data_sheet",
+          "label": "Patient Data Sheet",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "hint": "Enter individual patient records collected during the camp",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "name": {
+              "label": "Name",
+              "type": "text",
+              "required": true
+            },
+            "age": {
+              "label": "Age",
+              "type": "number",
+              "required": true
+            },
+            "sex": {
+              "label": "Sex",
+              "type": "dropdown",
+              "options": ["Male", "Female", "Other"],
+              "required": true
+            },
+            "contact": {
+              "label": "Contact Number",
+              "type": "text",
+              "required": false
+            },
+            "complaints": {
+              "label": "Complaints",
+              "type": "textarea",
+              "required": false
+            },
+            "height_cm": {
+              "label": "Height (cm)",
+              "type": "number",
+              "required": false
+            },
+            "weight_kg": {
+              "label": "Weight (kg)",
+              "type": "number",
+              "required": false
+            },
+            "bmi": {
+              "label": "BMI (kg/m²)",
+              "type": "number",
+              "required": false
+            },
+            "temperature_f": {
+              "label": "Temperature (°F)",
+              "type": "number",
+              "required": false
+            },
+            "pulse_bpm": {
+              "label": "Pulse (bpm)",
+              "type": "number",
+              "required": false
+            },
+            "bp_mmhg": {
+              "label": "BP (mmHg)",
+              "type": "text",
+              "hint": "e.g. 120/80",
+              "required": false
+            },
+            "any_other_findings": {
+              "label": "Any Other Findings",
+              "type": "textarea",
+              "required": false
+            },
+            "provisional_diagnosis": {
+              "label": "Provisional Diagnosis (Medical Officer)",
+              "type": "textarea",
+              "required": false
+            }
+          }
+        },
+        {
+          "key": "problems_identified",
+          "label": "Frequency and Percentage of Problems Identified",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "required": true,
+          "hint": "List health conditions identified during the camp with their frequency and percentage",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "condition": {
+              "label": "Condition / Health Problem",
+              "type": "text",
+              "required": true
+            },
+            "number_of_problems_identified": {
+              "label": "Number of Problems Identified",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "6. Nursing Student's Role and Participation",
+      "fields": [
+        {
+          "key": "specific_responsibility_assigned",
+          "label": "Specific Responsibility Assigned",
+          "type": "textarea",
+          "hint": "Describe the specific role or station you were assigned to during the camp",
+          "required": true
+        },
+        {
+          "key": "activities_performed",
+          "label": "Activities Performed",
+          "type": "array",
+          "minItems": 1,
+          "itemLabel": "Activity",
+          "hint": "List the activities you personally performed during the camp",
+          "required": true
+        },
+        {
+          "key": "skills_practiced",
+          "label": "Skills Practiced During Camp",
+          "type": "array",
+          "minItems": 1,
+          "itemLabel": "Skill",
+          "hint": "List the clinical and interpersonal skills you practiced during the camp",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "7. Conclusion",
+      "fields": [
+        {
+          "key": "conclusion",
+          "label": "Conclusion",
+          "type": "textarea",
+          "hint": "Summarize the learning outcomes and personal reflections — what was observed, what was learned, community impact, and how it contributes to your nursing practice",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "8. References",
+      "fields": [
+        {
+          "key": "references",
+          "label": "References",
+          "type": "array",
+          "minItems": 1,
+          "itemLabel": "Reference",
+          "hint": "List all references, textbooks, and sources consulted for the report",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        { "key": "evaluator_name", "label": "Name of Evaluator", "type": "text", "required": false },
+        { "key": "evaluator_signature", "label": "Signature of Evaluator", "type": "text", "required": false },
+        { "key": "date_of_evaluation", "label": "Date of Evaluation", "type": "date", "required": false },
+        { "key": "place", "label": "Place", "type": "text", "required": false },
+        { "key": "remarks", "label": "Remarks", "type": "textarea", "required": false },
+        {
+          "key": "marks",
+          "label": "Evaluation Criteria",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "introduction_and_objectives":          { "label": "Introduction and Objectives",           "max_marks": 5  },
+            "planning_and_preparation":             { "label": "Planning and Preparation",              "max_marks": 10 },
+            "services_provided_during_camp":        { "label": "Services Provided During Camp",         "max_marks": 10 },
+            "camp_statistics_and_outcome":          { "label": "Camp Statistics and Outcome",           "max_marks": 10 },
+            "nursing_student_role_participation":   { "label": "Nursing Student's Role and Participation", "max_marks": 10 },
+            "conclusion_and_references":            { "label": "Conclusion and References",             "max_marks": 5  },
+            "total":                                { "label": "Total",                                 "max_marks": 50 }
+          }
+        }
+      ]
+    }
+  ]
+}

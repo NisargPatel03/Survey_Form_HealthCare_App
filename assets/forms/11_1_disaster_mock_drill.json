@@ -1,0 +1,328 @@
+{
+  "title": "Report on Participation in Disaster Mock Drill",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "sections": [
+    {
+      "section": "A. Student Details",
+      "fields": [
+        { "key": "student_name", "label": "Name of Student", "type": "text", "required": true },
+        { "key": "semester_year", "label": "Semester / Year", "type": "text", "required": true },
+        { "key": "student_id", "label": "Student ID No.", "type": "text", "required": true },
+        { "key": "area_of_posting", "label": "Area of Posting (PHC / CHC)", "type": "text", "required": true },
+        { "key": "location_of_mock_drill", "label": "Location of Mock Drill", "type": "text", "required": true },
+        { "key": "date_of_observation", "label": "Date of Observation", "type": "date", "required": true },
+        { "key": "duration", "label": "Duration", "type": "text", "hint": "e.g. 2 hours, Half day", "required": true },
+        { "key": "name_of_supervisor", "label": "Name of Supervisor", "type": "text", "required": true },
+        { "key": "date_of_submission", "label": "Date of Submission", "type": "date", "required": true },
+        { "key": "place", "label": "Place", "type": "text", "required": false }
+      ]
+    },
+    {
+      "section": "B. Details of Mock Drill",
+      "fields": [
+        {
+          "key": "type_of_disaster_simulated",
+          "label": "Type of Disaster Simulated",
+          "type": "text",
+          "hint": "e.g. Earthquake, Flood, Fire, Mass Casualty Incident, Chemical Spill",
+          "required": true
+        },
+        {
+          "key": "organizing_authority",
+          "label": "Organizing Authority",
+          "type": "text",
+          "hint": "e.g. District Health Authority, NDRF, Hospital Administration",
+          "required": true
+        },
+        {
+          "key": "departments_agencies_involved",
+          "label": "Departments / Agencies Involved",
+          "type": "array",
+          "minItems": 1,
+          "itemLabel": "Department / Agency",
+          "hint": "e.g. Fire Department, Police, Health Team, Ambulance Services, NGOs",
+          "required": true
+        },
+        {
+          "key": "number_of_personnel_involved",
+          "label": "Number of Personnel Involved",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "setting",
+          "label": "Setting",
+          "type": "dropdown",
+          "options": ["Hospital", "Community", "Field"],
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "C. Objectives of Mock Drill",
+      "fields": [
+        {
+          "key": "general_objective",
+          "label": "General Objective",
+          "type": "textarea",
+          "hint": "State the broad overall goal of participating in and observing the disaster mock drill",
+          "required": true
+        },
+        {
+          "key": "specific_objectives",
+          "label": "Specific Objectives",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "itemLabel": "Objective",
+          "hint": "List the specific, measurable objectives of the mock drill observation",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "D. Pre-Drill Preparation",
+      "fields": [
+        {
+          "key": "briefing_by_experts",
+          "label": "Briefing Given by Experts",
+          "type": "textarea",
+          "hint": "Describe the briefing session conducted before the drill — who briefed, what was covered, and how roles were explained",
+          "required": true
+        },
+        {
+          "key": "allocation_of_roles",
+          "label": "Allocation of Roles and Responsibilities",
+          "type": "textarea",
+          "hint": "Describe how roles and responsibilities were assigned to different teams and individuals before the drill",
+          "required": true
+        },
+        {
+          "key": "equipment_and_logistics",
+          "label": "Equipment and Logistics Arranged",
+          "type": "textarea",
+          "hint": "List and describe the equipment, supplies, vehicles, and logistics arranged for the drill",
+          "required": true
+        },
+        {
+          "key": "safety_precautions",
+          "label": "Safety Precautions Ensured",
+          "type": "textarea",
+          "hint": "Describe the safety measures put in place before and during the mock drill",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "E. Step-Wise Description of Mock Drill",
+      "fields": [
+        {
+          "key": "disaster_scenario_initiation",
+          "label": "Disaster Scenario Initiation",
+          "type": "textarea",
+          "hint": "Describe how the disaster scenario was initiated — the simulated event, trigger, and initial conditions",
+          "required": true
+        },
+        {
+          "key": "alert_and_communication_system",
+          "label": "Alert and Communication System",
+          "type": "textarea",
+          "hint": "Describe the alert mechanisms used — sirens, radio, phone trees, public announcement systems, and how information was communicated",
+          "required": true
+        },
+        {
+          "key": "initial_response_by_team",
+          "label": "Initial Response by Team",
+          "type": "textarea",
+          "hint": "Describe the immediate actions taken by the response teams upon receiving the alert",
+          "required": true
+        },
+        {
+          "key": "rescue_and_evacuation_process",
+          "label": "Rescue and Evacuation Process",
+          "type": "textarea",
+          "hint": "Describe how rescue operations were carried out and how victims were evacuated from the simulated disaster site",
+          "required": true
+        },
+        {
+          "key": "triage_and_patient_management",
+          "label": "Triage and Patient Management",
+          "type": "textarea",
+          "hint": "Describe the triage system used (e.g. START triage), how patients were categorized, and the care provided at the scene",
+          "required": true
+        },
+        {
+          "key": "referral_and_transportation_system",
+          "label": "Referral / Transportation System",
+          "type": "textarea",
+          "hint": "Describe how patients were transported and referred to health facilities during the drill",
+          "required": true
+        },
+        {
+          "key": "interdepartmental_coordination",
+          "label": "Interdepartmental Coordination",
+          "type": "textarea",
+          "hint": "Describe how different departments and agencies coordinated with each other throughout the drill",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "F. Roles and Responsibilities of Different Teams",
+      "fields": [
+        {
+          "key": "health_team",
+          "label": "Health Team",
+          "type": "textarea",
+          "hint": "Describe the roles and responsibilities performed by the health team — doctors, nurses, paramedics, ANMs, etc.",
+          "required": true
+        },
+        {
+          "key": "fire_rescue_team",
+          "label": "Fire / Rescue Team",
+          "type": "textarea",
+          "hint": "Describe the roles and responsibilities of the fire and rescue team during the drill",
+          "required": true
+        },
+        {
+          "key": "police_security",
+          "label": "Police / Security",
+          "type": "textarea",
+          "hint": "Describe the roles of the police and security personnel in crowd control, perimeter management, and coordination",
+          "required": true
+        },
+        {
+          "key": "ambulance_services",
+          "label": "Ambulance Services",
+          "type": "textarea",
+          "hint": "Describe the role of ambulance services in patient transport and pre-hospital care during the drill",
+          "required": true
+        },
+        {
+          "key": "others",
+          "label": "Others (If Any)",
+          "type": "textarea",
+          "hint": "Describe the roles of any other agencies or teams involved — e.g. NGOs, Civil Defence, NDRF, volunteers",
+          "required": false
+        }
+      ]
+    },
+    {
+      "section": "G. Observational Analysis",
+      "fields": [
+        {
+          "key": "communication_effectiveness",
+          "label": "Communication Effectiveness",
+          "type": "textarea",
+          "hint": "Analyze how effectively communication was carried out between teams, command centres, and the public during the drill",
+          "required": true
+        },
+        {
+          "key": "team_coordination",
+          "label": "Team Coordination",
+          "type": "textarea",
+          "hint": "Analyze how well teams coordinated with each other and how smoothly the overall response was executed",
+          "required": true
+        },
+        {
+          "key": "use_of_equipment",
+          "label": "Use of Equipment",
+          "type": "textarea",
+          "hint": "Describe how effectively equipment and resources were utilized during the drill",
+          "required": true
+        },
+        {
+          "key": "time_management",
+          "label": "Time Management",
+          "type": "textarea",
+          "hint": "Analyze how well time was managed — response time, evacuation time, triage speed, and overall drill duration",
+          "required": true
+        },
+        {
+          "key": "strengths_of_the_drill",
+          "label": "Strengths of the Drill",
+          "type": "textarea",
+          "hint": "List and describe the key strengths and positive aspects observed during the mock drill",
+          "required": true
+        },
+        {
+          "key": "gaps_and_limitations",
+          "label": "Gaps / Limitations Identified",
+          "type": "textarea",
+          "hint": "Identify and describe the gaps, weaknesses, or areas requiring improvement observed during the drill",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "H. Learning Experience",
+      "fields": [
+        {
+          "key": "knowledge_gained",
+          "label": "Knowledge Gained",
+          "type": "textarea",
+          "hint": "Describe the new knowledge acquired from observing and participating in the disaster mock drill",
+          "required": true
+        },
+        {
+          "key": "skills_observed",
+          "label": "Skills Observed",
+          "type": "textarea",
+          "hint": "Describe the clinical, technical, and interpersonal skills observed being practiced during the drill",
+          "required": true
+        },
+        {
+          "key": "importance_of_disaster_preparedness",
+          "label": "Importance of Disaster Preparedness",
+          "type": "textarea",
+          "hint": "Reflect on why disaster preparedness is critical for communities and health systems based on what you observed",
+          "required": true
+        },
+        {
+          "key": "relevance_to_nursing_practice",
+          "label": "Relevance to Nursing Practice",
+          "type": "textarea",
+          "hint": "Describe how the learnings from this drill are relevant to your role and responsibilities as a community health nurse",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "I. Conclusion",
+      "fields": [
+        {
+          "key": "conclusion",
+          "label": "Conclusion",
+          "type": "textarea",
+          "hint": "Summarize the overall experience — key takeaways from the drill, its effectiveness, and how participation in this mock drill will shape your approach to disaster nursing and community health preparedness",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        { "key": "evaluator_name", "label": "Name of Evaluator", "type": "text", "required": false },
+        { "key": "evaluator_signature", "label": "Signature of Evaluator", "type": "text", "required": false },
+        { "key": "date_of_evaluation", "label": "Date of Evaluation", "type": "date", "required": false },
+        { "key": "remarks", "label": "Remarks", "type": "textarea", "required": false },
+        {
+          "key": "marks",
+          "label": "Evaluation Criteria",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "student_details_and_objectives":       { "label": "Student Details & Objectives",                  "max_marks": 3  },
+            "understanding_of_drill":               { "label": "Understanding of Drill (Details + Preparation)", "max_marks": 4  },
+            "stepwise_description_of_drill":        { "label": "Step-wise Description of Drill",                "max_marks": 6  },
+            "roles_of_teams":                       { "label": "Roles of Teams",                                "max_marks": 5  },
+            "observational_analysis":               { "label": "Observational Analysis",                        "max_marks": 5  },
+            "learning_experience":                  { "label": "Learning Experience",                           "max_marks": 5  },
+            "conclusion":                           { "label": "Conclusion",                                    "max_marks": 2  },
+            "total":                                { "label": "Total",                                         "max_marks": 30 }
+          }
+        }
+      ]
+    }
+  ]
+}
