@@ -344,33 +344,34 @@
           "key": "marks",
           "label": "Evaluation Criteria",
           "type": "object",
+          "required": false,
           "properties": {
-            "id": {
-              "label": "1. Identification & Protocol",
+            "identification_and_protocol_selection": {
+              "label": "Identification & Protocol Selection",
               "max_marks": 3
             },
-            "screening": {
-              "label": "2. Screening / Assessment Table",
+            "screening_assessment_table": {
+              "label": "Screening / Assessment Table",
               "max_marks": 6
             },
             "classification": {
-              "label": "3. Classification",
+              "label": "Classification",
               "max_marks": 2
             },
-            "management": {
-              "label": "4. Management & Care Table",
+            "management_and_care_table": {
+              "label": "Management & Care Table",
               "max_marks": 8
             },
-            "health_advice": {
-              "label": "5. Health Advice Table",
+            "health_advice_table": {
+              "label": "Health Advice Table",
               "max_marks": 5
             },
-            "referral": {
-              "label": "6. Referral Decision (Reason)",
+            "referral_decision_reason": {
+              "label": "Referral Decision (Reason)",
               "max_marks": 3
             },
-            "presentation": {
-              "label": "7. Presentation & Conclusion",
+            "presentation_and_conclusion": {
+              "label": "Presentation & Conclusion",
               "max_marks": 3
             },
             "total": {

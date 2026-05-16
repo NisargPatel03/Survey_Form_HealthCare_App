@@ -596,35 +596,36 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Evaluation Criteria",
+          "label": "Marks",
           "type": "object",
+          "required": false,
           "properties": {
-            "intro": {
-              "label": "1. Clarity of Introduction/Objectives",
+            "introduction_objectives_learning": {
+              "label": "Clarity of Introduction, Stated Objectives, and Learning Outcomes",
               "max_marks": 5
             },
-            "village": {
-              "label": "2. Overview/Profile of Village",
+            "village_overview": {
+              "label": "Overview and General Profile of the Village",
               "max_marks": 5
             },
-            "social": {
-              "label": "3. Social Environment/Landmarks",
+            "social_environment_landmarks": {
+              "label": "Description of Social Environment and Key Community Landmarks",
               "max_marks": 10
             },
-            "demographic": {
-              "label": "4. Demographic/Environmental Analysis",
+            "demographic_environmental": {
+              "label": "Analysis of Demographic and Environmental Characteristics",
               "max_marks": 10
             },
-            "diagnosis": {
-              "label": "5. Community Diagnosis",
+            "community_diagnosis": {
+              "label": "Community Diagnosis: Identification of Health Problems and Needs",
               "max_marks": 10
             },
-            "knowledge": {
-              "label": "6. Assessment of Health Knowledge",
+            "health_knowledge_beliefs": {
+              "label": "Assessment of Health Knowledge, Beliefs, and Practices",
               "max_marks": 5
             },
             "conclusion": {
-              "label": "7. Conclusion/Summary",
+              "label": "Conclusion: Summary of Findings and Reflective Insights",
               "max_marks": 5
             },
             "total": {

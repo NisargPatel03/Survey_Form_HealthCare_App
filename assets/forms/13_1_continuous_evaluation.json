@@ -5,223 +5,147 @@
     {
       "section": "Student & Experience Details",
       "fields": [
-        { "key": "student_name", "label": "Name of Student", "type": "text", "required": true },
-        { "key": "student_id", "label": "Student ID No.", "type": "text", "required": true },
-        { "key": "area_of_experience", "label": "Area of Experience", "type": "text", "required": true },
-        { "key": "period_of_experience", "label": "Period of Experience", "type": "text", "hint": "e.g. 01/06/2024 to 15/06/2024", "required": true }
-      ]
-    },
-    {
-      "section": "Evaluation Criteria",
-      "description": "Scores: 4 = Very Good, 3 = Good, 2 = Satisfactory / Fair, 1 = Poor",
-      "fields": [
         {
-          "key": "personal_and_professional_qualities",
-          "label": "I. Personal and Professional Qualities",
-          "type": "object",
-          "required": true,
-          "properties": {
-            "leadership": {
-              "label": "a) Leadership",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "punctuality": {
-              "label": "b) Punctuality",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "grooming": {
-              "label": "c) Grooming",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "relationship_with_others": {
-              "label": "d) Relationship with Others",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "attitude_towards_suggestions": {
-              "label": "e) Attitude Towards Suggestions",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            }
-          }
+          "key": "student_name",
+          "label": "Name of Student",
+          "type": "text",
+          "required": true
         },
         {
-          "key": "assessment_in_home_and_clinic",
-          "label": "II. Assessment in Home and Clinic",
-          "type": "object",
-          "required": true,
-          "properties": {
-            "history_taking": {
-              "label": "a) History Taking",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "physical_assessment": {
-              "label": "b) Physical Assessment",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "assisting_guiding_investigation": {
-              "label": "c) Assisting & Guiding for Investigation",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "observation_of_signs_symptoms": {
-              "label": "d) Home / Clinic Observation of Signs & Symptoms",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "identification_of_needs_problems": {
-              "label": "e) Identification of Needs & Problems",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            }
-          }
+          "key": "student_id",
+          "label": "Student ID No.",
+          "type": "text",
+          "required": true
         },
         {
-          "key": "planning",
-          "label": "III. Planning",
-          "type": "object",
-          "required": true,
-          "properties": {
-            "selection_of_priority_needs": {
-              "label": "a) Selection of Priority Needs / Problems",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "setting_objectives": {
-              "label": "b) Setting Objectives",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "planning_appropriate_interventions": {
-              "label": "c) Planning Appropriate Interventions",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "resource_allocation": {
-              "label": "d) Resource Allocation",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            }
-          }
+          "key": "area_of_experience",
+          "label": "Area of Experience",
+          "type": "text",
+          "required": true
         },
         {
-          "key": "implementation",
-          "label": "IV. Implementation",
-          "type": "object",
-          "required": true,
-          "properties": {
-            "approach_to_family_greeting": {
-              "label": "a) Approach to Family & Manner of Greeting",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "explaining_purpose_of_visit": {
-              "label": "b) Explaining the Purpose of Visit to Family",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "providing_home_care": {
-              "label": "c) Providing Home Care",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "doing_simple_procedure": {
-              "label": "d) Doing Simple Procedure at Home / Clinic",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "assisting_in_clinical_services": {
-              "label": "e) Assisting in Clinical Services",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "giving_health_education": {
-              "label": "f) Giving Health Education in Home / Clinic",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "recording_and_reporting": {
-              "label": "g) Recording and Reporting",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            }
-          }
-        },
-        {
-          "key": "evaluation",
-          "label": "V. Evaluation",
-          "type": "object",
-          "required": true,
-          "properties": {
-            "health_teaching": {
-              "label": "a) Health Teaching",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "family_care": {
-              "label": "b) Family Care",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "self_assessment": {
-              "label": "c) Self-Assessment",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            },
-            "submitting_assignment_on_time": {
-              "label": "d) Submitting Assignment on Time",
-              "type": "dropdown",
-              "options": ["1 - Poor", "2 - Satisfactory / Fair", "3 - Good", "4 - Very Good"],
-              "max_marks": 4
-            }
-          }
-        },
-        {
-          "key": "total",
-          "label": "Total Marks",
-          "type": "number",
-          "max_marks": 100,
-          "required": false,
-          "hint": "Sum of all scored items (25 items × max 4 marks each = 100 marks)"
+          "key": "period_of_experience",
+          "label": "Period of Experience",
+          "type": "text",
+          "hint": "e.g. 01/06/2024 to 15/06/2024",
+          "required": true
         }
       ]
     },
     {
       "section": "Evaluation (For Evaluator Use Only)",
       "fields": [
-        { "key": "evaluator_name", "label": "Name of Evaluator", "type": "text", "required": false },
-        { "key": "evaluator_signature", "label": "Signature of Evaluator", "type": "text", "required": false },
-        { "key": "date_of_evaluation", "label": "Date of Evaluation", "type": "date", "required": false },
-        { "key": "remarks", "label": "Remarks", "type": "textarea", "required": false }
+        {
+          "key": "marks",
+          "label": "Evaluation Criteria",
+          "type": "object",
+          "properties": {
+            "leadership": {
+              "label": "I-a) Leadership",
+              "max_marks": 4
+            },
+            "punctuality": {
+              "label": "I-b) Punctuality",
+              "max_marks": 4
+            },
+            "grooming": {
+              "label": "I-c) Grooming",
+              "max_marks": 4
+            },
+            "relationship": {
+              "label": "I-d) Relationship with others",
+              "max_marks": 4
+            },
+            "attitude": {
+              "label": "I-e) Attitude towards suggestions",
+              "max_marks": 4
+            },
+            "history": {
+              "label": "II-a) History taking",
+              "max_marks": 4
+            },
+            "physical": {
+              "label": "II-b) Physical assessment",
+              "max_marks": 4
+            },
+            "investigation": {
+              "label": "II-c) Assisting investigation",
+              "max_marks": 4
+            },
+            "observation": {
+              "label": "II-d) Observation of signs",
+              "max_marks": 4
+            },
+            "needs": {
+              "label": "II-e) Identification of needs",
+              "max_marks": 4
+            },
+            "priority": {
+              "label": "III-a) Selection of priority",
+              "max_marks": 4
+            },
+            "objectives": {
+              "label": "III-b) Setting objectives",
+              "max_marks": 4
+            },
+            "interventions": {
+              "label": "III-c) Planning interventions",
+              "max_marks": 4
+            },
+            "allocation": {
+              "label": "III-d) Resource allocation",
+              "max_marks": 4
+            },
+            "approach": {
+              "label": "IV-a) Approach to family",
+              "max_marks": 4
+            },
+            "purpose": {
+              "label": "IV-b) Explaining purpose",
+              "max_marks": 4
+            },
+            "home_care": {
+              "label": "IV-c) Providing home care",
+              "max_marks": 4
+            },
+            "procedure": {
+              "label": "IV-d) Simple procedure at home",
+              "max_marks": 4
+            },
+            "clinical": {
+              "label": "IV-e) Assisting in clinical services",
+              "max_marks": 4
+            },
+            "education": {
+              "label": "IV-f) Health education",
+              "max_marks": 4
+            },
+            "recording": {
+              "label": "IV-g) Recording and reporting",
+              "max_marks": 4
+            },
+            "teaching": {
+              "label": "V-a) Health teaching",
+              "max_marks": 4
+            },
+            "care_eval": {
+              "label": "V-b) Family Care",
+              "max_marks": 4
+            },
+            "self": {
+              "label": "V-c) Self-assessment",
+              "max_marks": 4
+            },
+            "submission": {
+              "label": "V-d) Submitting assignment on time",
+              "max_marks": 4
+            },
+            "total": {
+              "label": "Total Marks",
+              "max_marks": 100
+            }
+          }
+        }
       ]
     }
   ]

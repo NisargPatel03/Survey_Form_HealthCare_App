@@ -180,41 +180,42 @@
           "key": "marks",
           "label": "Evaluation Criteria",
           "type": "object",
+          "required": false,
           "properties": {
-            "intro": {
-              "label": "1. Introduction & Relevance",
+            "introduction_relevance": {
+              "label": "Introduction & Relevance to Community Health Topic",
               "max_marks": 5
             },
-            "obj": {
-              "label": "2. Clarity of Objectives",
+            "clarity_of_objectives": {
+              "label": "Clarity of Objectives",
               "max_marks": 5
             },
-            "script": {
-              "label": "3. Script Summary & Theme",
+            "script_summary_theme": {
+              "label": "Script Summary & Theme of the Role Play",
               "max_marks": 5
             },
-            "execution": {
-              "label": "4. Role Play Execution",
+            "role_play_execution": {
+              "label": "Role Play Execution (Acting, Dialogue, Use of Props)",
               "max_marks": 10
             },
-            "participation": {
-              "label": "5. Participation & Distribution",
+            "participation_role_distribution": {
+              "label": "Participation & Role Distribution",
               "max_marks": 5
             },
-            "methodology": {
-              "label": "6. Methodology & Engagement",
+            "methodology_community_engagement": {
+              "label": "Methodology & Community Engagement",
               "max_marks": 5
             },
-            "audience": {
-              "label": "7. Audience Involvement",
+            "audience_involvement": {
+              "label": "Audience Involvement & Interaction",
               "max_marks": 5
             },
-            "feedback": {
-              "label": "8. Feedback Collection",
+            "feedback_collection": {
+              "label": "Feedback Collection & Integration",
               "max_marks": 5
             },
-            "conclusion": {
-              "label": "9. Conclusion & Impact",
+            "conclusion_community_impact": {
+              "label": "Conclusion & Community Impact",
               "max_marks": 5
             },
             "total": {

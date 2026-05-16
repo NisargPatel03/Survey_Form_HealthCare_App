@@ -305,44 +305,46 @@
       "section": "Evaluation (For Evaluator Use Only)",
       "fields": [
         {
-          "key": "evaluator_name",
-          "label": "Name of Evaluator",
-          "type": "text",
-          "required": false
-        },
-        {
-          "key": "evaluator_signature",
-          "label": "Signature of Evaluator",
-          "type": "text",
-          "required": false
-        },
-        {
-          "key": "date_of_evaluation",
-          "label": "Date of Evaluation",
-          "type": "date",
-          "required": false
-        },
-        {
-          "key": "remarks",
-          "label": "Remarks",
-          "type": "textarea",
-          "required": false
-        },
-        {
           "key": "marks",
-          "label": "Marks",
+          "label": "Evaluation Criteria",
           "type": "object",
-          "required": false,
           "properties": {
-            "community_profile":          { "label": "Community Profile",           "max_marks": 2 },
-            "introduction_and_objectives":{ "label": "Introduction & Objectives",   "max_marks": 2 },
-            "identification_of_needs":    { "label": "Identification of Needs/Problems", "max_marks": 4 },
-            "family_care_plan":           { "label": "Family Care Plan",            "max_marks": 10 },
-            "nutritional_assessment":     { "label": "Nutritional Assessment",      "max_marks": 2 },
-            "health_education":           { "label": "Health Education",            "max_marks": 5 },
-            "conclusion_and_summary":     { "label": "Conclusion and Summary",      "max_marks": 2 },
-            "bibliography":               { "label": "Bibliography",                "max_marks": 3 },
-            "total":                      { "label": "Total",                       "max_marks": 30 }
+            "community_profile": {
+              "label": "1. Community profile",
+              "max_marks": 2
+            },
+            "intro_obj": {
+              "label": "2. Introduction & Objectives",
+              "max_marks": 2
+            },
+            "id_needs": {
+              "label": "3. Identification of Needs/Problems",
+              "max_marks": 4
+            },
+            "care_plan": {
+              "label": "4. Family Care plan",
+              "max_marks": 10
+            },
+            "nutrition": {
+              "label": "5. Nutritional Assessment",
+              "max_marks": 2
+            },
+            "health_edu": {
+              "label": "6. Health Education",
+              "max_marks": 5
+            },
+            "conclusion": {
+              "label": "7. Conclusion and Summary",
+              "max_marks": 2
+            },
+            "biblio": {
+              "label": "8. Bibliography",
+              "max_marks": 3
+            },
+            "total": {
+              "label": "Total",
+              "max_marks": 30
+            }
           }
         }
       ]

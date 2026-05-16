@@ -338,43 +338,44 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Evaluation Criteria",
+          "label": "Marks",
           "type": "object",
+          "required": false,
           "properties": {
-            "intro": {
-              "label": "1. Introduction",
+            "introduction": {
+              "label": "Introduction (background, rationale, event details)",
               "max_marks": 5
             },
-            "assessment": {
-              "label": "2. School Assessment",
+            "school_assessment": {
+              "label": "School Assessment (environmental, hygiene, health infrastructure)",
               "max_marks": 5
             },
-            "planning": {
-              "label": "3. Planning and Preparation",
+            "planning_and_preparation": {
+              "label": "Planning and Preparation (planning steps, teamwork, resource readiness)",
               "max_marks": 5
             },
-            "execution": {
-              "label": "4. Execution Process",
+            "execution_process": {
+              "label": "Execution Process (logical flow, participation, real-time handling)",
               "max_marks": 10
             },
-            "role": {
-              "label": "5. Role of Nursing Students",
+            "role_of_nursing_students": {
+              "label": "Role of Nursing Students (clarity and extent of involvement and learning)",
               "max_marks": 5
             },
-            "screening": {
-              "label": "6. Health Screening Components",
+            "health_screening": {
+              "label": "Health Screening Components (appropriateness and completeness)",
               "max_marks": 5
             },
-            "data": {
-              "label": "7. Assessment Data Presentation",
+            "assessment_data": {
+              "label": "Assessment Data Presentation (table clarity, accuracy, interpretation)",
               "max_marks": 5
             },
-            "outcome": {
-              "label": "8. Outcome Reporting",
+            "outcome_reporting": {
+              "label": "Outcome Reporting (results, referrals, feedback, impact)",
               "max_marks": 5
             },
-            "conclusion": {
-              "label": "9. Conclusion and Summary",
+            "conclusion_and_summary": {
+              "label": "Conclusion and Summary (synthesis of findings and key takeaways)",
               "max_marks": 5
             },
             "total": {

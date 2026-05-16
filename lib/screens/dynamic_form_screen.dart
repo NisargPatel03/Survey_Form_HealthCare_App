@@ -33,6 +33,16 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
   List<dynamic> _sections = [];
   Map<String, dynamic> _formData = {};
   bool _hasUnsavedChanges = false;
+  
+  // Faculty features
+  List<Map<String, dynamic>> _faculties = [];
+  String? _selectedFacultyId;
+  String? _status;
+  bool _isReadOnly = false;
+  String? _facultyRemarks;
+  num? _marksObtained;
+  num? _maxMarks;
+  Map<String, dynamic>? _evaluationData;
 
   String get _draftKey => 'draft_${widget.semester}_${widget.studentId}_${widget.requirementSrNo}';
 
@@ -132,25 +142,41 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       final String jsonString = await rootBundle.loadString('assets/forms/$schemaFile');
       final Map<String, dynamic> schema = jsonDecode(jsonString);
       
+      // 2. Load existing submission from database
       final existingData = await _submissionService.getSubmission(widget.studentId, widget.courseName, widget.requirementSrNo);
-      Map<String, dynamic> initialData = existingData ?? {};
+      Map<String, dynamic> initialData = existingData != null ? Map<String, dynamic>.from(existingData['form_data']) : {};
 
-      // Auto-load draft if it exists
+      // Auto-load local draft if it's newer or if no database data exists
       final prefs = await SharedPreferences.getInstance();
       final draftString = prefs.getString(_draftKey);
       if (draftString != null) {
         try {
           final draftData = jsonDecode(draftString) as Map<String, dynamic>;
-          initialData = draftData;
-          _hasUnsavedChanges = true; // Mark as unsaved so warning shows
+          // Always load the local draft if it exists, so students see their latest unsaved edits
+          if (draftData.isNotEmpty) {
+            initialData = {...initialData, ...draftData};
+            _hasUnsavedChanges = true;
+          }
         } catch (_) {}
       }
+
+      // 3. Fetch faculty profiles
+      final faculties = await _submissionService.getFacultyProfiles();
 
       setState(() {
         _formTitle = schema['title'] ?? 'Form';
         _fields = schema['fields'] ?? [];
         _sections = schema['sections'] ?? [];
         _formData = initialData;
+        _faculties = faculties;
+        _status = existingData?['status'];
+        // Form is only locked if it's approved or rejected
+        _isReadOnly = (_status == 'approved' || _status == 'rejected');
+        _facultyRemarks = existingData?['faculty_remarks'];
+        _marksObtained = existingData?['marks_obtained'];
+        _maxMarks = existingData?['max_marks'];
+        _evaluationData = existingData?['evaluation_data'];
+        _selectedFacultyId = existingData?['assigned_faculty_id'];
         _isLoading = false;
       });
     } catch (e) {
@@ -168,11 +194,18 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
     setState(() => _isLoading = true);
     
     try {
+      if (_selectedFacultyId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a Faculty member for evaluation')));
+        setState(() => _isLoading = false);
+        return;
+      }
+
       await _submissionService.submitRequirement(
-        widget.studentId,
-        widget.courseName,
-        widget.requirementSrNo,
-        _formData,
+        studentId: widget.studentId,
+        courseName: widget.courseName,
+        requirementSrNo: widget.requirementSrNo,
+        formData: _formData,
+        assignedFacultyId: _selectedFacultyId!,
       );
       
       await _clearDraft();
@@ -204,6 +237,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
             labelText: label,
             border: const OutlineInputBorder(),
           ),
+          enabled: !_isReadOnly,
           maxLines: type == 'textarea' ? 4 : 1,
           keyboardType: type == 'number' ? TextInputType.number : TextInputType.text,
           validator: (value) {
@@ -242,7 +276,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
             }
             return null;
           },
-          onChanged: (val) {
+          onChanged: _isReadOnly ? null : (val) {
             setState(() {
               dataMap[key] = val;
             });
@@ -255,7 +289,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
         child: InkWell(
-          onTap: () async {
+          onTap: _isReadOnly ? null : () async {
             final picked = await showDatePicker(
               context: context,
               initialDate: DateTime.now(),
@@ -443,17 +477,122 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       }
     }
 
-    widgets.add(const SizedBox(height: 24));
-    widgets.add(
-      ElevatedButton(
-        onPressed: _submitForm,
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size.fromHeight(50),
-          textStyle: const TextStyle(fontSize: 18),
+    // Faculty Remarks for Resubmission
+    if (_status == 'resubmission_required' && _facultyRemarks != null) {
+      widgets.insert(0, Container(
+        margin: const EdgeInsets.only(bottom: 24),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.yellow.shade50,
+          border: Border.all(color: Colors.yellow.shade700),
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: const Text('Submit Requirement'),
-      ),
-    );
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.rotate_left, color: Colors.yellow.shade900),
+                const SizedBox(width: 8),
+                Text('Resubmission Required', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.yellow.shade900)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text('Faculty Remarks: $_facultyRemarks', style: TextStyle(color: Colors.yellow.shade900)),
+          ],
+        ),
+      ));
+    }
+
+    // Marks Display for Approved
+    if (_status == 'approved' && _marksObtained != null) {
+      widgets.add(const Divider(height: 48));
+      widgets.add(Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.green.shade50,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.green.shade200),
+        ),
+        child: Column(
+          children: [
+            const Text('EVALUATION RESULT', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2, color: Colors.green)),
+            const SizedBox(height: 16),
+            Text('$_marksObtained / $_maxMarks', style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.green)),
+            if (_facultyRemarks != null) ...[
+              const SizedBox(height: 12),
+              Text('Remarks: $_facultyRemarks', textAlign: TextAlign.center, style: const TextStyle(fontStyle: FontStyle.italic)),
+            ],
+            if (_evaluationData != null) ...[
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 8),
+              ..._evaluationData!.entries.map((e) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        e.key.replaceAll('_', ' ').toUpperCase(), 
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text('${e.value}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  ],
+                ),
+              )).toList(),
+            ]
+          ],
+        ),
+      ));
+    }
+
+    // Faculty Selection Dropdown
+    if (_status != 'approved') {
+      widgets.add(const SizedBox(height: 32));
+      widgets.add(const Text('Select Faculty for Evaluation', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)));
+      widgets.add(const SizedBox(height: 8));
+      widgets.add(
+        DropdownButtonFormField<String>(
+          value: _selectedFacultyId,
+          decoration: const InputDecoration(
+            hintText: 'Choose Evaluator',
+            border: OutlineInputBorder(),
+            filled: true,
+            fillColor: Colors.white,
+          ),
+          items: _faculties.map((f) => DropdownMenuItem(
+            value: f['id'].toString(),
+            child: Text(f['full_name']),
+          )).toList(),
+          onChanged: (val) => setState(() => _selectedFacultyId = val),
+          validator: (val) => val == null ? 'Please select a faculty member' : null,
+        )
+      );
+    }
+
+    widgets.add(const SizedBox(height: 24));
+    if (_status != 'approved') {
+      widgets.add(
+        ElevatedButton(
+          onPressed: _submitForm,
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            textStyle: const TextStyle(fontSize: 18),
+            backgroundColor: _status == 'resubmission_required' ? Colors.orange : null,
+          ),
+          child: Text(_status == 'resubmission_required' ? 'Resubmit Requirement' : 'Submit Requirement'),
+        ),
+      );
+    } else {
+      widgets.add(
+        const Center(child: Text('This requirement has been approved and cannot be edited.', style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic)))
+      );
+    }
 
     return widgets;
   }

@@ -265,43 +265,44 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Evaluation Criteria",
+          "label": "Marks",
           "type": "object",
+          "required": false,
           "properties": {
-            "intro": {
-              "label": "1. Introduction & Relevance",
+            "introduction_and_relevance": {
+              "label": "Introduction & Relevance to Community Health Nursing",
               "max_marks": 5
             },
-            "obj": {
-              "label": "2. Clarity of Objectives",
+            "clarity_of_objectives": {
+              "label": "Clarity of Objectives",
               "max_marks": 5
             },
-            "baseline": {
-              "label": "3. Client Baseline Data",
+            "client_baseline_data": {
+              "label": "Client Baseline Data (Demographics, Health History, Present Complaint)",
               "max_marks": 5
             },
-            "purpose": {
-              "label": "4. Purpose of the Procedure",
+            "purpose_of_procedure": {
+              "label": "Purpose of the Procedure",
               "max_marks": 5
             },
-            "articles": {
-              "label": "5. Articles Used with Their Purpose",
+            "articles_used": {
+              "label": "Articles Used with Their Purpose",
               "max_marks": 5
             },
-            "steps": {
-              "label": "6. Steps of Procedure with Rationale",
+            "steps_with_rationale": {
+              "label": "Steps of Procedure with Rationale",
               "max_marks": 10
             },
-            "recording": {
-              "label": "7. Recording and Reporting",
+            "recording_and_reporting": {
+              "label": "Recording and Reporting / Documentation",
               "max_marks": 5
             },
-            "resp": {
-              "label": "8. Nursing Responsibilities After",
+            "nursing_responsibilities": {
+              "label": "Nursing Responsibilities After Procedure",
               "max_marks": 5
             },
-            "biblio": {
-              "label": "9. References / Bibliography",
+            "references": {
+              "label": "References / Bibliography (APA/Vancouver style)",
               "max_marks": 5
             },
             "total": {

@@ -1,5 +1,5 @@
 {
-  "title": "Family Care Study",
+  "title": "Family Care Plan",
   "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Department of Community Health Nursing",
   "sections": [
     {
@@ -44,7 +44,7 @@
           "key": "introduction_self",
           "label": "Self Introduction",
           "type": "textarea",
-          "hint": "e.g. I am [Name] from Manikaka Topawala Institute of Nursing. For the purpose of completing my care plan assignment, I have selected this case...",
+          "hint": "Brief self-introduction mentioning institute and purpose of the care plan",
           "required": true
         },
         {
@@ -120,14 +120,12 @@
     },
     {
       "section": "IV. Family Care Plan Table",
-      "hint": "Fill one entry per nursing diagnosis. Up to 3 entries (matching the 3 care plan table pages in the PDF).",
+      "hint": "Fill one row per nursing diagnosis. Multiple entries can be added.",
       "fields": [
         {
           "key": "care_plan_entries",
           "label": "Care Plan Entries",
           "type": "array",
-          "minItems": 1,
-          "maxItems": 3,
           "required": true,
           "itemSchema": {
             "assessment": {
@@ -177,8 +175,6 @@
           "key": "nutritional_assessment",
           "label": "Nutritional Assessment",
           "type": "array",
-          "minItems": 7,
-          "maxItems": 7,
           "required": true,
           "itemSchema": {
             "meal_time": {
@@ -310,60 +306,45 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Evaluation Criteria",
+          "label": "Marks",
           "type": "object",
+          "required": false,
           "properties": {
-            "intro": {
-              "label": "1. Introduction",
-              "max_marks": 5
+            "community_profile": {
+              "label": "Community Profile",
+              "max_marks": 2
             },
-            "obj": {
-              "label": "2. Objectives",
-              "max_marks": 5
+            "introduction_and_objectives": {
+              "label": "Introduction & Objectives",
+              "max_marks": 2
             },
-            "roaster": {
-              "label": "3. Family Roaster /Composition",
+            "identification_of_needs": {
+              "label": "Identification of Needs/Problems",
+              "max_marks": 4
+            },
+            "family_care_plan": {
+              "label": "Family Care Plan",
               "max_marks": 10
             },
-            "exam": {
-              "label": "4. General Examination",
-              "max_marks": 15
+            "nutritional_assessment": {
+              "label": "Nutritional Assessment",
+              "max_marks": 2
             },
-            "disease": {
-              "label": "5. Disease Condition",
-              "max_marks": 10
-            },
-            "needs": {
-              "label": "6. Identification Of Needs/Problems",
+            "health_education": {
+              "label": "Health Education",
               "max_marks": 5
             },
-            "care_plan": {
-              "label": "7. Family Care plan",
-              "max_marks": 15
+            "conclusion_and_summary": {
+              "label": "Conclusion and Summary",
+              "max_marks": 2
             },
-            "nutrition": {
-              "label": "8. Nutritional Assessment",
-              "max_marks": 5
-            },
-            "health_edu": {
-              "label": "9. Health Education",
-              "max_marks": 10
-            },
-            "av_aids": {
-              "label": "10. A. V. Aids",
-              "max_marks": 10
-            },
-            "conclusion": {
-              "label": "11. Conclusion and Summary",
-              "max_marks": 5
-            },
-            "biblio": {
-              "label": "12. Bibliography",
-              "max_marks": 5
+            "bibliography": {
+              "label": "Bibliography",
+              "max_marks": 3
             },
             "total": {
               "label": "Total",
-              "max_marks": 100
+              "max_marks": 30
             }
           }
         }

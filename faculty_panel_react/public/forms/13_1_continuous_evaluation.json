@@ -1,0 +1,45 @@
+{
+  "title": "Continuous Evaluation of Performance in Community",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "sections": [
+    {
+      "section": "Student & Experience Details",
+      "fields": [
+        {
+          "key": "student_name",
+          "label": "Name of Student",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "student_id",
+          "label": "Student ID No.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "area_of_experience",
+          "label": "Area of Experience",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "period_of_experience",
+          "label": "Period of Experience",
+          "type": "text",
+          "hint": "e.g. 01/06/2024 to 15/06/2024",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation Criteria",
+      "description": "Scores: 4 = Very Good, 3 = Good, 2 = Satisfactory / Fair, 1 = Poor",
+      "fields": []
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": []
+    }
+  ]
+}

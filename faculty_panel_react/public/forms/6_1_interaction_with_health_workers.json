@@ -311,33 +311,34 @@
           "key": "marks",
           "label": "Evaluation Criteria",
           "type": "object",
+          "required": false,
           "properties": {
-            "details": {
-              "label": "1. Student Details & Objectives",
+            "student_details_and_objectives": {
+              "label": "Student Details & Objectives",
               "max_marks": 3
             },
-            "profile": {
-              "label": "2. Profile of Health Worker",
+            "profile_of_health_worker": {
+              "label": "Profile of Health Worker",
               "max_marks": 3
             },
-            "roles": {
-              "label": "3. Roles, Responsibilities & Services",
+            "roles_responsibilities_services": {
+              "label": "Roles, Responsibilities & Services",
               "max_marks": 6
             },
-            "programs": {
-              "label": "4. National Programs & Interaction",
+            "national_programs_community_interaction": {
+              "label": "National Programs & Community Interaction",
               "max_marks": 5
             },
-            "coordination": {
-              "label": "5. Coordination & Problem Solving",
+            "coordination_challenges_problem_solving": {
+              "label": "Coordination, Challenges & Problem Solving",
               "max_marks": 5
             },
-            "observation": {
-              "label": "6. Student Observation & Learning",
+            "student_observation_and_learning": {
+              "label": "Student Observation & Learning",
               "max_marks": 5
             },
-            "conclusion": {
-              "label": "7. Conclusion & Presentation",
+            "conclusion_and_presentation": {
+              "label": "Conclusion & Presentation",
               "max_marks": 3
             },
             "total": {

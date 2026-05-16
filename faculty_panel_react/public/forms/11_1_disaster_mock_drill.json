@@ -361,33 +361,34 @@
           "key": "marks",
           "label": "Evaluation Criteria",
           "type": "object",
+          "required": false,
           "properties": {
-            "details": {
-              "label": "1. Student Details & Objectives",
+            "student_details_and_objectives": {
+              "label": "Student Details & Objectives",
               "max_marks": 3
             },
-            "understanding": {
-              "label": "2. Understanding of Drill",
+            "understanding_of_drill": {
+              "label": "Understanding of Drill (Details + Preparation)",
               "max_marks": 4
             },
-            "description": {
-              "label": "3. Step-wise Description",
+            "stepwise_description_of_drill": {
+              "label": "Step-wise Description of Drill",
               "max_marks": 6
             },
-            "roles": {
-              "label": "4. Roles of Teams",
+            "roles_of_teams": {
+              "label": "Roles of Teams",
               "max_marks": 5
             },
-            "analysis": {
-              "label": "5. Observational Analysis",
+            "observational_analysis": {
+              "label": "Observational Analysis",
               "max_marks": 5
             },
-            "learning": {
-              "label": "6. Learning Experience",
+            "learning_experience": {
+              "label": "Learning Experience",
               "max_marks": 5
             },
             "conclusion": {
-              "label": "7. Conclusion",
+              "label": "Conclusion",
               "max_marks": 2
             },
             "total": {

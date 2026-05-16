@@ -172,31 +172,32 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Evaluation Criteria",
+          "label": "Marks",
           "type": "object",
+          "required": false,
           "properties": {
-            "intro": {
-              "label": "1. Introduction and Objectives",
+            "introduction_and_objectives": {
+              "label": "Introduction and Objectives",
               "max_marks": 5
             },
-            "layout": {
-              "label": "2. Physical Layout Description",
+            "physical_layout_description": {
+              "label": "Physical Layout Description",
               "max_marks": 5
             },
-            "staffing": {
-              "label": "3. Staffing Pattern",
+            "staffing_pattern": {
+              "label": "Staffing Pattern",
               "max_marks": 5
             },
-            "services": {
-              "label": "4. Services and Departmental Details",
+            "services_and_departmental_details": {
+              "label": "Services and Departmental Details",
               "max_marks": 5
             },
-            "records": {
-              "label": "5. Records and Reports Maintained",
+            "records_and_reports_maintained": {
+              "label": "Records and Reports Maintained",
               "max_marks": 5
             },
-            "conclusion": {
-              "label": "6. Conclusion and References",
+            "conclusion_and_references": {
+              "label": "Conclusion and References",
               "max_marks": 5
             },
             "total": {
