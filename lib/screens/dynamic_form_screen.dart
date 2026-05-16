@@ -71,6 +71,12 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         '10.2': 'procedure_format.json',
         '11.1': '11_1_individual_health_talk.json',
         '12.1': '12_1_role_play_report.json',
+        '13.1': '13_visit_report.json',
+        '13.2': '13_visit_report.json',
+        '13.3': '13_visit_report.json',
+        '13.4': '13_visit_report.json',
+        '13.5': '13_visit_report.json',
+        '13.6': '13_visit_report.json',
       };
       
       final schemaFile = lookup[widget.requirementSrNo];
@@ -449,8 +455,32 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       },
       '11.1': {'7 Individual Health Talk Format': 'assets/pdfs/individual_health_talk.pdf'},
       '12.1': {
-        '14 A Role Play Format': 'assets/pdfs/role_play_format.pdf',
-        '14 B Role Play Guidelines': 'assets/pdfs/role_play_guidelines.pdf'
+        '14 A Role Play Format': 'assets/pdfs/role_play_report_a.pdf',
+        '14 B Role Play Guidelines': 'assets/pdfs/role_play_report_b.pdf'
+      },
+      '13.1': {
+        '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf',
+        '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf'
+      },
+      '13.2': {
+        '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf',
+        '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf'
+      },
+      '13.3': {
+        '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf',
+        '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf'
+      },
+      '13.4': {
+        '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf',
+        '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf'
+      },
+      '13.5': {
+        '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf',
+        '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf'
+      },
+      '13.6': {
+        '16 A Visit Report Format': 'assets/pdfs/visit_report.pdf',
+        '16 B Visit Report Guidelines': 'assets/pdfs/visit_report_guidelines.pdf'
       },
     };
 
@@ -554,7 +584,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Text(
-                      'Form configuration not yet available for requirement ${widget.requirementSrNo}.\n\n(Configured: 1.1, 2.1, 3.1, 4.1, 4.2, 5.1, 6.1, 6.2, 6.3, 7.1, 8.1, 9.1, 10.1, 10.2, 11.1, 12.1)',
+                      'Form configuration not yet available for requirement ${widget.requirementSrNo}.\n\n(Configured: 1.1, 2.1, 3.1, 4.1, 4.2, 5.1, 6.1, 6.2, 6.3, 7.1, 8.1, 9.1, 10.1, 10.2, 11.1, 12.1, 13.1-13.6)',
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
