@@ -27,7 +27,7 @@ class CourseRequirementsData {
     CourseRequirement(srNo: '5.1', postingType: 'I. Rural posting', category: '5. Health education', name: 'Exhibition/Health Talk - Group', quantity: 1),
     CourseRequirement(srNo: '6.1', postingType: 'I. Rural posting', category: '6. Participation in outreach services in Rural Area', name: 'School Health Programme', quantity: 1),
     CourseRequirement(srNo: '6.2', postingType: 'I. Rural posting', category: '6. Participation in outreach services in Rural Area', name: 'Aanaganwadi Assessment Programme', quantity: 1),
-    CourseRequirement(srNo: '6.3', postingType: 'I. Rural posting', category: '6. Participation in outreach services in Rural Area', name: 'Community Health Survey Report', quantity: 1, isSurvey: true),
+    CourseRequirement(srNo: '6.3', postingType: 'I. Rural posting', category: '6. Participation in outreach services in Rural Area', name: 'Community Health Survey Report', quantity: 1),
     
     // II. Urban posting
     CourseRequirement(srNo: '7.1', postingType: 'II. Urban posting', category: '7. Orientation report', name: 'Urban Health Centre', quantity: 1),

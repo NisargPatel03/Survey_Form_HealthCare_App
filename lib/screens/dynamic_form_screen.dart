@@ -44,6 +44,10 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         '3.1': '3_1_care_study.json',
         '4.1': 'procedure_format.json',
         '4.2': 'procedure_format.json',
+        '5.1': '5_1_group_health_talk.json',
+        '6.1': '6_1_school_health_program.json',
+        '6.2': '6_2_anganwadi_assessment.json',
+        '6.3': '6_3_survey_report.json',
       };
       
       final schemaFile = lookup[widget.requirementSrNo];
@@ -372,6 +376,18 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         'Procedure Format': 'assets/pdfs/procedure_format.pdf',
         'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf'
       },
+      '5.1': {'Group Health Talk': 'assets/pdfs/group_health_talk.pdf'},
+      '6.1': {
+        '10 A School Health Program': 'assets/pdfs/school_health_program.pdf',
+        '10 B School Health Program Guidelines': 'assets/pdfs/school_health_program_guidelines.pdf',
+      },
+      '6.2': {
+        '11 A Anganwadi Assessment Report': 'assets/pdfs/anganwadi_assessment_report.pdf',
+        '11 B Anganwadi Assessment Guidelines': 'assets/pdfs/anganwadi_assessment_guidelines.pdf',
+      },
+      '6.3': {
+        '18 Survey Report (PDF version)': 'assets/pdfs/survey_report.pdf',
+      },
     };
 
     final options = pdfLookup[widget.requirementSrNo];
@@ -447,7 +463,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Text(
-                      'Form configuration not yet available for requirement ${widget.requirementSrNo}.\n\n(Only 1.1, 2.1, 3.1, 4.1, and 4.2 are currently configured in the Dynamic System.)',
+                      'Form configuration not yet available for requirement ${widget.requirementSrNo}.\n\n(Configured: 1.1, 2.1, 3.1, 4.1, 4.2, 5.1, 6.1, 6.2, 6.3)',
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),

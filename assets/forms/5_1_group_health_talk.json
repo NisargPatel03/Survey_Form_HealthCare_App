@@ -1,0 +1,305 @@
+{
+  "title": "Group Health Talk",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "sections": [
+    {
+      "section": "Student & Submission Information",
+      "fields": [
+        {
+          "key": "student_names",
+          "label": "Name of the Students",
+          "type": "array",
+          "itemLabel": "Student Name",
+          "minItems": 1,
+          "hint": "List all student names involved in the group health talk",
+          "required": true
+        },
+        {
+          "key": "student_id",
+          "label": "Student ID No.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "date_of_submission",
+          "label": "Date of Submission",
+          "type": "date",
+          "required": true
+        },
+        {
+          "key": "place_of_health_talk",
+          "label": "Place of Group Health Talk",
+          "type": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "I. Introduction & Session Details",
+      "fields": [
+        {
+          "key": "group_name",
+          "label": "Group Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "topic",
+          "label": "Topic",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "date",
+          "label": "Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "key": "time",
+          "label": "Time",
+          "type": "time",
+          "required": true
+        },
+        {
+          "key": "venue",
+          "label": "Venue",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "group_to_be_taught",
+          "label": "Group to be Taught",
+          "type": "text",
+          "hint": "e.g. Pregnant women, School children, Farmers, Elderly group",
+          "required": true
+        },
+        {
+          "key": "av_aids",
+          "label": "A.V. Aids",
+          "type": "text",
+          "hint": "e.g. Flashcards, Charts, Posters, PowerPoint, Pamphlets",
+          "required": true
+        },
+        {
+          "key": "method_of_teaching",
+          "label": "Method of Teaching",
+          "type": "text",
+          "hint": "e.g. Lecture, Discussion, Demonstration, Question & Answer",
+          "required": true
+        },
+        {
+          "key": "language_of_health_talk",
+          "label": "Language of Health Talk",
+          "type": "text",
+          "hint": "e.g. Gujarati, Hindi, English",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "II. Objectives",
+      "fields": [
+        {
+          "key": "general_objective",
+          "label": "General Objective",
+          "type": "textarea",
+          "hint": "One broad overarching objective of the health talk",
+          "required": true
+        },
+        {
+          "key": "specific_objectives",
+          "label": "Specific Objectives",
+          "type": "array",
+          "itemLabel": "Objective",
+          "minItems": 1,
+          "maxItems": 5,
+          "hint": "List up to 5 specific, measurable objectives",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "III. Health Talk Plan",
+      "hint": "Each row corresponds to one segment of the health talk session. Add as many rows as needed.",
+      "fields": [
+        {
+          "key": "health_talk_plan",
+          "label": "Health Talk Plan",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "time": {
+              "label": "Time (mins)",
+              "type": "text",
+              "hint": "e.g. 5 mins, 10:00–10:10 AM",
+              "required": true
+            },
+            "specific_objective": {
+              "label": "Specific Objective",
+              "type": "textarea",
+              "required": true
+            },
+            "subject_matter_content": {
+              "label": "Subject Matter / Content",
+              "type": "textarea",
+              "required": true
+            },
+            "teaching_learning_activities": {
+              "label": "Teaching / Learning Activities",
+              "type": "textarea",
+              "hint": "e.g. Lecture, Group discussion, Demonstration, Q&A",
+              "required": true
+            },
+            "av_aids": {
+              "label": "AV Aids",
+              "type": "text",
+              "hint": "e.g. Chart, Poster, Flashcard, PPT slide",
+              "required": false
+            },
+            "evaluation": {
+              "label": "Evaluation",
+              "type": "textarea",
+              "hint": "How will learning be assessed for this segment?",
+              "required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "IV. Summary & Conclusion",
+      "fields": [
+        {
+          "key": "summary",
+          "label": "Summary",
+          "type": "textarea",
+          "hint": "Briefly summarize the key points covered during the health talk",
+          "required": true
+        },
+        {
+          "key": "conclusion",
+          "label": "Conclusion",
+          "type": "textarea",
+          "hint": "Describe the outcomes, participant response, and closing remarks",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "V. Bibliography",
+      "fields": [
+        {
+          "key": "bibliography",
+          "label": "Bibliography",
+          "type": "array",
+          "itemLabel": "Reference",
+          "minItems": 1,
+          "hint": "Use APA or Vancouver citation style",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "hint": "Each item is scored on a scale of 1–5",
+      "fields": [
+        {
+          "key": "evaluator_name",
+          "label": "Name of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "evaluator_signature",
+          "label": "Signature of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "date_of_evaluation",
+          "label": "Date of Evaluation",
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "remarks",
+          "label": "Remarks",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "marks",
+          "label": "Evaluation Marks (Scale: 1–5 per item)",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "interpersonal_relationship": {
+              "label": "Interpersonal Relationship",
+              "max_marks": 10,
+              "items": {
+                "utilize_proper_approach":          { "label": "Utilize proper approach",                "max_marks": 5 },
+                "develop_and_maintain_rapport":     { "label": "Develop and maintain good rapport",      "max_marks": 5 }
+              }
+            },
+            "assessment": {
+              "label": "Assessment",
+              "max_marks": 25,
+              "items": {
+                "gathering_accurate_data":          { "label": "Gathering accurate and relevant data",                        "max_marks": 5 },
+                "clinical_assessments":             { "label": "Conduct clinical assessments and physical evaluations",        "max_marks": 5 },
+                "determine_knowledge_background":   { "label": "Determine participants' knowledge and educational background", "max_marks": 5 },
+                "evaluate_health_issues":           { "label": "Evaluate the health issues affecting the community",          "max_marks": 5 },
+                "develop_health_diagnosis":         { "label": "Develop a health diagnosis based on community data",          "max_marks": 5 },
+                "record_and_prioritize":            { "label": "Record and prioritize key issues",                            "max_marks": 5 }
+              }
+            },
+            "planning_and_management": {
+              "label": "Planning and Management",
+              "max_marks": 15,
+              "items": {
+                "selection_and_seating":            { "label": "Selection of area, appropriate seating arrangements, AV aids", "max_marks": 5 },
+                "av_aids_quality":                  { "label": "AV aids: adequate, appropriate size, clear and self-explanatory","max_marks": 5 },
+                "language_simplicity":              { "label": "Language simple, local and easily understandable",             "max_marks": 5 }
+              }
+            },
+            "implementation_and_organization": {
+              "label": "Implementation and Organization",
+              "max_marks": 15,
+              "items": {
+                "introduction_and_communication":   { "label": "Appropriate intro of self/topic, audible voice, good communication and leadership", "max_marks": 5 },
+                "learner_engagement":               { "label": "Identifies learner level, motivates audience, clears doubts, holds attention",      "max_marks": 5 },
+                "time_and_content_management":      { "label": "Repetition of key points, consistency, time management, effective discussion, attractive conclusion", "max_marks": 5 }
+              }
+            },
+            "feedback": {
+              "label": "Feedback",
+              "max_marks": 5,
+              "items": {
+                "participant_involvement":          { "label": "Individual response, questions generated, active involvement, sharing of expressions", "max_marks": 5 }
+              }
+            },
+            "evaluation": {
+              "label": "Evaluation",
+              "max_marks": 25,
+              "items": {
+                "comparing_participant_response":   { "label": "Comparing participants' response",     "max_marks": 5 },
+                "fulfillment_of_objectives":        { "label": "Fulfillment of desired objectives",   "max_marks": 5 },
+                "summary":                          { "label": "Summary",                             "max_marks": 5 },
+                "conclusion":                       { "label": "Conclusion",                          "max_marks": 5 },
+                "bibliography":                     { "label": "Bibliography",                        "max_marks": 5 }
+              }
+            },
+            "total":                                { "label": "Total", "max_marks": 100 }
+          }
+        }
+      ]
+    }
+  ]
+}

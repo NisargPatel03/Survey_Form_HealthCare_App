@@ -1,0 +1,595 @@
+{
+  "title": "Survey Report",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "sections": [
+    {
+      "section": "Student & Submission Information",
+      "fields": [
+        {
+          "key": "student_name",
+          "label": "Name of Student",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "student_id",
+          "label": "Student ID No.",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "village_name",
+          "label": "Name of Village",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "date_of_submission",
+          "label": "Date of Submission",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "1. Introduction",
+      "fields": [
+        {
+          "key": "introduction",
+          "label": "1.1 Introduction",
+          "type": "textarea",
+          "hint": "Provide context and background of the survey — why it was conducted, where, and by whom",
+          "required": true
+        },
+        {
+          "key": "objectives",
+          "label": "1.2 Objectives",
+          "type": "array",
+          "itemLabel": "Objective",
+          "minItems": 1,
+          "hint": "List the objectives of the survey",
+          "required": true
+        },
+        {
+          "key": "learning_outcome",
+          "label": "1.3 Learning Outcome",
+          "type": "textarea",
+          "hint": "Describe the expected or achieved learning outcomes from conducting this survey",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "2. Brief Introduction of Village",
+      "fields": [
+        {
+          "key": "village_introduction",
+          "label": "Village Introduction",
+          "type": "textarea",
+          "hint": "Provide a general overview of the village — history, geography, location, and community profile",
+          "required": true
+        },
+        {
+          "key": "agriculture",
+          "label": "2.1 Agriculture",
+          "type": "textarea",
+          "hint": "Describe the agricultural practices, major crops, and dependence on farming in the village",
+          "required": true
+        },
+        {
+          "key": "transportation",
+          "label": "2.2 Transportation",
+          "type": "textarea",
+          "hint": "Describe roads, transport modes, connectivity to nearby towns/cities",
+          "required": true
+        },
+        {
+          "key": "basic_statistics",
+          "label": "2.3 Basic Statistics",
+          "type": "textarea",
+          "hint": "Key village statistics — total households, population, land area, etc.",
+          "required": true
+        },
+        {
+          "key": "basic_means_of_employment",
+          "label": "2.4 Basic Means of Employment",
+          "type": "textarea",
+          "hint": "Describe the major sources of livelihood and employment in the village",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "3. Social Environment",
+      "fields": [
+        {
+          "key": "legislative_setup",
+          "label": "3.1 Legislative Setup",
+          "type": "textarea",
+          "hint": "Describe the administrative and governance structure — Gram Panchayat, ward divisions, local bodies",
+          "required": true
+        },
+        {
+          "key": "village_panchayat_and_organisation",
+          "label": "3.2 Village Panchayat & Organisation",
+          "type": "textarea",
+          "hint": "Describe the Panchayat structure, elected members, and key community organizations",
+          "required": true
+        },
+        {
+          "key": "landmarks",
+          "label": "3.3 Landmarks",
+          "type": "textarea",
+          "hint": "List and describe key community landmarks — school, temple, health centre, market, etc.",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "4. Demographic Characteristics",
+      "fields": [
+        {
+          "key": "total_population",
+          "label": "Total Population (N)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "age_wise_distribution",
+          "label": "Table 1: Age Wise Distribution",
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "Age Category",
+              "type": "dropdown",
+              "options": [
+                "Under 5 age",
+                "School children (5–12 yrs)",
+                "Teenagers (12–19 yrs)",
+                "Early Adolescence (19–25 yrs)",
+                "Middle Adolescence (25–40 yrs)",
+                "Late Adolescence (40–60 yrs)",
+                "Old age (>60 yrs)"
+              ],
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "age_wise_description",
+          "label": "Table 1 Description",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "gender_wise_distribution",
+          "label": "Table 2: Gender Wise Distribution",
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "Gender",
+              "type": "dropdown",
+              "options": ["Male", "Female"],
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "gender_wise_description",
+          "label": "Table 2 Description",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "religion_wise_distribution",
+          "label": "Table 3: Religion Wise Distribution",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "Religion",
+              "type": "text",
+              "hint": "e.g. Hindu, Muslim, Christian, Jain, Other",
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "religion_wise_description",
+          "label": "Table 3 Description",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "education_wise_distribution",
+          "label": "Table 4: Education Wise Distribution",
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "Education Level",
+              "type": "dropdown",
+              "options": [
+                "Illiterate",
+                "Primary",
+                "Secondary",
+                "Higher Secondary",
+                "Graduate and above"
+              ],
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "education_wise_description",
+          "label": "Table 4 Description",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "family_type_distribution",
+          "label": "Table 5: Type of Family Wise Distribution",
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "Family Type",
+              "type": "dropdown",
+              "options": ["Nuclear", "Single", "Joint"],
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "family_type_description",
+          "label": "Table 5 Description",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "occupation_wise_distribution",
+          "label": "Table 6: Occupation Wise Distribution",
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "Occupation",
+              "type": "dropdown",
+              "options": [
+                "Daily Wages",
+                "Farmer",
+                "Business",
+                "Self Employed",
+                "Government Job"
+              ],
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "occupation_wise_description",
+          "label": "Table 6 Description",
+          "type": "textarea",
+          "required": false
+        }
+      ]
+    },
+    {
+      "section": "5. Environmental Characteristics",
+      "fields": [
+        {
+          "key": "house_type_distribution",
+          "label": "Table 1: House Wise Distribution",
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "House Type",
+              "type": "dropdown",
+              "options": ["Pucca", "Semi-Pucca", "Kutcha"],
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "house_type_description",
+          "label": "Table 1 Description",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "drainage_distribution",
+          "label": "Table 2: Drainage Wise Distribution",
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "Drainage",
+              "type": "dropdown",
+              "options": ["Adequate", "Inadequate"],
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "drainage_description",
+          "label": "Table 2 Description",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "waste_disposal_distribution",
+          "label": "Table 3: Disposal of Waste",
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "required": true,
+          "itemSchema": {
+            "category": {
+              "label": "Disposal Method",
+              "type": "dropdown",
+              "options": ["Composting", "Burning", "Dumping"],
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency (f)",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "waste_disposal_description",
+          "label": "Table 3 Description",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "vital_statistics",
+          "label": "Other Vital Statistics",
+          "type": "object",
+          "required": true,
+          "properties": {
+            "tubectomy":                    { "label": "Tubectomy",                        "type": "number" },
+            "vasectomy":                    { "label": "Vasectomy",                        "type": "number" },
+            "temporary_contraceptives":     { "label": "Temporary Contraceptives",         "type": "number" },
+            "infertility":                  { "label": "Infertility",                      "type": "number" },
+            "births_last_one_year":         { "label": "Number of Births in Last One Year","type": "number" },
+            "deaths_last_one_year":         { "label": "Number of Deaths in Last One Year","type": "number" },
+            "antenatal_mothers":            { "label": "Antenatal Mothers",                "type": "number" },
+            "postnatal_mothers":            { "label": "Postnatal Mothers",                "type": "number" },
+            "eligible_couples":             { "label": "Eligible Couples",                 "type": "number" }
+          }
+        }
+      ]
+    },
+    {
+      "section": "6. Community Diagnosis",
+      "fields": [
+        {
+          "key": "community_diagnosis",
+          "label": "Community Diagnosis: Health Problems Identified",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "hint": "List identified health problems with frequency and percentage",
+          "required": true,
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "health_problem": {
+              "label": "Health Problem",
+              "type": "text",
+              "required": true
+            },
+            "frequency": {
+              "label": "Frequency",
+              "type": "number",
+              "required": true
+            },
+            "percentage": {
+              "label": "Percentage (%)",
+              "type": "number",
+              "required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "7. Health Knowledge, Beliefs and Practices",
+      "fields": [
+        {
+          "key": "about_health_and_disease",
+          "label": "About Health and Disease",
+          "type": "textarea",
+          "hint": "Describe the community's understanding and awareness about health and disease",
+          "required": true
+        },
+        {
+          "key": "outlook",
+          "label": "Outlook",
+          "type": "textarea",
+          "hint": "Describe general attitudes, perceptions, and outlook of the community towards health",
+          "required": true
+        },
+        {
+          "key": "existing_health_practices",
+          "label": "Existing Health Practices",
+          "type": "textarea",
+          "hint": "Describe current health practices — both positive and negative — observed in the community",
+          "required": true
+        },
+        {
+          "key": "attitude_towards_health_agencies",
+          "label": "Attitude Towards Health Agencies",
+          "type": "textarea",
+          "hint": "Describe the community's attitude toward PHC, ANM, ASHA, hospitals, and other health services",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "8. Conclusion",
+      "fields": [
+        {
+          "key": "conclusion",
+          "label": "Conclusion",
+          "type": "textarea",
+          "hint": "Summarize key findings from the survey and provide reflective insights and recommendations",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        {
+          "key": "evaluator_name",
+          "label": "Name of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "evaluator_signature",
+          "label": "Signature of Evaluator",
+          "type": "text",
+          "required": false
+        },
+        {
+          "key": "date_of_evaluation",
+          "label": "Date of Evaluation",
+          "type": "date",
+          "required": false
+        },
+        {
+          "key": "remarks",
+          "label": "Remarks",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "key": "marks",
+          "label": "Marks",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "introduction_objectives_learning":   { "label": "Clarity of Introduction, Stated Objectives, and Learning Outcomes",          "max_marks": 5  },
+            "village_overview":                   { "label": "Overview and General Profile of the Village",                                "max_marks": 5  },
+            "social_environment_landmarks":       { "label": "Description of Social Environment and Key Community Landmarks",              "max_marks": 10 },
+            "demographic_environmental":          { "label": "Analysis of Demographic and Environmental Characteristics",                  "max_marks": 10 },
+            "community_diagnosis":                { "label": "Community Diagnosis: Identification of Health Problems and Needs",           "max_marks": 10 },
+            "health_knowledge_beliefs":           { "label": "Assessment of Health Knowledge, Beliefs, and Practices",                    "max_marks": 5  },
+            "conclusion":                         { "label": "Conclusion: Summary of Findings and Reflective Insights",                   "max_marks": 5  },
+            "total":                              { "label": "Total",                                                                      "max_marks": 50 }
+          }
+        }
+      ]
+    }
+  ]
+}
