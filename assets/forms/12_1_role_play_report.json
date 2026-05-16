@@ -1,0 +1,184 @@
+{
+  "title": "Role Play Report",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "sections": [
+    {
+      "section": "Student & Submission Information",
+      "fields": [
+        { "key": "student_name", "label": "Name of Student", "type": "text", "required": true },
+        { "key": "student_id", "label": "Student ID No.", "type": "text", "required": true },
+        { "key": "date_of_submission", "label": "Date of Submission", "type": "date", "required": true },
+        { "key": "topic", "label": "Topic", "type": "text", "required": true }
+      ]
+    },
+    {
+      "section": "1. Introduction",
+      "fields": [
+        {
+          "key": "introduction",
+          "label": "Introduction",
+          "type": "textarea",
+          "hint": "Provide background and context of the role play — why it was conducted, the community health issue it addresses, and its relevance",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "2. Objectives of the Role Play",
+      "fields": [
+        {
+          "key": "general_objective",
+          "label": "General Objective",
+          "type": "textarea",
+          "hint": "State the broad overall goal of the role play",
+          "required": true
+        },
+        {
+          "key": "specific_objectives",
+          "label": "Specific Objectives",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "itemLabel": "Objective",
+          "hint": "List the specific, measurable objectives of the role play",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "3. Script Summary / Theme of the Role Play",
+      "fields": [
+        {
+          "key": "script_summary",
+          "label": "Script Summary / Theme",
+          "type": "textarea",
+          "hint": "Summarize the script — describe the theme, storyline, characters, and key messages conveyed through the role play",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "4. Role Play Execution",
+      "fields": [
+        {
+          "key": "role_distribution",
+          "label": "Role Distribution & Participation",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "hint": "List each participant and the role they played",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "participant_name": {
+              "label": "Name of Participant",
+              "type": "text",
+              "required": true
+            },
+            "role_played": {
+              "label": "Role Played",
+              "type": "text",
+              "required": true
+            }
+          }
+        },
+        {
+          "key": "props_used",
+          "label": "Props / AV Aids Used",
+          "type": "array",
+          "minItems": 1,
+          "itemLabel": "Prop / Aid",
+          "hint": "List the props, costumes, or AV aids used during the role play",
+          "required": false
+        },
+        {
+          "key": "execution_description",
+          "label": "Execution Description",
+          "type": "textarea",
+          "hint": "Describe how the role play was performed — acting quality, dialogue delivery, use of props, and overall flow",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "5. Methodology / Approach",
+      "fields": [
+        {
+          "key": "methodology",
+          "label": "Methodology / Approach",
+          "type": "textarea",
+          "hint": "Describe the methodology used — how the role play was planned, rehearsed, and delivered. Include community engagement strategies and audience interaction methods",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "6. Feedback Collection and Integration",
+      "fields": [
+        {
+          "key": "feedback_method",
+          "label": "Feedback Collection Method",
+          "type": "textarea",
+          "hint": "Describe how feedback was collected from the audience — verbal, written, Q&A, etc.",
+          "required": true
+        },
+        {
+          "key": "feedback_received",
+          "label": "Feedback Received",
+          "type": "textarea",
+          "hint": "Summarize the key feedback points received from the audience or community members",
+          "required": true
+        },
+        {
+          "key": "feedback_integration",
+          "label": "Integration of Feedback",
+          "type": "textarea",
+          "hint": "Describe how the received feedback was integrated or how it will improve future role plays",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "7. Outcome / Conclusion",
+      "fields": [
+        {
+          "key": "outcome",
+          "label": "Outcome / Conclusion",
+          "type": "textarea",
+          "hint": "Summarize the key outcomes of the role play — community impact, awareness created, learning achieved, and overall effectiveness",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        { "key": "evaluator_name", "label": "Name of Evaluator", "type": "text", "required": false },
+        { "key": "evaluator_signature", "label": "Signature of Evaluator", "type": "text", "required": false },
+        { "key": "date_of_evaluation", "label": "Date of Evaluation", "type": "date", "required": false },
+        { "key": "remarks", "label": "Remarks", "type": "textarea", "required": false },
+        {
+          "key": "marks",
+          "label": "Evaluation Criteria",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "introduction_relevance":       { "label": "Introduction & Relevance to Community Health Topic",  "max_marks": 5  },
+            "clarity_of_objectives":        { "label": "Clarity of Objectives",                              "max_marks": 5  },
+            "script_summary_theme":         { "label": "Script Summary & Theme of the Role Play",            "max_marks": 5  },
+            "role_play_execution":          { "label": "Role Play Execution (Acting, Dialogue, Use of Props)","max_marks": 10 },
+            "participation_role_distribution": { "label": "Participation & Role Distribution",               "max_marks": 5  },
+            "methodology_community_engagement": { "label": "Methodology & Community Engagement",             "max_marks": 5  },
+            "audience_involvement":         { "label": "Audience Involvement & Interaction",                 "max_marks": 5  },
+            "feedback_collection":          { "label": "Feedback Collection & Integration",                  "max_marks": 5  },
+            "conclusion_community_impact":  { "label": "Conclusion & Community Impact",                      "max_marks": 5  },
+            "total":                        { "label": "Total",                                              "max_marks": 50 }
+          }
+        }
+      ]
+    }
+  ]
+}

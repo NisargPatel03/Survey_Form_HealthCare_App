@@ -1,0 +1,162 @@
+{
+  "title": "Individual Health Talk",
+  "institution": "Manikaka Topawala Institute of Nursing, CHARUSAT – Community Health Nursing",
+  "sections": [
+    {
+      "section": "Introduction",
+      "fields": [
+        { "key": "student_name", "label": "Name of Student", "type": "text", "required": true },
+        { "key": "topic", "label": "Topic", "type": "text", "required": true },
+        { "key": "date", "label": "Date", "type": "date", "required": true },
+        { "key": "time", "label": "Time", "type": "text", "required": true },
+        { "key": "venue", "label": "Venue", "type": "text", "required": true },
+        { "key": "group_to_be_taught", "label": "Group to be Taught", "type": "text", "required": true },
+        { "key": "av_aids", "label": "A.V. Aids", "type": "text", "required": true },
+        { "key": "method_of_teaching", "label": "Method of Teaching", "type": "text", "required": true },
+        { "key": "language_of_health_talk", "label": "Language of Health Talk", "type": "text", "required": true }
+      ]
+    },
+    {
+      "section": "Objectives",
+      "fields": [
+        {
+          "key": "general_objective",
+          "label": "General Objective",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "key": "specific_objectives",
+          "label": "Specific Objectives",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "itemLabel": "Objective",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Health Talk Plan",
+      "fields": [
+        {
+          "key": "health_talk_plan",
+          "label": "Health Talk Plan",
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "time": {
+              "label": "Time",
+              "type": "text",
+              "hint": "e.g. 5 min, 10 min",
+              "required": true
+            },
+            "specific_objectives": {
+              "label": "Specific Objectives",
+              "type": "textarea",
+              "required": true
+            },
+            "subject_matter_content": {
+              "label": "Subject Matter / Content",
+              "type": "textarea",
+              "required": true
+            },
+            "teaching_learning_activities": {
+              "label": "Teaching / Learning Activities",
+              "type": "textarea",
+              "required": true
+            },
+            "av_aids": {
+              "label": "AV Aids",
+              "type": "text",
+              "required": false
+            },
+            "evaluation": {
+              "label": "Evaluation",
+              "type": "textarea",
+              "required": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section": "Summary & Conclusion",
+      "fields": [
+        {
+          "key": "summary",
+          "label": "Summary",
+          "type": "textarea",
+          "hint": "Provide a brief summary of the health talk delivered",
+          "required": true
+        },
+        {
+          "key": "conclusion",
+          "label": "Conclusion",
+          "type": "textarea",
+          "hint": "Provide concluding remarks and key takeaways",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Bibliography",
+      "fields": [
+        {
+          "key": "bibliography",
+          "label": "Bibliography",
+          "type": "array",
+          "minItems": 1,
+          "itemLabel": "Reference",
+          "hint": "List all references used in the health talk",
+          "required": true
+        }
+      ]
+    },
+    {
+      "section": "Evaluation (For Evaluator Use Only)",
+      "fields": [
+        { "key": "evaluator_name", "label": "Name of Evaluator", "type": "text", "required": false },
+        { "key": "evaluator_signature", "label": "Signature of Evaluator", "type": "text", "required": false },
+        { "key": "date_of_evaluation", "label": "Date of Evaluation", "type": "date", "required": false },
+        { "key": "remarks", "label": "Remarks", "type": "textarea", "required": false },
+        {
+          "key": "marks",
+          "label": "Evaluation Criteria",
+          "type": "object",
+          "required": false,
+          "properties": {
+            "formulation_of_attainable_objectives": { "label": "Formulation of Attainable Objectives", "max_marks": 5 },
+            "adequacy_of_content":                  { "label": "Adequacy of Content",                  "max_marks": 5 },
+            "organization_of_subject_matter":       { "label": "Organization of Subject Matter",       "max_marks": 5 },
+            "current_knowledge":                    { "label": "Current Knowledge Related to Subject Matter", "max_marks": 5 },
+            "suitable_av_aids":                     { "label": "Suitable A.V. Aids",                   "max_marks": 5 },
+            "presentation_interesting":             { "label": "Presentation: Interesting",            "max_marks": 5 },
+            "presentation_clear_audible":           { "label": "Presentation: Clear & Audible",        "max_marks": 5 },
+            "adequate_explanation":                 { "label": "Adequate Explanation",                 "max_marks": 5 },
+            "effective_use_of_av_aids":             { "label": "Effective Use of A.V. Aids",           "max_marks": 5 },
+            "group_involvement":                    { "label": "Group Involvement",                    "max_marks": 5 },
+            "time_limit":                           { "label": "Time Limit",                           "max_marks": 5 },
+            "self_confidence":                      { "label": "Personal Qualities: Self Confidence",  "max_marks": 5 },
+            "personal_appearance":                  { "label": "Personal Qualities: Personal Appearance", "max_marks": 5 },
+            "approachable":                         { "label": "Personal Qualities: Approachable",     "max_marks": 5 },
+            "language":                             { "label": "Personal Qualities: Language",         "max_marks": 5 },
+            "mannerism":                            { "label": "Personal Qualities: Mannerism",        "max_marks": 5 },
+            "self_awareness":                       { "label": "Personal Qualities: Self-Awareness of Strong & Weak Points", "max_marks": 5 },
+            "recapitulation":                       { "label": "Feedback: Recapitulation",             "max_marks": 5 },
+            "effectiveness":                        { "label": "Feedback: Effectiveness",              "max_marks": 5 },
+            "clients_response":                     { "label": "Feedback: Client's Response",          "max_marks": 5 },
+            "reference_bibliography":               { "label": "Reference / Bibliography",             "max_marks": 5 },
+            "total":                                { "label": "Total",                                "max_marks": 100 }
+          }
+        }
+      ]
+    }
+  ]
+}

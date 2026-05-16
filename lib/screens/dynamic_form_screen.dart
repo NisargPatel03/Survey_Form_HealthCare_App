@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/submission_service.dart';
 import 'pdf_viewer_screen.dart';
 
@@ -29,6 +30,21 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
   List<dynamic> _fields = [];
   List<dynamic> _sections = [];
   Map<String, dynamic> _formData = {};
+  bool _hasUnsavedChanges = false;
+
+  String get _draftKey => 'draft_${widget.studentId}_${widget.requirementSrNo}';
+
+  Future<void> _saveDraft() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_draftKey, jsonEncode(_formData));
+    _hasUnsavedChanges = true;
+  }
+
+  Future<void> _clearDraft() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_draftKey);
+    _hasUnsavedChanges = false;
+  }
 
   @override
   void initState() {
@@ -48,6 +64,13 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         '6.1': '6_1_school_health_program.json',
         '6.2': '6_2_anganwadi_assessment.json',
         '6.3': '6_3_survey_report.json',
+        '7.1': '1_1_orientation_report.json',
+        '8.1': '2_1_care_plan.json',
+        '9.1': '3_1_care_study.json',
+        '10.1': 'procedure_format.json',
+        '10.2': 'procedure_format.json',
+        '11.1': '11_1_individual_health_talk.json',
+        '12.1': '12_1_role_play_report.json',
       };
       
       final schemaFile = lookup[widget.requirementSrNo];
@@ -63,12 +86,24 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       final Map<String, dynamic> schema = jsonDecode(jsonString);
       
       final existingData = await _submissionService.getSubmission(widget.studentId, widget.requirementSrNo);
+      Map<String, dynamic> initialData = existingData ?? {};
+
+      // Auto-load draft if it exists
+      final prefs = await SharedPreferences.getInstance();
+      final draftString = prefs.getString(_draftKey);
+      if (draftString != null) {
+        try {
+          final draftData = jsonDecode(draftString) as Map<String, dynamic>;
+          initialData = draftData;
+          _hasUnsavedChanges = true; // Mark as unsaved so warning shows
+        } catch (_) {}
+      }
 
       setState(() {
         _formTitle = schema['title'] ?? 'Form';
         _fields = schema['fields'] ?? [];
         _sections = schema['sections'] ?? [];
-        _formData = existingData ?? {};
+        _formData = initialData;
         _isLoading = false;
       });
     } catch (e) {
@@ -93,6 +128,8 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         _formData,
       );
       
+      await _clearDraft();
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Form Submitted Successfully!')));
         Navigator.pop(context, true);
@@ -128,6 +165,10 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
             }
             return null;
           },
+          onChanged: (value) {
+            dataMap[key] = value;
+            _saveDraft();
+          },
           onSaved: (value) => dataMap[key] = value,
         ),
       );
@@ -158,6 +199,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
             setState(() {
               dataMap[key] = val;
             });
+            _saveDraft();
           },
           onSaved: (value) => dataMap[key] = value,
         ),
@@ -177,6 +219,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
               setState(() {
                 dataMap[key] = "${picked.toLocal()}".split(' ')[0];
               });
+              _saveDraft();
             }
           },
           child: InputDecorator(
@@ -250,6 +293,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
                         listData.add('');
                       }
                     });
+                    _saveDraft();
                   },
                   icon: const Icon(Icons.add),
                   label: Text('Add ${field['itemLabel'] ?? 'Entry'}'),
@@ -287,6 +331,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
                   setState(() {
                     listData.removeAt(index);
                   });
+                  _saveDraft();
                 },
               ),
             ],
@@ -299,7 +344,10 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
                 border: OutlineInputBorder(),
                 isDense: true,
               ),
-              onChanged: (val) => listData[index] = val,
+              onChanged: (val) {
+                listData[index] = val;
+                _saveDraft();
+              },
               onSaved: (val) => listData[index] = val,
             )
           else
@@ -388,6 +436,22 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       '6.3': {
         '18 Survey Report (PDF version)': 'assets/pdfs/survey_report.pdf',
       },
+      '7.1': {'Orientation Report': 'assets/pdfs/orientation_report.pdf'},
+      '8.1': {'Family Care Plan': 'assets/pdfs/family_care_plan.pdf'},
+      '9.1': {'Family Care Study': 'assets/pdfs/family_care_study.pdf'},
+      '10.1': {
+        'Procedure Format': 'assets/pdfs/procedure_format.pdf',
+        'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf'
+      },
+      '10.2': {
+        'Procedure Format': 'assets/pdfs/procedure_format.pdf',
+        'Procedure Guidelines': 'assets/pdfs/procedure_format_guidelines.pdf'
+      },
+      '11.1': {'7 Individual Health Talk Format': 'assets/pdfs/individual_health_talk.pdf'},
+      '12.1': {
+        '14 A Role Play Format': 'assets/pdfs/role_play_format.pdf',
+        '14 B Role Play Guidelines': 'assets/pdfs/role_play_guidelines.pdf'
+      },
     };
 
     final options = pdfLookup[widget.requirementSrNo];
@@ -441,10 +505,37 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    if (!_hasUnsavedChanges) return true;
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Exit Form?'),
+        content: const Text('Your current progress has been automatically saved as a local draft. You can safely exit and resume later.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Stay'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primaryContainer),
+            child: const Text('Exit (Draft Saved)'),
+          ),
+        ],
+      ),
+    );
+    
+    return result ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
         title: Text(_formTitle),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -463,7 +554,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Text(
-                      'Form configuration not yet available for requirement ${widget.requirementSrNo}.\n\n(Configured: 1.1, 2.1, 3.1, 4.1, 4.2, 5.1, 6.1, 6.2, 6.3)',
+                      'Form configuration not yet available for requirement ${widget.requirementSrNo}.\n\n(Configured: 1.1, 2.1, 3.1, 4.1, 4.2, 5.1, 6.1, 6.2, 6.3, 7.1, 8.1, 9.1, 10.1, 10.2, 11.1, 12.1)',
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
@@ -479,6 +570,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
                     ),
                   ),
                 ),
+      ),
     );
   }
 }
