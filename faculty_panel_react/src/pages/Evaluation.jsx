@@ -96,8 +96,23 @@ export default function Evaluation() {
         '13.1': '13_1_continuous_evaluation.json',
       };
 
-      const semester = sub.form_data.semester_year?.toString() || (sub.form_data.semester?.includes('7') ? '7' : '5');
-      const lookup = semester.includes('7') ? lookup7th : lookup5th;
+      const getStudentSemester = (s) => {
+        let sem = s.class_semester || s.form_data?.class_semester || s.form_data?.semester_year || s.form_data?.semester;
+        if (!sem && s.course_name) {
+          if (s.course_name.includes('NUR 401') || s.course_name.includes('Nursing - II')) {
+            sem = '7';
+          } else if (s.course_name.includes('NUR 303') || s.course_name.includes('Nursing - I')) {
+            sem = '5';
+          }
+        }
+        sem = (sem || '5').toString().trim();
+        if (sem.includes('7')) return '7';
+        if (sem.includes('5')) return '5';
+        return sem;
+      };
+
+      const semester = getStudentSemester(sub);
+      const lookup = semester === '7' ? lookup7th : lookup5th;
       const schemaFile = lookup[sub.requirement_sr_no];
 
       if (!schemaFile) {
