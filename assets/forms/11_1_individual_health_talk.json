@@ -173,12 +173,8 @@
           "type": "object",
           "required": false,
           "properties": {
-            "formulation_of_attainable_objectives": {
-              "label": "Formulation of Attainable Objectives",
-              "max_marks": 5
-            },
             "adequacy_of_content": {
-              "label": "Adequacy of Content",
+              "label": "Formulation of Attainable Objectives & Adequacy of Content",
               "max_marks": 5
             },
             "organization_of_subject_matter": {
