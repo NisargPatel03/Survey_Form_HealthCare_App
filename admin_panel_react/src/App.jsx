@@ -11,6 +11,7 @@ import Export from './pages/Export';
 import MapHealth from './pages/MapHealth';
 import SurveyorAnalytics from './pages/SurveyorAnalytics';
 import ReportBuilder from './pages/ReportBuilder';
+import StudentAcademicRecords from './pages/StudentAcademicRecords';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="map" element={<MapHealth />} />
         <Route path="families" element={<FamilyDirectory />} />
         <Route path="export" element={<Export />} />
+        <Route path="academic" element={<StudentAcademicRecords />} />
       </Route>
     </Routes>
   );
