@@ -141,21 +141,27 @@ export default function Evaluation() {
   };
 
   const submitEvaluation = async (status) => {
+    if (status === 'resubmission_required' && !remarks.trim()) {
+      alert('Please enter faculty remarks explaining what the student needs to correct.');
+      return;
+    }
+
     setSaving(true);
     try {
+      const isResubmit = status === 'resubmission_required';
       const total = calculateTotal();
       const evalSection = formSchema.sections.find(s => s.section.toLowerCase().includes('evaluat'));
-      const marksField = evalSection.fields.find(f => f.key === 'marks');
-      const maxTotal = marksField.properties.total.max_marks;
+      const marksField = evalSection?.fields.find(f => f.key === 'marks');
+      const maxTotal = marksField?.properties?.total?.max_marks || 0;
 
       const { error } = await supabase
         .from('requirement_submissions')
         .update({
           status: status,
-          marks_obtained: total,
-          max_marks: maxTotal,
+          marks_obtained: isResubmit ? null : total,
+          max_marks: isResubmit ? null : maxTotal,
           faculty_remarks: remarks,
-          evaluation_data: evaluationMarks,
+          evaluation_data: isResubmit ? null : evaluationMarks,
           evaluated_at: new Date().toISOString()
         })
         .eq('id', id);
@@ -304,6 +310,14 @@ export default function Evaluation() {
                     Approve & Assign Marks
                   </button>
                   <button
+                    onClick={() => submitEvaluation('resubmission_required')}
+                    disabled={saving}
+                    className="w-full bg-orange-500 hover:bg-orange-650 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
+                  >
+                    <RotateCcw className="h-5 w-5" />
+                    Request Resubmission
+                  </button>
+                  <button
                     onClick={() => submitEvaluation('rejected')}
                     disabled={saving}
                     className="w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
@@ -317,6 +331,12 @@ export default function Evaluation() {
               {submission.status === 'approved' && (
                 <div className="bg-green-50 text-green-800 p-4 rounded-lg border border-green-100 text-center font-medium">
                   This submission has been approved.
+                </div>
+              )}
+
+              {submission.status === 'resubmission_required' && (
+                <div className="bg-orange-50 text-orange-800 p-4 rounded-lg border border-orange-200 text-center font-medium mt-3">
+                  ⚠️ Requested resubmission from the student. Waiting for their update...
                 </div>
               )}
             </div>

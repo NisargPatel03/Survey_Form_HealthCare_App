@@ -50,9 +50,25 @@ export default function Dashboard() {
     return groups;
   }, {});
 
+  // Helper to securely deduce student semester based on course_name as fallback
+  const getStudentSemester = (sub) => {
+    let sem = sub.class_semester || sub.form_data?.class_semester;
+    if (!sem && sub.course_name) {
+      if (sub.course_name.includes('NUR 401') || sub.course_name.includes('Nursing - II')) {
+        sem = '7';
+      } else if (sub.course_name.includes('NUR 303') || sub.course_name.includes('Nursing - I')) {
+        sem = '5';
+      }
+    }
+    sem = (sem || '5').toString().trim();
+    if (sem.includes('7')) return '7';
+    if (sem.includes('5')) return '5';
+    return sem;
+  };
+
   // Group by Semester for Tabs
   const semesterGroups = Object.entries(studentGroups).reduce((acc, [id, subs]) => {
-    const sem = (subs[0].class_semester || subs[0].form_data?.class_semester || '5').toString().trim();
+    const sem = getStudentSemester(subs[0]);
     if (!acc[sem]) acc[sem] = [];
     acc[sem].push([id, subs]);
     return acc;
@@ -145,6 +161,8 @@ export default function Dashboard() {
         return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">APPROVED</span>;
       case 'rejected':
         return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700">REJECTED</span>;
+      case 'resubmission_required':
+        return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700">RESUBMIT</span>;
       default:
         return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-700 uppercase">{status}</span>;
     }
@@ -203,8 +221,7 @@ export default function Dashboard() {
             const approvedCount = studentSubmissions.filter(s => s.status === 'approved').length;
             
             // Get semester and handle different formats (string/number)
-            const rawSemester = studentSubmissions[0].class_semester || studentSubmissions[0].form_data?.class_semester || '5';
-            const semesterStr = rawSemester.toString().trim();
+            const semesterStr = getStudentSemester(studentSubmissions[0]);
             const totalRequired = SEMESTER_TOTALS[semesterStr] || 22; // Default to 22 if unknown
             
             const isComplete = approvedCount >= totalRequired;

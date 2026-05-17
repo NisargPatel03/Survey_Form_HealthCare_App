@@ -36,6 +36,8 @@ class SubmissionService {
       print('SUBMITTING DATA for $studentId: ${formData.keys.length} fields');
 
       // 2. Prepare the update/insert data
+      // We explicitly set evaluation-related fields to null during submission/resubmission
+      // so that previous marks/remarks don't linger on a newly updated form.
       final Map<String, dynamic> submissionData = {
         'student_id': studentId.trim(),
         'course_name': courseName.trim(),
@@ -43,6 +45,10 @@ class SubmissionService {
         'form_data': formData,
         'status': 'submitted',
         'assigned_faculty_id': assignedFacultyId,
+        'marks_obtained': null,
+        'max_marks': null,
+        'faculty_remarks': null,
+        'evaluation_data': null,
       };
 
       if (existing != null) {

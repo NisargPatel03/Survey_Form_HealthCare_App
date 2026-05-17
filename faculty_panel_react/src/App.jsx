@@ -32,6 +32,7 @@ function App() {
   }, []);
 
   const fetchUserRole = async (userId) => {
+    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('profiles')
