@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/course_requirement.dart';
 import 'student_dashboard_screen.dart';
 
@@ -49,6 +50,21 @@ class _AcademicDetailsScreenState extends State<AcademicDetailsScreen> {
         ? 'NUR 303 - Community Health Nursing - I' 
         : 'NUR 401 - Community Health Nursing - II';
     await prefs.setString('courseName_${widget.studentId}', courseName);
+
+    // Sync to Supabase User Metadata so it carries over to any new device
+    try {
+      await Supabase.instance.client.auth.updateUser(
+        UserAttributes(
+          data: {
+            'academic_year': _selectedYear,
+            'semester': _selectedSemester,
+            'course_name': courseName,
+          },
+        ),
+      );
+    } catch (e) {
+      print('Error syncing academic details to Supabase cloud: $e');
+    }
 
     if (mounted) {
       Navigator.pushReplacement(

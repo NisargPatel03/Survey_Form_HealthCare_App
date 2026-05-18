@@ -211,14 +211,22 @@ class _LoginScreenState extends State<LoginScreen> {
         if (mounted) {
           final prefs = await SharedPreferences.getInstance();
           final studentId = _studentIdController.text.toUpperCase();
-          final hasAcademicYear = prefs.getString('academicYear_$studentId') != null;
-          final hasSemester = prefs.getString('semester_$studentId') != null;
+          
+          final user = Supabase.instance.client.auth.currentUser;
+          final metadata = user?.userMetadata;
+          
+          final hasAcademicYear = metadata?['academic_year'] != null;
+          final hasSemester = metadata?['semester'] != null;
 
-          if (!hasAcademicYear || !hasSemester) {
+          if (hasAcademicYear && hasSemester) {
+            await prefs.setString('academicYear_$studentId', metadata!['academic_year']);
+            await prefs.setString('semester_$studentId', metadata['semester']);
+            await prefs.setString('courseName_$studentId', metadata['course_name'] ?? '');
+            
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => AcademicDetailsScreen(
+                builder: (context) => StudentDashboardScreen(
                   studentId: studentId,
                 ),
               ),
@@ -227,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => StudentDashboardScreen(
+                builder: (context) => AcademicDetailsScreen(
                   studentId: studentId,
                 ),
               ),
