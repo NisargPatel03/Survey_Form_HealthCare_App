@@ -120,6 +120,10 @@ const StudentAcademicRecords = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const printPageRef = useRef(null);
+  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+  const [bulkProgress, setBulkProgress] = useState('');
+  const [bulkRenderStudent, setBulkRenderStudent] = useState(null);
+  const bulkPrintRef = useRef(null);
 
   // Fetch evaluated submissions from Supabase
   useEffect(() => {
@@ -322,6 +326,83 @@ const StudentAcademicRecords = () => {
     }
   };
 
+  const handleToggleSelect = (studentId) => {
+    setSelectedStudentIds(prev => 
+      prev.includes(studentId)
+        ? prev.filter(id => id !== studentId)
+        : [...prev, studentId]
+    );
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedStudentIds(filteredStudents.map(s => s.student_id));
+    } else {
+      setSelectedStudentIds([]);
+    }
+  };
+
+  const handleBulkDownload = async () => {
+    if (selectedStudentIds.length === 0) return;
+    
+    try {
+      const idsToDownload = [...selectedStudentIds];
+      
+      for (let i = 0; i < idsToDownload.length; i++) {
+        const studentId = idsToDownload[i];
+        const student = studentProfiles[studentId];
+        if (!student) continue;
+        
+        setBulkProgress(`Generating ${i + 1}/${idsToDownload.length}...`);
+        setBulkRenderStudent(student);
+        
+        // Wait for React to render the new student details off-screen
+        await new Promise(r => setTimeout(r, 200));
+        
+        if (bulkPrintRef.current) {
+          const element = bulkPrintRef.current;
+          
+          const canvas = await html2canvas(element, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#dbe5f1',
+          });
+          
+          const imgData = canvas.toDataURL('image/png');
+          
+          const imgWidth = 210; // A4 standard width in mm
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          
+          const pdf = new jsPDF('p', 'mm', [imgWidth, imgHeight]);
+          
+          pdf.addImage(
+            imgData, 
+            'PNG', 
+            0, 
+            0, 
+            imgWidth, 
+            imgHeight,
+            undefined,
+            'FAST'
+          );
+          
+          const filename = `${student.student_id}_${student.student_name.replace(/\s+/g, '_')}_Marksheet.pdf`;
+          pdf.save(filename);
+        }
+      }
+      
+      alert(`Successfully downloaded ${idsToDownload.length} marksheets!`);
+      setSelectedStudentIds([]);
+    } catch (error) {
+      console.error('Error generating bulk PDFs:', error);
+      alert('Failed to generate bulk PDFs: ' + (error.message || error));
+    } finally {
+      setBulkProgress('');
+      setBulkRenderStudent(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-12 min-h-[400px]">
@@ -365,22 +446,41 @@ const StudentAcademicRecords = () => {
               Access semester-wise student transcripts, view marks, print official marksheets, and export posting summaries.
             </p>
           </div>
-          
-          <button
-            onClick={exportToCSV}
-            disabled={!filteredStudents.length}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
-          >
-            <FaFileCsv size={18} />
-            Export Posting Summary
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-end items-stretch sm:items-center w-full md:w-auto">
+            <button
+              onClick={exportToCSV}
+              disabled={!filteredStudents.length}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 text-sm"
+            >
+              <FaFileCsv size={18} />
+              Export Posting Summary
+            </button>
+            
+            <button
+              onClick={handleBulkDownload}
+              disabled={selectedStudentIds.length === 0 || bulkProgress !== ''}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white font-semibold rounded-lg shadow hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 text-sm"
+            >
+              {bulkProgress !== '' ? (
+                <>
+                  <FaSpinner className="animate-spin" size={18} />
+                  <span>{bulkProgress}</span>
+                </>
+              ) : (
+                <>
+                  <FaDownload size={18} />
+                  <span>Download Selected ({selectedStudentIds.length})</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Tab switcher and search query */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8">
           <div className="flex gap-2 w-full md:w-auto">
             <button
-              onClick={() => { setActiveSemester('5'); setSelectedStudent(null); }}
+              onClick={() => { setActiveSemester('5'); setSelectedStudent(null); setSelectedStudentIds([]); }}
               className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg font-bold transition duration-200 ${
                 activeSemester === '5' 
                   ? 'bg-primary text-white shadow-md' 
@@ -390,7 +490,7 @@ const StudentAcademicRecords = () => {
               5th Semester
             </button>
             <button
-              onClick={() => { setActiveSemester('7'); setSelectedStudent(null); }}
+              onClick={() => { setActiveSemester('7'); setSelectedStudent(null); setSelectedStudentIds([]); }}
               className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg font-bold transition duration-200 ${
                 activeSemester === '7' 
                   ? 'bg-primary text-white shadow-md' 
@@ -466,6 +566,14 @@ const StudentAcademicRecords = () => {
             <table className="w-full text-left">
               <thead className="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
                 <tr>
+                  <th className="px-6 py-4 w-12 text-center">
+                    <input
+                      type="checkbox"
+                      checked={filteredStudents.length > 0 && selectedStudentIds.length === filteredStudents.length}
+                      onChange={handleSelectAll}
+                      className="h-4.5 w-4.5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer accent-[#000080]"
+                    />
+                  </th>
                   <th className="px-6 py-4">Student ID (Roll No)</th>
                   <th className="px-6 py-4">Student Name</th>
                   <th className="px-6 py-4">Course Code / Class</th>
@@ -483,6 +591,14 @@ const StudentAcademicRecords = () => {
                   
                   return (
                     <tr key={student.student_id} className="hover:bg-gray-50/50">
+                      <td className="px-6 py-4 w-12 text-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedStudentIds.includes(student.student_id)}
+                          onChange={() => handleToggleSelect(student.student_id)}
+                          className="h-4.5 w-4.5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer accent-[#000080]"
+                        />
+                      </td>
                       <td className="px-6 py-4 font-bold text-primary">{student.student_id}</td>
                       <td className="px-6 py-4 font-semibold text-gray-800">{student.student_name}</td>
                       <td className="px-6 py-4 text-gray-500 text-xs font-medium truncate max-w-[200px]" title={student.courseName}>
@@ -516,7 +632,7 @@ const StudentAcademicRecords = () => {
                 })}
                 {filteredStudents.length === 0 && (
                   <tr>
-                    <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
                       <p className="font-semibold text-base">No student records found</p>
                       <p className="text-sm text-gray-400 mt-1">Try resetting the filters or typing a different search query.</p>
                     </td>
@@ -814,6 +930,165 @@ const StudentAcademicRecords = () => {
           }
         }
       `}} />
+
+      {/* Hidden Off-Screen Marksheet Renderer for Bulk Downloads */}
+      {bulkRenderStudent && (() => {
+        const bulkReqs = bulkRenderStudent.semester === '5' ? requirements5th : requirements7th;
+        const bulkTotalPossible = bulkRenderStudent.semester === '5' ? 1100 : 1620;
+        const isBulkCompleted = bulkRenderStudent.approvedCount >= bulkReqs.length;
+
+        return (
+          <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '800px', pointerEvents: 'none' }}>
+            <div ref={bulkPrintRef} className="print-page text-black font-sans bg-[#dbe5f1] leading-relaxed p-8 border-[8px] border-[#000080]">
+              {/* School Header with Logo */}
+              <div className="flex flex-col items-center mb-6 border-b-4 border-[#000080] pb-4">
+                <div className="flex items-center justify-center gap-4 mb-3 w-full">
+                  <img 
+                    src="/logo.jpg" 
+                    alt="MTIN Logo" 
+                    className="h-16 w-16 object-contain rounded-full border border-gray-300 shadow-sm" 
+                  />
+                  <div className="text-left">
+                    <h1 className="text-xl font-extrabold uppercase tracking-wide text-gray-900 leading-tight">
+                      Manikaka Topawala Institute of Nursing
+                    </h1>
+                    <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mt-0.5">
+                      Constituent of CHARUSAT – Community Health Nursing
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-2 mb-4 inline-block border-2 border-[#000080] px-4 py-1.5 uppercase font-extrabold text-xs tracking-wider bg-white/80">
+                  Posting Completion Marksheet ({bulkRenderStudent.semester}th Semester)
+                </div>
+              </div>
+
+              {/* Student Info Box */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm border-4 border-[#000080] p-4 mb-6 mt-6 bg-white/95 rounded-lg">
+                <div>
+                  <span className="font-bold text-[#000080]">Student Name: </span>
+                  <span className="font-semibold text-gray-800">{bulkRenderStudent.student_name}</span>
+                </div>
+                <div>
+                  <span className="font-bold text-[#000080]">Student ID No: </span>
+                  <span className="font-bold text-primary">{bulkRenderStudent.student_id}</span>
+                </div>
+                <div className="col-span-2">
+                  <span className="font-bold text-[#000080]">Course / Class: </span>
+                  <span className="font-medium text-gray-700 inline" title={bulkRenderStudent.courseName}>
+                    {bulkRenderStudent.courseName}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-bold text-[#000080]">Posting Progress: </span>
+                  <span className="font-bold text-blue-700">
+                    {bulkRenderStudent.approvedCount} / {bulkReqs.length} Approved ({Math.round((bulkRenderStudent.approvedCount / bulkReqs.length) * 100)}%)
+                  </span>
+                </div>
+                <div>
+                  <span className="font-bold text-[#000080]">Overall Status: </span>
+                  <span className={`inline-block px-2.5 py-0.5 rounded font-extrabold text-xs border leading-none ${
+                    isBulkCompleted
+                      ? 'bg-green-100 text-green-800 border-green-200'
+                      : 'bg-amber-100 text-amber-800 border-amber-200'
+                  }`}>
+                    {isBulkCompleted ? 'COMPLETED' : 'POSTING IN PROGRESS'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Academic Transcript Table */}
+              <table className="w-full border-collapse border-4 border-[#000080] text-xs text-left bg-white/95">
+                <thead>
+                  <tr className="bg-[#4f81bd] text-white font-bold">
+                    <th className="border-2 border-[#000080] px-3 py-2 text-center w-12 font-bold">Sr. No</th>
+                    <th className="border-2 border-[#000080] px-3 py-2 font-bold">Name of Requirement</th>
+                    <th className="border-2 border-[#000080] px-3 py-2 text-center w-14 font-bold">Quantity</th>
+                    <th className="border-2 border-[#000080] px-3 py-2 text-center w-24 font-bold">Marks Allotted</th>
+                    <th className="border-2 border-[#000080] px-3 py-2 text-center w-24 font-bold">Marks Achieved</th>
+                    <th className="border-2 border-[#000080] px-3 py-2 text-center w-32 font-bold">Date of Submission</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bulkReqs.map((req, idx) => {
+                    const achievement = bulkRenderStudent.requirements[req.sr];
+                    const prevReq = idx > 0 ? bulkReqs[idx - 1] : null;
+                    const showSectionHeader = !prevReq || prevReq.section !== req.section;
+                    const showCategoryHeader = !prevReq || prevReq.category !== req.category;
+
+                    return (
+                      <React.Fragment key={req.sr}>
+                        {showSectionHeader && (
+                          <tr className="bg-[#dbe5f1] font-bold text-[#000080]">
+                            <td colSpan={6} className="border-2 border-[#000080] px-3 py-1.5 uppercase font-extrabold tracking-wide">
+                              {req.section}
+                            </td>
+                          </tr>
+                        )}
+
+                        {showCategoryHeader && req.category && (
+                          <tr className="bg-[#f2f5f9] font-semibold text-[#000080]">
+                            <td colSpan={6} className="border-2 border-[#000080] px-3 py-1 italic pl-5">
+                              {req.category}
+                            </td>
+                          </tr>
+                        )}
+
+                        <tr>
+                          <td className="border-2 border-[#000080] px-3 py-2 text-center font-bold text-[#000080]">{req.sr}</td>
+                          <td className="border-2 border-[#000080] px-3 py-2 pl-6 font-medium">{req.name}</td>
+                          <td className="border-2 border-[#000080] px-3 py-2 text-center">1</td>
+                          <td className="border-2 border-[#000080] px-3 py-2 text-center font-bold text-gray-700">{req.max}</td>
+                          <td className="border-2 border-[#000080] px-3 py-2 text-center font-extrabold text-sm text-[#000080]">
+                            {achievement && achievement.status === 'approved' 
+                              ? achievement.marks_obtained 
+                              : achievement && achievement.status === 'pending'
+                              ? 'Pending Evaluation'
+                              : '—'}
+                          </td>
+                          <td className="border-2 border-[#000080] px-3 py-2 text-center font-medium text-gray-700">
+                            {achievement && achievement.status === 'approved' && achievement.evaluated_at
+                              ? formatDate(achievement.evaluated_at)
+                              : '—'}
+                          </td>
+                        </tr>
+                      </React.Fragment>
+                    );
+                  })}
+
+                  {/* Total Sum Row */}
+                  <tr className="bg-[#dbe5f1] font-extrabold text-sm text-[#000080]">
+                    <td colSpan={2} className="border-2 border-[#000080] px-3 py-2.5 text-right uppercase">
+                      Total posting requirements
+                    </td>
+                    <td className="border-2 border-[#000080] px-3 py-2.5 text-center">{bulkReqs.length}</td>
+                    <td className="border-2 border-[#000080] px-3 py-2.5 text-center text-[#000080]">{bulkTotalPossible}</td>
+                    <td className="border-2 border-[#000080] px-3 py-2.5 text-center text-[#000080] text-base">
+                      {bulkRenderStudent.totalMarks}
+                    </td>
+                    <td className="border-2 border-[#000080] px-3 py-2.5 text-center text-[#000080] font-bold">—</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              {/* Signatures & Footer */}
+              <div className="mt-16 grid grid-cols-3 gap-6 text-center text-xs font-bold pt-8 border-t-4 border-dashed border-[#000080]">
+                <div className="flex flex-col items-center">
+                  <div className="h-10 border-b border-black w-40 mb-2"></div>
+                  <span>Course Coordinator</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="h-10 border-b border-black w-40 mb-2"></div>
+                  <span>Head of Department</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="h-10 border-b border-black w-40 mb-2"></div>
+                  <span>Principal, MTIN</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
