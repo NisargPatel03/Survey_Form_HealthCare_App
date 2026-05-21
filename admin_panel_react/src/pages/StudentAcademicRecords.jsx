@@ -17,6 +17,7 @@ import {
 } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas-pro';
+import XLSX from 'xlsx-js-style';
 
 // 5th Semester Official requirements template (22 requirements, 1100 marks)
 const requirements5th = [
@@ -403,6 +404,199 @@ const StudentAcademicRecords = () => {
     }
   };
 
+  const handleExportRequirementsExcel = () => {
+    if (!filteredStudents.length) return;
+
+    try {
+      const activeReqs = activeSemester === '5' ? requirements5th : requirements7th;
+      const isSem5 = activeSemester === '5';
+
+      // 1. Double Header Arrays
+      const row0 = [''];
+      const row1 = ['Student Id'];
+
+      const merges = [];
+
+      if (isSem5) {
+        // Col B to J: Rural Area
+        row0[1] = 'Rural Area';
+        // Col K to Q: Urban Area
+        row0[10] = 'Urban Area';
+        // Col R to W: Observation visit
+        row0[17] = 'Observation visit';
+
+        // Add standard empty strings for merged cells
+        for (let i = 2; i <= 9; i++) row0[i] = '';
+        for (let i = 11; i <= 16; i++) row0[i] = '';
+        for (let i = 18; i <= 22; i++) row0[i] = '';
+        row0[23] = ''; // Total cell is blank in row 0
+
+        // Merges: B1:J1 (Col 1 to 9), K1:Q1 (Col 10 to 16), R1:W1 (Col 17 to 22)
+        merges.push({ s: { r: 0, c: 1 }, e: { r: 0, c: 9 } });
+        merges.push({ s: { r: 0, c: 10 }, e: { r: 0, c: 16 } });
+        merges.push({ s: { r: 0, c: 17 }, e: { r: 0, c: 22 } });
+
+        // Row 1 Column headers
+        // Rural Posting
+        row1.push('Orientation report');
+        row1.push('Care plan');
+        row1.push('Care study');
+        row1.push('Procedure-1');
+        row1.push('Procedure-2');
+        row1.push('Group Health education');
+        row1.push('School Health Programme');
+        row1.push('Aanaganwadi Assessment Programme');
+        row1.push('Community Health Survey Report');
+
+        // Urban Posting
+        row1.push('Orientation report');
+        row1.push('Care plan');
+        row1.push('Care study');
+        row1.push('Procedure-1');
+        row1.push('Procedure-2');
+        row1.push('Individual Health education');
+        row1.push('Role Play');
+
+        // Observation visits
+        row1.push('Water purification plant');
+        row1.push('Sewage treatment plant');
+        row1.push('Milk dairy');
+        row1.push('Slaughter House');
+        row1.push('Rain water harvesting');
+        row1.push('Market');
+
+        row1.push('Total');
+      } else {
+        // Semester 7 merging logic
+        // Identify sections and lengths
+        const ruralCount = activeReqs.filter(r => r.section.toUpperCase().includes('RURAL')).length;
+        const urbanCount = activeReqs.filter(r => r.section.toUpperCase().includes('URBAN')).length;
+        const obsCount = activeReqs.filter(r => r.section.toUpperCase().includes('OBSERVATION')).length;
+        const otherCount = activeReqs.filter(r => r.section.toUpperCase().includes('OTHER')).length;
+
+        let colIdx = 1;
+
+        // Rural area merge
+        row0[colIdx] = 'Rural Area';
+        for (let i = 1; i < ruralCount; i++) row0[colIdx + i] = '';
+        merges.push({ s: { r: 0, c: colIdx }, e: { r: 0, c: colIdx + ruralCount - 1 } });
+        colIdx += ruralCount;
+
+        // Urban area merge
+        row0[colIdx] = 'Urban Area';
+        for (let i = 1; i < urbanCount; i++) row0[colIdx + i] = '';
+        merges.push({ s: { r: 0, c: colIdx }, e: { r: 0, c: colIdx + urbanCount - 1 } });
+        colIdx += urbanCount;
+
+        // Observation visit merge
+        row0[colIdx] = 'Observation visit';
+        for (let i = 1; i < obsCount; i++) row0[colIdx + i] = '';
+        merges.push({ s: { r: 0, c: colIdx }, e: { r: 0, c: colIdx + obsCount - 1 } });
+        colIdx += obsCount;
+
+        // Other merge if exists
+        if (otherCount > 0) {
+          row0[colIdx] = 'Other';
+          for (let i = 1; i < otherCount; i++) row0[colIdx + i] = '';
+          merges.push({ s: { r: 0, c: colIdx }, e: { r: 0, c: colIdx + otherCount - 1 } });
+          colIdx += otherCount;
+        }
+
+        row0[colIdx] = ''; // Total cell
+
+        // Row 1 Column headers
+        activeReqs.forEach(req => {
+          row1.push(req.name);
+        });
+        row1.push('Total');
+      }
+
+      // 2. Build Rows Data
+      const sheetData = [row0, row1];
+
+      filteredStudents.forEach(student => {
+        const studentRow = [student.student_id];
+        
+        activeReqs.forEach(req => {
+          const achievement = student.requirements[req.sr];
+          if (achievement && achievement.status === 'approved') {
+            studentRow.push(achievement.marks_obtained);
+          } else {
+            studentRow.push(0); // Match non-empty numeric zero if not completed
+          }
+        });
+
+        studentRow.push(student.totalMarks);
+        sheetData.push(studentRow);
+      });
+
+      // 3. Create Workbook & Sheets
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(sheetData);
+
+      // Apply Merges
+      ws['!merges'] = merges;
+
+      // Define standard styling (clean table borders, solid headers)
+      const borderStyle = {
+        top: { style: 'thin', color: { rgb: 'CCCCCC' } },
+        bottom: { style: 'thin', color: { rgb: 'CCCCCC' } },
+        left: { style: 'thin', color: { rgb: 'CCCCCC' } },
+        right: { style: 'thin', color: { rgb: 'CCCCCC' } }
+      };
+
+      const range = XLSX.utils.decode_range(ws['!ref']);
+
+      // Apply premium styles to cells
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const cellRef = XLSX.utils.encode_cell({ c: C, r: R });
+          const cell = ws[cellRef];
+          if (!cell) continue;
+
+          if (!cell.s) cell.s = {};
+          cell.s.border = borderStyle;
+
+          // Double Row 0 and Row 1 headers (Bold, Centered)
+          if (R === 0 || R === 1) {
+            cell.s.font = { bold: true, name: 'Calibri', sz: 10 };
+            cell.s.alignment = { horizontal: 'center', vertical: 'center' };
+          } else {
+            // Data Rows alignment
+            if (C === 0) {
+              // Student Roll Number left aligned, bold
+              cell.s.font = { bold: true, name: 'Calibri', sz: 10 };
+              cell.s.alignment = { horizontal: 'left', vertical: 'center' };
+            } else if (C === range.e.c) {
+              // Total Marks Column bold, centered
+              cell.s.font = { bold: true, name: 'Calibri', sz: 10 };
+              cell.s.alignment = { horizontal: 'center', vertical: 'center' };
+            } else {
+              // Marks: centered
+              cell.s.alignment = { horizontal: 'center', vertical: 'center' };
+            }
+          }
+        }
+      }
+
+      // Column widths
+      const wscols = [{ wch: 15 }]; // Student Id column
+      for (let i = 1; i < row1.length - 1; i++) {
+        wscols.push({ wch: 18 }); // Requirement columns wide enough
+      }
+      wscols.push({ wch: 10 }); // Total column
+      ws['!cols'] = wscols;
+
+      // 4. Save file
+      XLSX.utils.book_append_sheet(wb, ws, `NUR${isSem5 ? '303' : '404'}_Marksheet`);
+      XLSX.writeFile(wb, `NUR${isSem5 ? '303' : '404'}_REQUIREMENTS_MARKS_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+    } catch (error) {
+      console.error('Error generating Requirements Excel:', error);
+      alert('Failed to generate Excel sheet: ' + (error.message || error));
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-12 min-h-[400px]">
@@ -447,6 +641,15 @@ const StudentAcademicRecords = () => {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-end items-stretch sm:items-center w-full md:w-auto">
+            <button
+              onClick={handleExportRequirementsExcel}
+              disabled={!filteredStudents.length}
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#1D6F42] text-white font-semibold rounded-lg shadow hover:bg-[#155231] disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 text-sm"
+            >
+              <FaFileCsv size={18} />
+              Download NUR{activeSemester === '5' ? '303' : '404'} Excel
+            </button>
+
             <button
               onClick={exportToCSV}
               disabled={!filteredStudents.length}
