@@ -92,6 +92,22 @@ const requirements7th = [
   { sr: '13.1', section: 'IV. OTHER', category: '13. Continuous Evaluation', name: 'Continuous evaluation of performance in community', max: 100 },
 ];
 
+// Helper to format date beautifully
+const formatDate = (dateString) => {
+  if (!dateString) return '—';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '—';
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch (e) {
+    return '—';
+  }
+};
+
 const StudentAcademicRecords = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -567,6 +583,7 @@ const StudentAcademicRecords = () => {
                       <th className="border border-blue-800 px-3 py-2 text-center w-14 font-bold">Quantity</th>
                       <th className="border border-blue-800 px-3 py-2 text-center w-24 font-bold">Marks Allotted</th>
                       <th className="border border-blue-800 px-3 py-2 text-center w-24 font-bold">Marks Achieved</th>
+                      <th className="border border-blue-800 px-3 py-2 text-center w-32 font-bold">Date of Submission</th>
                       <th className="border border-blue-800 px-3 py-2 text-center w-24 print:hidden">Status</th>
                     </tr>
                   </thead>
@@ -584,7 +601,7 @@ const StudentAcademicRecords = () => {
                           {/* Section Divider Heading */}
                           {showSectionHeader && (
                             <tr className="bg-blue-200/80 print:bg-blue-200/80 font-bold text-blue-950">
-                              <td colSpan={6} className="border border-blue-800 px-3 py-1.5 uppercase font-extrabold tracking-wide">
+                              <td colSpan={7} className="border border-blue-800 px-3 py-1.5 uppercase font-extrabold tracking-wide">
                                 {req.section}
                               </td>
                             </tr>
@@ -593,7 +610,7 @@ const StudentAcademicRecords = () => {
                           {/* Category Heading (subheadings like Orientation, Care plan etc) */}
                           {showCategoryHeader && req.category && (
                             <tr className="bg-blue-50/60 print:bg-blue-50/60 font-semibold text-blue-900">
-                              <td colSpan={6} className="border border-blue-800 px-3 py-1 italic pl-5">
+                              <td colSpan={7} className="border border-blue-800 px-3 py-1 italic pl-5">
                                 {req.category}
                               </td>
                             </tr>
@@ -610,6 +627,11 @@ const StudentAcademicRecords = () => {
                                 ? achievement.marks_obtained 
                                 : achievement && achievement.status === 'pending'
                                 ? 'Pending Evaluation'
+                                : '—'}
+                            </td>
+                            <td className="border border-blue-300 px-3 py-2 text-center font-medium text-gray-700">
+                              {achievement && achievement.status === 'approved' && achievement.evaluated_at
+                                ? formatDate(achievement.evaluated_at)
                                 : '—'}
                             </td>
                             <td className="border border-blue-300 px-3 py-2 text-center print:hidden">
@@ -638,6 +660,7 @@ const StudentAcademicRecords = () => {
                       <td className="border border-blue-800 px-3 py-2.5 text-center text-blue-900 text-base">
                         {selectedStudent.totalMarks}
                       </td>
+                      <td className="border border-blue-800 px-3 py-2.5 text-center text-blue-950 font-bold">—</td>
                       <td className="border border-blue-800 px-3 py-2.5 print:hidden"></td>
                     </tr>
                   </tbody>
