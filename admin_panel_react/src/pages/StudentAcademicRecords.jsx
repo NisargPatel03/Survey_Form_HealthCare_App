@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '../services/supabase';
 import { 
   FaGraduationCap, 
@@ -12,8 +12,11 @@ import {
   FaExclamationCircle, 
   FaUserGraduate, 
   FaBookOpen, 
-  FaAward 
+  FaAward,
+  FaDownload
 } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas-pro';
 
 // 5th Semester Official requirements template (22 requirements, 1100 marks)
 const requirements5th = [
@@ -115,6 +118,8 @@ const StudentAcademicRecords = () => {
   const [activeSemester, setActiveSemester] = useState('5');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const printPageRef = useRef(null);
 
   // Fetch evaluated submissions from Supabase
   useEffect(() => {
@@ -274,8 +279,47 @@ const StudentAcademicRecords = () => {
     document.body.removeChild(link);
   };
 
-  const handlePrint = () => {
-    window.print();
+  const handleDownloadPDF = async () => {
+    if (!printPageRef.current) return;
+    
+    try {
+      setIsDownloading(true);
+      const element = printPageRef.current;
+      
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#dbe5f1',
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      
+      // Highly robust proportional single-page size in standard mm units
+      const imgWidth = 210; // A4 standard width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      const pdf = new jsPDF('p', 'mm', [imgWidth, imgHeight]);
+      
+      pdf.addImage(
+        imgData, 
+        'PNG', 
+        0, 
+        0, 
+        imgWidth, 
+        imgHeight,
+        undefined,
+        'FAST'
+      );
+      
+      const filename = `${selectedStudent.student_id}_${selectedStudent.student_name.replace(/\s+/g, '_')}_Marksheet.pdf`;
+      pdf.save(filename);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF: ' + (error.message || error));
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   if (loading) {
@@ -497,11 +541,21 @@ const StudentAcademicRecords = () => {
               </div>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={handlePrint}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded text-sm font-semibold transition"
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloading}
+                  className="flex items-center gap-2 px-4 py-1.5 bg-white text-primary hover:bg-white/95 disabled:opacity-75 disabled:cursor-not-allowed rounded-lg text-sm font-bold shadow-sm transition"
                 >
-                  <FaPrint />
-                  Print Marksheet
+                  {isDownloading ? (
+                    <>
+                      <FaSpinner className="animate-spin" />
+                      Downloading...
+                    </>
+                  ) : (
+                    <>
+                      <FaDownload />
+                      Download Marksheet PDF
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={() => setSelectedStudent(null)}
@@ -516,10 +570,10 @@ const StudentAcademicRecords = () => {
             <div className="flex-1 overflow-y-auto p-8 print:p-0 print:overflow-visible">
               
               {/* printable page layout */}
-              <div className="print-page text-black font-sans bg-white leading-relaxed mx-auto max-w-[800px]">
+              <div ref={printPageRef} className="print-page text-black font-sans bg-[#dbe5f1] print:bg-[#dbe5f1] leading-relaxed mx-auto max-w-[800px] border-[8px] border-[#000080] p-8 print:p-8">
                 
                 {/* School Header with Logo */}
-                <div className="flex flex-col items-center mb-6 border-b border-black pb-4">
+                <div className="flex flex-col items-center mb-6 border-b-4 border-[#000080] pb-4">
                   <div className="flex items-center justify-center gap-4 mb-3 w-full">
                     <img 
                       src="/logo.jpg" 
@@ -535,35 +589,35 @@ const StudentAcademicRecords = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="mt-2 mb-4 inline-block border border-black px-4 py-1.5 uppercase font-extrabold text-xs tracking-wider bg-gray-50/50">
+                  <div className="mt-2 mb-4 inline-block border-2 border-[#000080] px-4 py-1.5 uppercase font-extrabold text-xs tracking-wider bg-white/80">
                     Posting Completion Marksheet ({selectedStudent.semester}th Semester)
                   </div>
                 </div>
 
                 {/* Student Info Box with elegant blue tint */}
-                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm border border-blue-800 p-4 mb-6 mt-6 bg-blue-50/40 print:bg-blue-50/40 rounded-lg">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm border-4 border-[#000080] p-4 mb-6 mt-6 bg-white/95 print:bg-white/95 rounded-lg">
                   <div>
-                    <span className="font-bold text-blue-900">Student Name: </span>
+                    <span className="font-bold text-[#000080]">Student Name: </span>
                     <span className="font-semibold text-gray-800">{selectedStudent.student_name}</span>
                   </div>
                   <div>
-                    <span className="font-bold text-blue-900">Student ID No: </span>
+                    <span className="font-bold text-[#000080]">Student ID No: </span>
                     <span className="font-bold text-primary">{selectedStudent.student_id}</span>
                   </div>
                   <div>
-                    <span className="font-bold text-blue-900">Course / Class: </span>
+                    <span className="font-bold text-[#000080]">Course / Class: </span>
                     <span className="font-medium text-gray-700 truncate block max-w-xs" title={selectedStudent.courseName}>
                       {selectedStudent.courseName}
                     </span>
                   </div>
                   <div>
-                    <span className="font-bold text-blue-900">Posting Progress: </span>
+                    <span className="font-bold text-[#000080]">Posting Progress: </span>
                     <span className="font-bold text-blue-700">
                       {selectedStudent.approvedCount} / {selectedReqs.length} Approved ({Math.round((selectedStudent.approvedCount / selectedReqs.length) * 100)}%)
                     </span>
                   </div>
-                  <div className="col-span-2 mt-1 pt-1 border-t border-blue-200">
-                    <span className="font-bold text-blue-900">Overall Status: </span>
+                  <div className="col-span-2 mt-1 pt-1 border-t border-[#000080]">
+                    <span className="font-bold text-[#000080]">Overall Status: </span>
                     <span className={`inline-block px-2.5 py-0.5 rounded font-extrabold text-xs border leading-none ${
                       isSelectedCompleted
                         ? 'bg-green-100 text-green-800 border-green-200'
@@ -575,16 +629,16 @@ const StudentAcademicRecords = () => {
                 </div>
 
                 {/* High Fidelity Table with Premium Blue Borders */}
-                <table className="w-full border-collapse border border-blue-800 text-xs text-left">
+                <table className="w-full border-collapse border-4 border-[#000080] text-xs text-left bg-white/95 print:bg-white/95">
                   <thead>
-                    <tr className="bg-blue-100 print:bg-blue-100 text-blue-950 font-bold">
-                      <th className="border border-blue-800 px-3 py-2 text-center w-12 font-bold">Sr. No</th>
-                      <th className="border border-blue-800 px-3 py-2 font-bold">Name of Requirement</th>
-                      <th className="border border-blue-800 px-3 py-2 text-center w-14 font-bold">Quantity</th>
-                      <th className="border border-blue-800 px-3 py-2 text-center w-24 font-bold">Marks Allotted</th>
-                      <th className="border border-blue-800 px-3 py-2 text-center w-24 font-bold">Marks Achieved</th>
-                      <th className="border border-blue-800 px-3 py-2 text-center w-32 font-bold">Date of Submission</th>
-                      <th className="border border-blue-800 px-3 py-2 text-center w-24 print:hidden">Status</th>
+                    <tr className="bg-[#4f81bd] print:bg-[#4f81bd] text-white font-bold">
+                      <th className="border-2 border-[#000080] px-3 py-2 text-center w-12 font-bold">Sr. No</th>
+                      <th className="border-2 border-[#000080] px-3 py-2 font-bold">Name of Requirement</th>
+                      <th className="border-2 border-[#000080] px-3 py-2 text-center w-14 font-bold">Quantity</th>
+                      <th className="border-2 border-[#000080] px-3 py-2 text-center w-24 font-bold">Marks Allotted</th>
+                      <th className="border-2 border-[#000080] px-3 py-2 text-center w-24 font-bold">Marks Achieved</th>
+                      <th className="border-2 border-[#000080] px-3 py-2 text-center w-32 font-bold">Date of Submission</th>
+                      <th className="border-2 border-[#000080] px-3 py-2 text-center w-24 print:hidden font-bold">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -600,8 +654,8 @@ const StudentAcademicRecords = () => {
                         <React.Fragment key={req.sr}>
                           {/* Section Divider Heading */}
                           {showSectionHeader && (
-                            <tr className="bg-blue-200/80 print:bg-blue-200/80 font-bold text-blue-950">
-                              <td colSpan={7} className="border border-blue-800 px-3 py-1.5 uppercase font-extrabold tracking-wide">
+                            <tr className="bg-[#dbe5f1] print:bg-[#dbe5f1] font-bold text-[#000080]">
+                              <td colSpan={7} className="border-2 border-[#000080] px-3 py-1.5 uppercase font-extrabold tracking-wide">
                                 {req.section}
                               </td>
                             </tr>
@@ -609,32 +663,32 @@ const StudentAcademicRecords = () => {
 
                           {/* Category Heading (subheadings like Orientation, Care plan etc) */}
                           {showCategoryHeader && req.category && (
-                            <tr className="bg-blue-50/60 print:bg-blue-50/60 font-semibold text-blue-900">
-                              <td colSpan={7} className="border border-blue-800 px-3 py-1 italic pl-5">
+                            <tr className="bg-[#f2f5f9] print:bg-[#f2f5f9] font-semibold text-[#000080]">
+                              <td colSpan={7} className="border-2 border-[#000080] px-3 py-1 italic pl-5">
                                 {req.category}
                               </td>
                             </tr>
                           )}
 
                           {/* Standard Row */}
-                          <tr className="hover:bg-blue-50/10">
-                            <td className="border border-blue-300 px-3 py-2 text-center font-bold text-blue-900">{req.sr}</td>
-                            <td className="border border-blue-300 px-3 py-2 pl-6 font-medium">{req.name}</td>
-                            <td className="border border-blue-300 px-3 py-2 text-center">1</td>
-                            <td className="border border-blue-300 px-3 py-2 text-center font-bold text-gray-700">{req.max}</td>
-                            <td className="border border-blue-300 px-3 py-2 text-center font-extrabold text-sm text-blue-950">
+                          <tr className="hover:bg-[#dbe5f1]/40">
+                            <td className="border-2 border-[#000080] px-3 py-2 text-center font-bold text-[#000080]">{req.sr}</td>
+                            <td className="border-2 border-[#000080] px-3 py-2 pl-6 font-medium">{req.name}</td>
+                            <td className="border-2 border-[#000080] px-3 py-2 text-center">1</td>
+                            <td className="border-2 border-[#000080] px-3 py-2 text-center font-bold text-gray-700">{req.max}</td>
+                            <td className="border-2 border-[#000080] px-3 py-2 text-center font-extrabold text-sm text-[#000080]">
                               {achievement && achievement.status === 'approved' 
                                 ? achievement.marks_obtained 
                                 : achievement && achievement.status === 'pending'
                                 ? 'Pending Evaluation'
                                 : '—'}
                             </td>
-                            <td className="border border-blue-300 px-3 py-2 text-center font-medium text-gray-700">
+                            <td className="border-2 border-[#000080] px-3 py-2 text-center font-medium text-gray-700">
                               {achievement && achievement.status === 'approved' && achievement.evaluated_at
                                 ? formatDate(achievement.evaluated_at)
                                 : '—'}
                             </td>
-                            <td className="border border-blue-300 px-3 py-2 text-center print:hidden">
+                            <td className="border-2 border-[#000080] px-3 py-2 text-center print:hidden">
                               <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
                                 achievement && achievement.status === 'approved'
                                   ? 'bg-green-50 text-green-700 border border-green-200'
@@ -651,23 +705,23 @@ const StudentAcademicRecords = () => {
                     })}
 
                     {/* Total Sum Row */}
-                    <tr className="bg-blue-100 font-extrabold print:bg-blue-100 text-sm text-blue-950">
-                      <td colSpan={2} className="border border-blue-800 px-3 py-2.5 text-right uppercase">
+                    <tr className="bg-[#dbe5f1] font-extrabold print:bg-[#dbe5f1] text-sm text-[#000080]">
+                      <td colSpan={2} className="border-2 border-[#000080] px-3 py-2.5 text-right uppercase">
                         Total posting requirements
                       </td>
-                      <td className="border border-blue-800 px-3 py-2.5 text-center">{selectedReqs.length}</td>
-                      <td className="border border-blue-800 px-3 py-2.5 text-center text-blue-800">{selectedTotalPossible}</td>
-                      <td className="border border-blue-800 px-3 py-2.5 text-center text-blue-900 text-base">
+                      <td className="border-2 border-[#000080] px-3 py-2.5 text-center">{selectedReqs.length}</td>
+                      <td className="border-2 border-[#000080] px-3 py-2.5 text-center text-[#000080]">{selectedTotalPossible}</td>
+                      <td className="border-2 border-[#000080] px-3 py-2.5 text-center text-[#000080] text-base">
                         {selectedStudent.totalMarks}
                       </td>
-                      <td className="border border-blue-800 px-3 py-2.5 text-center text-blue-950 font-bold">—</td>
-                      <td className="border border-blue-800 px-3 py-2.5 print:hidden"></td>
+                      <td className="border-2 border-[#000080] px-3 py-2.5 text-center text-[#000080] font-bold">—</td>
+                      <td className="border-2 border-[#000080] px-3 py-2.5 print:hidden"></td>
                     </tr>
                   </tbody>
                 </table>
 
                 {/* Signatures & Footer Row */}
-                <div className="mt-16 print:mt-24 grid grid-cols-3 gap-6 text-center text-xs font-bold pt-8 border-t-2 border-dashed border-blue-300 signature-section">
+                <div className="mt-16 print:mt-24 grid grid-cols-3 gap-6 text-center text-xs font-bold pt-8 border-t-4 border-dashed border-[#000080] signature-section">
                   <div className="flex flex-col items-center">
                     <div className="h-10 border-b border-black w-40 mb-2"></div>
                     <span>Course Coordinator</span>
