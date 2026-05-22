@@ -96,8 +96,12 @@
         {
           "key": "layout_sketch_or_map",
           "label": "Sketch / Map of Layout",
-          "type": "textarea",
-          "hint": "Provide a textual description of the sketch or map of the centre layout (attach hand-drawn sketch if applicable)",
+          "type": "sketch",
+          "accept": [
+            "image/png",
+            "image/jpeg"
+          ],
+          "hint": "Draw or upload a sketch of the center layout",
           "required": false
         }
       ]

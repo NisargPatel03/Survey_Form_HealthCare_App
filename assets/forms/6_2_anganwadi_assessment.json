@@ -184,13 +184,13 @@
         {
           "key": "physical_layout_sketch",
           "label": "Sketch / Map of Layout",
-          "type": "file",
+          "type": "sketch",
           "accept": [
             "image/png",
             "image/jpeg",
             "application/pdf"
           ],
-          "hint": "Upload a hand-drawn or digital sketch of the Anganwadi center layout",
+          "hint": "Draw or upload a sketch of the Anganwadi center layout",
           "required": false
         }
       ]

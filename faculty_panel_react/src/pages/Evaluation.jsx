@@ -131,7 +131,7 @@ export default function Evaluation() {
           if (marksField && marksField.properties) {
             const initialMarks = {};
             Object.keys(marksField.properties).forEach(key => {
-              if (key !== 'total') initialMarks[key] = 0;
+              if (key !== 'total') initialMarks[key] = '';
             });
             setEvaluationMarks(initialMarks);
           }
@@ -151,6 +151,10 @@ export default function Evaluation() {
   };
 
   const handleMarkChange = (key, value, max) => {
+    if (value === '') {
+      setEvaluationMarks(prev => ({ ...prev, [key]: '' }));
+      return;
+    }
     const numVal = Math.min(Math.max(0, Number(value) || 0), max);
     setEvaluationMarks(prev => ({ ...prev, [key]: numVal }));
   };
@@ -159,6 +163,29 @@ export default function Evaluation() {
     if (status === 'resubmission_required' && !remarks.trim()) {
       alert('Please enter faculty remarks explaining what the student needs to correct.');
       return;
+    }
+
+    if (status === 'approved') {
+      const evalSection = formSchema?.sections.find(s => s.section.toLowerCase().includes('evaluat'));
+      const marksField = evalSection?.fields.find(f => f.key === 'marks');
+      const marksProperties = marksField?.properties;
+      
+      if (marksProperties) {
+        const missingKeys = [];
+        Object.keys(marksProperties).forEach(key => {
+          if (key !== 'total') {
+            const val = evaluationMarks[key];
+            if (val === undefined || val === null || val === '') {
+              missingKeys.push(marksProperties[key].label || key);
+            }
+          }
+        });
+        
+        if (missingKeys.length > 0) {
+          alert(`Please enter marks for all criteria before approving. Missing marks for:\n- ${missingKeys.join('\n- ')}`);
+          return;
+        }
+      }
     }
 
     setSaving(true);
@@ -246,6 +273,32 @@ export default function Evaluation() {
                                   </div>
                                 ))}
                               </div>
+                            ) : (field.type === 'sketch' || field.key === 'physical_layout_sketch' || field.key === 'layout_sketch_or_map') ? (
+                              value ? (
+                                value.startsWith('http') ? (
+                                  <div className="mt-2 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 max-w-lg shadow-sm">
+                                    <a href={value} target="_blank" rel="noopener noreferrer" className="block relative group">
+                                      <img 
+                                        src={value} 
+                                        alt={field.label} 
+                                        className="w-full h-auto max-h-80 object-contain hover:scale-[1.02] transition-transform duration-200" 
+                                      />
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">
+                                        Click to view full image
+                                      </div>
+                                    </a>
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-lg flex flex-col gap-1 mt-1">
+                                    <span className="font-bold flex items-center gap-1">
+                                      ⚠️ Local Draft Not Uploaded
+                                    </span>
+                                    <span className="text-xs break-all">Path: {value}</span>
+                                  </div>
+                                )
+                              ) : (
+                                <span className="text-gray-400 italic">No sketch response</span>
+                              )
                             ) : (
                               value?.toString() || <span className="text-gray-400 italic">No response</span>
                             )}
@@ -286,9 +339,12 @@ export default function Evaluation() {
                         <input
                           type="number"
                           className="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 py-2"
-                          value={evaluationMarks[key] || 0}
+                          value={evaluationMarks[key] === undefined || evaluationMarks[key] === null ? '' : evaluationMarks[key]}
                           onChange={(e) => handleMarkChange(key, e.target.value, prop.max_marks)}
                           disabled={submission.status === 'approved'}
+                          min="0"
+                          max={prop.max_marks}
+                          placeholder="Enter marks..."
                         />
                       </div>
                     );

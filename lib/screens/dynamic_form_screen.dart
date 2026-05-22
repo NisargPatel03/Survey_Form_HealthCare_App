@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/submission_service.dart';
+import '../services/attachment_service.dart';
 import 'pdf_viewer_screen.dart';
+import 'sketch_canvas_screen.dart';
 
 class DynamicFormScreen extends StatefulWidget {
   final String studentId;
@@ -200,6 +204,47 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         return;
       }
 
+      // 1. Process and upload any offline/local sketch layout images to Supabase Storage
+      final attachmentService = AttachmentService();
+      
+      Future<void> uploadFieldIfSketch(Map<String, dynamic> field) async {
+        final key = field['key'];
+        final type = field['type'];
+        if (type == 'sketch') {
+          final localPath = _formData[key];
+          if (localPath is String && localPath.isNotEmpty && !localPath.startsWith('http')) {
+            final cloudUrl = await attachmentService.uploadRequirementAttachment(
+              studentId: widget.studentId,
+              requirementSrNo: widget.requirementSrNo,
+              localFilePath: localPath,
+            );
+            _formData[key] = cloudUrl;
+          }
+        }
+      }
+
+      // Process root level fields
+      for (final f in _fields) {
+        if (f is Map<String, dynamic>) {
+          await uploadFieldIfSketch(f);
+        } else if (f is Map) {
+          await uploadFieldIfSketch(Map<String, dynamic>.from(f));
+        }
+      }
+
+      // Process section level fields
+      for (final s in _sections) {
+        final List<dynamic> sectionFields = s['fields'] ?? [];
+        for (final f in sectionFields) {
+          if (f is Map<String, dynamic>) {
+            await uploadFieldIfSketch(f);
+          } else if (f is Map) {
+            await uploadFieldIfSketch(Map<String, dynamic>.from(f));
+          }
+        }
+      }
+
+      // 2. Submit to DB
       await _submissionService.submitRequirement(
         studentId: widget.studentId,
         courseName: widget.courseName,
@@ -218,6 +263,82 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _openInteractiveCanvas(String key, Map<String, dynamic> dataMap) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SketchCanvasScreen(),
+      ),
+    );
+
+    if (result != null && result is String) {
+      setState(() {
+        dataMap[key] = result;
+      });
+      _saveDraft();
+    }
+  }
+
+  Future<void> _pickSketchFromCameraOrGallery(String key, Map<String, dynamic> dataMap) async {
+    final ImagePicker picker = ImagePicker();
+    
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Source of Sketch Layout',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Colors.blue),
+              title: const Text('Take Photo of Drawing'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Colors.blue),
+              title: const Text('Choose from Gallery'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+
+    if (source != null) {
+      try {
+        final XFile? image = await picker.pickImage(
+          source: source,
+          maxWidth: 1200,
+          maxHeight: 1200,
+          imageQuality: 85,
+        );
+        
+        if (image != null) {
+          setState(() {
+            dataMap[key] = image.path;
+          });
+          _saveDraft();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error picking layout image: $e')),
+          );
+        }
       }
     }
   }
@@ -313,18 +434,239 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         ),
       );
     } else if (type == 'file') {
+      final fileVal = dataMap[key]?.toString();
+      final bool hasValue = fileVal != null && fileVal.isNotEmpty;
+      final bool isImage = hasValue && (fileVal.startsWith('http') || fileVal.endsWith('.png') || fileVal.endsWith('.jpg') || fileVal.endsWith('.jpeg') || fileVal.contains('sketch_'));
+
       return Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: label,
-            border: const OutlineInputBorder(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InputDecorator(
+              decoration: InputDecoration(
+                labelText: label,
+                border: const OutlineInputBorder(),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      fileVal ?? 'No file selected',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: hasValue ? Colors.blueGrey.shade800 : Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    isImage ? Icons.image_outlined : Icons.upload_file,
+                    color: Colors.blueGrey,
+                  ),
+                ],
+              ),
+            ),
+            if (isImage) ...[
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade200),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  height: 220,
+                  width: double.infinity,
+                  child: fileVal.startsWith('http')
+                      ? Image.network(
+                          fileVal,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.grey.shade100,
+                            child: const Center(
+                              child: Icon(Icons.broken_image_outlined, size: 48, color: Colors.grey),
+                            ),
+                          ),
+                        )
+                      : Image.file(
+                          File(fileVal),
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.grey.shade100,
+                            child: const Center(
+                              child: Icon(Icons.broken_image_outlined, size: 48, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+    } else if (type == 'sketch') {
+      final currentSketch = dataMap[key];
+      final bool isCloud = currentSketch != null && currentSketch.toString().startsWith('http');
+      final bool isLocal = currentSketch != null && !isCloud;
+      final bool isFileValid = isLocal && File(currentSketch.toString()).existsSync();
+
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(dataMap[key] ?? 'No file selected (Coming soon)'),
-              const Icon(Icons.upload_file),
+              Text(
+                label,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blueGrey),
+              ),
+              const SizedBox(height: 12),
+              
+              if (currentSketch != null && currentSketch.toString().isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      if (isCloud)
+                        Image.network(
+                          currentSketch.toString(),
+                          height: 220,
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const SizedBox(
+                              height: 220,
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 220,
+                              color: Colors.grey.shade100,
+                              child: const Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.broken_image_outlined, color: Colors.grey, size: 48),
+                                    SizedBox(height: 8),
+                                    Text('Error loading sketch from cloud', style: TextStyle(color: Colors.grey)),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      else if (isFileValid)
+                        Image.file(
+                          File(currentSketch.toString()),
+                          height: 220,
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                        )
+                      else
+                        Container(
+                          height: 150,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade50,
+                            border: Border.all(color: Colors.amber.shade300),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.warning_amber_rounded, size: 48, color: Colors.amber),
+                              SizedBox(height: 8),
+                              Text("Local file draft path not found", style: TextStyle(color: Colors.amber)),
+                            ],
+                          ),
+                        ),
+                      if (!_isReadOnly)
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.black.withOpacity(0.6),
+                            radius: 18,
+                            child: IconButton(
+                              icon: const Icon(Icons.close, size: 16, color: Colors.white),
+                              onPressed: () {
+                                setState(() {
+                                  dataMap[key] = null;
+                                });
+                                _saveDraft();
+                              },
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ] else ...[
+                Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    border: Border.all(color: Colors.grey.shade300, style: BorderStyle.solid),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.map_outlined, size: 48, color: Colors.grey),
+                      SizedBox(height: 8),
+                      Text("No sketch uploaded or drawn yet", style: TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+                ),
+              ],
+              
+              const SizedBox(height: 12),
+              
+              if (!_isReadOnly)
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _openInteractiveCanvas(key, dataMap),
+                        icon: const Icon(Icons.brush, size: 18),
+                        label: const Text('Draw Sketch'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade700,
+                          foregroundColor: Colors.white,
+                          elevation: 1,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _pickSketchFromCameraOrGallery(key, dataMap),
+                        icon: const Icon(Icons.camera_alt_outlined, size: 18),
+                        label: const Text('Capture Sketch'),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.blue.shade700),
+                          foregroundColor: Colors.blue.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

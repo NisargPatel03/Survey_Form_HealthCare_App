@@ -184,7 +184,7 @@
         {
           "key": "physical_layout_sketch",
           "label": "Sketch / Map of Layout",
-          "type": "file",
+          "type": "sketch",
           "accept": [
             "image/png",
             "image/jpeg",
