@@ -853,43 +853,43 @@ const StudentAcademicRecords = () => {
           <div className="bg-white w-full max-w-4xl rounded-none md:rounded-2xl shadow-2xl flex flex-col h-full md:max-h-[90vh] overflow-hidden print:shadow-none print:w-full print:h-auto print:max-h-none print:overflow-visible">
             
             {/* Modal Header (Hidden on printing) */}
-            <div className="px-6 py-4 bg-primary text-white flex items-center justify-between print:hidden">
-              <div className="flex items-center gap-2.5">
-                <FaGraduationCap size={22} />
-                <h3 className="font-bold text-lg">Student Posting Completion Transcript</h3>
+            <div className="px-4 py-3 md:px-6 md:py-4 bg-primary text-white flex items-center justify-between gap-2 print:hidden">
+              <div className="flex items-center gap-2 min-w-0">
+                <FaGraduationCap size={22} className="flex-shrink-0" />
+                <h3 className="font-bold text-sm sm:text-base md:text-lg leading-tight truncate">Student Posting Completion Transcript</h3>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 md:gap-3 flex-shrink-0">
                 <button
                   onClick={handleDownloadPDF}
                   disabled={isDownloading}
-                  className="flex items-center gap-2 px-4 py-1.5 bg-white text-primary hover:bg-white/95 disabled:opacity-75 disabled:cursor-not-allowed rounded-lg text-sm font-bold shadow-sm transition"
+                  className="flex items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-1.5 bg-white text-primary hover:bg-white/95 disabled:opacity-75 disabled:cursor-not-allowed rounded-lg text-xs md:text-sm font-bold shadow-sm transition whitespace-nowrap"
                 >
                   {isDownloading ? (
                     <>
-                      <FaSpinner className="animate-spin" />
-                      Downloading...
+                      <FaSpinner className="animate-spin text-[10px] md:text-xs" />
+                      <span>Downloading...</span>
                     </>
                   ) : (
                     <>
-                      <FaDownload />
-                      Download Marksheet PDF
+                      <FaDownload className="text-[10px] md:text-xs" />
+                      <span>Download Marksheet PDF</span>
                     </>
                   )}
                 </button>
                 <button
                   onClick={() => setSelectedStudent(null)}
-                  className="p-1.5 hover:bg-white/20 rounded-full transition"
+                  className="p-1.5 hover:bg-white/20 rounded-full transition flex-shrink-0"
                 >
-                  <FaTimes size={18} />
+                  <FaTimes size={16} />
                 </button>
               </div>
             </div>
 
             {/* Scrollable Document Container */}
-            <div className="flex-1 overflow-y-auto p-8 print:p-0 print:overflow-visible">
+            <div className="flex-1 overflow-auto p-4 md:p-8 bg-[#f3f4f6] print:p-0 print:overflow-visible">
               
               {/* printable page layout */}
-              <div ref={printPageRef} className="print-page text-black font-sans bg-[#dbe5f1] print:bg-[#dbe5f1] leading-relaxed mx-auto max-w-[800px] border-[8px] border-[#000080] p-8 print:p-8">
+              <div ref={printPageRef} className="print-page text-black font-sans bg-[#dbe5f1] print:bg-[#dbe5f1] leading-relaxed mx-auto w-[800px] min-w-[800px] border-[8px] border-[#000080] p-8 print:p-8 shadow-md">
                 
                 {/* School Header with Logo */}
                 <div className="flex flex-col items-center mb-6 border-b-4 border-[#000080] pb-4">
@@ -1142,7 +1142,7 @@ const StudentAcademicRecords = () => {
 
         return (
           <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '800px', pointerEvents: 'none' }}>
-            <div ref={bulkPrintRef} className="print-page text-black font-sans bg-[#dbe5f1] leading-relaxed p-8 border-[8px] border-[#000080]">
+            <div ref={bulkPrintRef} className="print-page text-black font-sans bg-[#dbe5f1] leading-relaxed w-[800px] min-w-[800px] p-8 border-[8px] border-[#000080]">
               {/* School Header with Logo */}
               <div className="flex flex-col items-center mb-6 border-b-4 border-[#000080] pb-4">
                 <div className="flex items-center justify-center gap-4 mb-3 w-full">
