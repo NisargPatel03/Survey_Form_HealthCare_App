@@ -28,12 +28,15 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   String? _academicYear;
   String? _semester;
   String? _courseName;
+  int _unreadCount = 0;
+  List<Map<String, dynamic>> _notifications = [];
 
   @override
   void initState() {
     super.initState();
     _loadAcademicDetails();
     _initialSync();
+    _fetchNotifications();
   }
 
   Future<void> _loadAcademicDetails() async {
@@ -45,6 +48,195 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         _courseName = prefs.getString('courseName_${widget.studentId}');
       });
     }
+
+    try {
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select('semester, academic_year')
+          .eq('student_id', widget.studentId)
+          .maybeSingle();
+
+      if (response != null) {
+        final serverSemester = response['semester'] as String?;
+        final serverYear = response['academic_year'] as String?;
+        
+        if (serverSemester != null && serverYear != null) {
+          final localSemester = prefs.getString('semester_${widget.studentId}');
+          final localYear = prefs.getString('academicYear_${widget.studentId}');
+          
+          if (serverSemester != localSemester || serverYear != localYear) {
+            String serverCourse = '';
+            if (serverSemester == '5th Sem') {
+              serverCourse = 'NUR 303 - Community Health Nursing - I';
+            } else if (serverSemester == '7th Sem') {
+              serverCourse = 'NUR 401 - Community Health Nursing - II';
+            }
+            
+            await prefs.setString('semester_${widget.studentId}', serverSemester);
+            await prefs.setString('academicYear_${widget.studentId}', serverYear);
+            await prefs.setString('courseName_${widget.studentId}', serverCourse);
+            
+            if (mounted) {
+              setState(() {
+                _semester = serverSemester;
+                _academicYear = serverYear;
+                _courseName = serverCourse;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Academic records updated: Promoted to $serverSemester ($serverYear)'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print('Error syncing academic details from server: $e');
+    }
+  }
+
+  Future<void> _fetchNotifications() async {
+    try {
+      final data = await Supabase.instance.client
+          .from('notifications')
+          .select('*')
+          .eq('student_id', widget.studentId)
+          .order('created_at', ascending: false);
+      
+      if (mounted) {
+        setState(() {
+          _notifications = List<Map<String, dynamic>>.from(data);
+          _unreadCount = _notifications.where((n) => n['is_read'] == false).length;
+        });
+      }
+    } catch (e) {
+      print('Error fetching notifications: $e');
+    }
+  }
+
+  Future<void> _markNotificationsAsRead() async {
+    if (_unreadCount == 0) return;
+    try {
+      await Supabase.instance.client
+          .from('notifications')
+          .update({'is_read': true})
+          .eq('student_id', widget.studentId);
+      
+      if (mounted) {
+        setState(() {
+          _unreadCount = 0;
+          for (var n in _notifications) {
+            n['is_read'] = true;
+          }
+        });
+      }
+    } catch (e) {
+      print('Error marking notifications as read: $e');
+    }
+  }
+
+  void _showNotificationsDialog() {
+    _markNotificationsAsRead();
+    
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              titlePadding: const EdgeInsets.fromLTRB(24, 20, 16, 0),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'Notifications',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 8),
+              content: SizedBox(
+                width: double.maxFinite,
+                height: 350,
+                child: _notifications.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No notifications yet',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _notifications.length,
+                        itemBuilder: (context, index) {
+                          final n = _notifications[index];
+                          final createdAt = DateTime.parse(n['created_at']).toLocal();
+                          final dateStr = '${createdAt.day}/${createdAt.month}/${createdAt.year} ${createdAt.hour.toString().padLeft(2, '0')}:${createdAt.minute.toString().padLeft(2, '0')}';
+                          
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Colors.grey.shade200),
+                              ),
+                            ),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: n['title'].toString().contains('Promotion') 
+                                    ? Colors.amber.shade100 
+                                    : Colors.blue.shade100,
+                                child: Icon(
+                                  n['title'].toString().contains('Promotion') 
+                                      ? Icons.military_tech
+                                      : Icons.assignment_turned_in,
+                                  color: n['title'].toString().contains('Promotion') 
+                                      ? Colors.amber.shade900 
+                                      : Colors.blue.shade900,
+                                ),
+                              ),
+                              title: Text(
+                                n['title'] ?? 'Notification',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    n['message'] ?? '',
+                                    style: const TextStyle(fontSize: 13, color: Colors.black87),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    dateStr,
+                                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close', style: TextStyle(fontSize: 16)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   Future<void> _initialSync() async {
@@ -363,8 +555,47 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: _loadSurveys,
+              onPressed: () {
+                _loadSurveys();
+                _loadAcademicDetails();
+                _fetchNotifications();
+              },
               tooltip: 'Refresh',
+            ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.notifications),
+                  onPressed: _showNotificationsDialog,
+                  tooltip: 'Notifications',
+                ),
+                if (_unreadCount > 0)
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 14,
+                        minHeight: 14,
+                      ),
+                      child: Text(
+                        '$_unreadCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             IconButton(
               icon: const Icon(Icons.help_outline),

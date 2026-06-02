@@ -212,16 +212,42 @@ class _LoginScreenState extends State<LoginScreen> {
           final prefs = await SharedPreferences.getInstance();
           final studentId = _studentIdController.text.toUpperCase();
           
+          // Try to fetch latest academic details from public.profiles (source of truth)
+          String? serverSemester;
+          String? serverYear;
+          try {
+            final profile = await Supabase.instance.client
+                .from('profiles')
+                .select('semester, academic_year')
+                .eq('student_id', studentId)
+                .maybeSingle();
+            if (profile != null) {
+              serverSemester = profile['semester'] as String?;
+              serverYear = profile['academic_year'] as String?;
+            }
+          } catch (e) {
+            print('Error fetching profile on login: $e');
+          }
+
           final user = Supabase.instance.client.auth.currentUser;
           final metadata = user?.userMetadata;
           
-          final hasAcademicYear = metadata?['academic_year'] != null;
-          final hasSemester = metadata?['semester'] != null;
+          final semester = serverSemester ?? metadata?['semester'] as String?;
+          final academicYear = serverYear ?? metadata?['academic_year'] as String?;
 
-          if (hasAcademicYear && hasSemester) {
-            await prefs.setString('academicYear_$studentId', metadata!['academic_year']);
-            await prefs.setString('semester_$studentId', metadata['semester']);
-            await prefs.setString('courseName_$studentId', metadata['course_name'] ?? '');
+          if (semester != null && academicYear != null) {
+            String courseName = '';
+            if (semester == '5th Sem') {
+              courseName = 'NUR 303 - Community Health Nursing - I';
+            } else if (semester == '7th Sem') {
+              courseName = 'NUR 401 - Community Health Nursing - II';
+            } else {
+              courseName = metadata?['course_name'] ?? '';
+            }
+
+            await prefs.setString('academicYear_$studentId', academicYear);
+            await prefs.setString('semester_$studentId', semester);
+            await prefs.setString('courseName_$studentId', courseName);
             
             Navigator.pushReplacement(
               context,

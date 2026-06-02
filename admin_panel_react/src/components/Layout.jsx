@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaChartPie, FaUsers, FaFileDownload, FaBars, FaTimes, FaMapMarkedAlt, FaSignOutAlt, FaClipboardList, FaFilter, FaGraduationCap, FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaHome, FaChartPie, FaUsers, FaFileDownload, FaBars, FaTimes, FaMapMarkedAlt, FaSignOutAlt, FaClipboardList, FaFilter, FaGraduationCap, FaChevronDown, FaChevronRight, FaClipboardCheck, FaUserPlus } from 'react-icons/fa';
 
 
 const Layout = () => {
@@ -28,6 +28,7 @@ const Layout = () => {
             items: [
                 { path: '/', name: 'Dashboard', icon: <FaHome /> },
                 { path: '/analytics', name: 'Analytics', icon: <FaChartPie /> },
+                { path: '/assign-surveys', name: 'Assign Surveys', icon: <FaClipboardCheck /> },
                 { path: '/reports', name: 'Custom Reports', icon: <FaFilter /> },
                 { path: '/map', name: 'Health Map', icon: <FaMapMarkedAlt /> },
                 { path: '/families', name: 'Family Directory', icon: <FaUsers /> },
@@ -40,6 +41,7 @@ const Layout = () => {
             title: 'Academic/Clinical Requirements',
             items: [
                 { path: '/academic', name: 'Academic Records', icon: <FaGraduationCap /> },
+                { path: '/students', name: 'Enroll & Promote', icon: <FaUserPlus /> },
             ]
         }
     ];
@@ -87,7 +89,7 @@ const Layout = () => {
                                     {expandedSections[section.id] ? <FaChevronDown size={10} className="text-teal-200" /> : <FaChevronRight size={10} className="text-teal-200" />}
                                 </button>
                                 
-                                <div className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-96 opacity-100 mt-1' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                                <div className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[1000px] opacity-100 mt-1' : 'max-h-0 opacity-0 pointer-events-none'}`}>
                                     <ul className="space-y-1">
                                         {section.items.map((item) => (
                                             <li key={item.path}>
