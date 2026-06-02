@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-import { ChevronLeft, Save, CheckCircle, RotateCcw, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Save, CheckCircle, RotateCcw, AlertTriangle, UserPlus } from 'lucide-react';
 
 export default function Evaluation() {
   const { id } = useParams();
@@ -13,10 +13,27 @@ export default function Evaluation() {
   const [evaluationMarks, setEvaluationMarks] = useState({});
   const [remarks, setRemarks] = useState('');
   const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [faculties, setFaculties] = useState([]);
 
   useEffect(() => {
     fetchSubmissionAndSchema();
+    fetchFaculties();
   }, [id]);
+
+  const fetchFaculties = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'faculty')
+        .order('full_name', { ascending: true });
+      if (error) throw error;
+      setFaculties(data || []);
+    } catch (err) {
+      console.error('Error fetching faculties:', err);
+    }
+  };
 
   const fetchSubmissionAndSchema = async () => {
     try {
@@ -218,6 +235,94 @@ export default function Evaluation() {
     }
   };
 
+  const saveEditedEvaluation = async () => {
+    const evalSection = formSchema?.sections.find(s => s.section.toLowerCase().includes('evaluat'));
+    const marksField = evalSection?.fields.find(f => f.key === 'marks');
+    const marksProperties = marksField?.properties;
+    
+    if (marksProperties) {
+      const missingKeys = [];
+      Object.keys(marksProperties).forEach(key => {
+        if (key !== 'total') {
+          const val = evaluationMarks[key];
+          if (val === undefined || val === null || val === '') {
+            missingKeys.push(marksProperties[key].label || key);
+          }
+        }
+      });
+      
+      if (missingKeys.length > 0) {
+        alert(`Please enter marks for all criteria. Missing marks for:\n- ${missingKeys.join('\n- ')}`);
+        return;
+      }
+    }
+
+    setSaving(true);
+    try {
+      const total = calculateTotal();
+      const maxTotal = marksField?.properties?.total?.max_marks || 0;
+
+      const { error } = await supabase
+        .from('requirement_submissions')
+        .update({
+          marks_obtained: total,
+          max_marks: maxTotal,
+          faculty_remarks: remarks,
+          evaluation_data: evaluationMarks,
+          evaluated_at: new Date().toISOString()
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      setSubmission(prev => ({
+        ...prev,
+        marks_obtained: total,
+        max_marks: maxTotal,
+        faculty_remarks: remarks,
+        evaluation_data: evaluationMarks,
+        evaluated_at: new Date().toISOString()
+      }));
+      
+      setIsEditing(false);
+      alert('Evaluation updated successfully.');
+    } catch (error) {
+      console.error('Error saving edited evaluation:', error);
+      alert('Failed to update evaluation.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReassignFaculty = async (facultyId) => {
+    const targetFaculty = faculties.find(f => f.id === facultyId);
+    if (!targetFaculty) return;
+
+    const confirmTransfer = window.confirm(
+      `Are you sure you want to re-assign this submission to ${targetFaculty.full_name}?\n\nThis will transfer all evaluation responsibilities, and you will be redirected to the dashboard.`
+    );
+    if (!confirmTransfer) return;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('requirement_submissions')
+        .update({
+          assigned_faculty_id: facultyId
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+      alert(`Submission successfully transferred to ${targetFaculty.full_name}.`);
+      navigate('/');
+    } catch (err) {
+      console.error('Error reassigning submission:', err);
+      alert('Failed to re-assign submission.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-600"></div></div>;
   if (error) return <div className="text-center py-20 text-red-600 font-medium">{error}</div>;
 
@@ -314,8 +419,8 @@ export default function Evaluation() {
         </div>
 
         {/* Right: Evaluation Form */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border-2 border-primary-100 overflow-hidden sticky top-8">
+        <div className="space-y-6 lg:sticky lg:top-8">
+          <div className="bg-white rounded-xl shadow-sm border-2 border-primary-100 overflow-hidden">
             <div className="bg-primary-50 px-6 py-4 border-b border-primary-100">
               <h3 className="font-bold text-primary-900 flex items-center gap-2">
                 <CheckCircle className="h-5 w-5" />
@@ -341,7 +446,7 @@ export default function Evaluation() {
                           className="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 py-2"
                           value={evaluationMarks[key] === undefined || evaluationMarks[key] === null ? '' : evaluationMarks[key]}
                           onChange={(e) => handleMarkChange(key, e.target.value, prop.max_marks)}
-                          disabled={submission.status === 'approved'}
+                          disabled={submission.status === 'approved' && !isEditing}
                           min="0"
                           max={prop.max_marks}
                           placeholder="Enter marks..."
@@ -365,7 +470,7 @@ export default function Evaluation() {
                   placeholder="Enter your feedback for the student..."
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
-                  disabled={submission.status === 'approved'}
+                  disabled={submission.status === 'approved' && !isEditing}
                 />
               </div>
 
@@ -400,8 +505,45 @@ export default function Evaluation() {
               )}
 
               {submission.status === 'approved' && (
-                <div className="bg-green-50 text-green-800 p-4 rounded-lg border border-green-100 text-center font-medium">
-                  This submission has been approved.
+                <div className="space-y-3 pt-4">
+                  {!isEditing ? (
+                    <>
+                      <div className="bg-green-50 text-green-800 p-4 rounded-lg border border-green-100 text-center font-bold flex items-center justify-center gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        Approved & Graded
+                      </div>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        disabled={saving}
+                        className="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
+                      >
+                        <RotateCcw className="h-5 w-5" />
+                        Re-evaluate / Edit Marks
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={saveEditedEvaluation}
+                        disabled={saving}
+                        className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Save className="h-5 w-5" />
+                        Save Changes
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsEditing(false);
+                          setRemarks(submission.faculty_remarks || '');
+                          setEvaluationMarks(submission.evaluation_data || {});
+                        }}
+                        disabled={saving}
+                        className="w-full bg-gray-150 hover:bg-gray-200 text-gray-700 py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 border"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -410,6 +552,33 @@ export default function Evaluation() {
                   ⚠️ Requested resubmission from the student. Waiting for their update...
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Load Distribution Card */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6 space-y-4">
+            <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+              <UserPlus className="h-5 w-5 text-primary-500" />
+              Faculty Load Distribution
+            </h4>
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-gray-500">Transfer Submission to Faculty</label>
+              <select
+                value={submission.assigned_faculty_id || ''}
+                onChange={(e) => handleReassignFaculty(e.target.value)}
+                disabled={saving}
+                className="w-full rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 py-2.5 text-sm cursor-pointer"
+              >
+                <option value="" disabled>Select Faculty...</option>
+                {faculties.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.full_name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-[10px] text-gray-400 mt-1 italic leading-normal">
+                Re-assigning this submission will transfer all grading and review responsibilities to the selected faculty member immediately.
+              </p>
             </div>
           </div>
         </div>

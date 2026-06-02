@@ -41,9 +41,20 @@ function App() {
         .single();
 
       if (error) throw error;
-      setUserRole(data.role);
+      
+      if (data && data.role === 'faculty') {
+        setUserRole(data.role);
+      } else {
+        console.warn('Unauthorized role detected. Access denied.');
+        setUserRole(null);
+        await supabase.auth.signOut();
+        alert('Access Denied: You do not have faculty privileges.');
+      }
     } catch (error) {
       console.error('Error fetching role:', error);
+      setUserRole(null);
+      await supabase.auth.signOut();
+      alert('Access Denied: Faculty profile not found. Please register.');
     } finally {
       setLoading(false);
     }
