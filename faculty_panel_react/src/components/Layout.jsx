@@ -132,27 +132,28 @@ export default function Layout() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
         <header className="bg-white/80 backdrop-blur-md shadow-sm border-b px-4 lg:px-8 py-4 flex justify-between items-center z-30">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
             >
               <Menu className="h-6 w-6 text-gray-600" />
             </button>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 truncate">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-800 truncate">
               {location.pathname === '/' ? 'Submissions Overview' : 'Requirement Evaluation'}
             </h2>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             {location.pathname.startsWith('/evaluation/') && (
               <div className="relative">
                 <button
                   onClick={() => setIsGuidelinesOpen(!isGuidelinesOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200 rounded-lg text-sm font-bold shadow-sm transition duration-150 cursor-pointer"
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200 rounded-lg text-xs sm:text-sm font-bold shadow-sm transition duration-150 cursor-pointer"
                 >
-                  <FileText className="h-4 w-4" />
-                  <span>Guidelines PDFs</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isGuidelinesOpen ? 'rotate-180' : ''}`} />
+                  <FileText className="h-4 w-4 flex-shrink-0" />
+                  <span className="hidden sm:inline">Guidelines PDFs</span>
+                  <span className="inline sm:hidden">Guidelines</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 flex-shrink-0 ${isGuidelinesOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {isGuidelinesOpen && (
                   <>
@@ -160,7 +161,7 @@ export default function Layout() {
                       className="fixed inset-0 z-40" 
                       onClick={() => setIsGuidelinesOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                       <div className="px-4 py-2 text-xs font-extrabold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-1">
                         Select a Guideline PDF
                       </div>
