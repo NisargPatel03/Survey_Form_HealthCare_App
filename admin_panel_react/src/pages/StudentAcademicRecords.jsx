@@ -957,7 +957,6 @@ const StudentAcademicRecords = () => {
                       <th className="border-2 border-[#000080] px-3 py-2 text-center w-24 font-bold">Marks Allotted</th>
                       <th className="border-2 border-[#000080] px-3 py-2 text-center w-24 font-bold">Marks Achieved</th>
                       <th className="border-2 border-[#000080] px-3 py-2 text-center w-32 font-bold">Date of Submission</th>
-                      <th className="border-2 border-[#000080] px-3 py-2 text-center w-24 print:hidden font-bold">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -974,7 +973,7 @@ const StudentAcademicRecords = () => {
                           {/* Section Divider Heading */}
                           {showSectionHeader && (
                             <tr className="bg-[#dbe5f1] print:bg-[#dbe5f1] font-bold text-[#000080]">
-                              <td colSpan={7} className="border-2 border-[#000080] px-3 py-1.5 uppercase font-extrabold tracking-wide">
+                              <td colSpan={6} className="border-2 border-[#000080] px-3 py-1.5 uppercase font-extrabold tracking-wide">
                                 {req.section}
                               </td>
                             </tr>
@@ -983,7 +982,7 @@ const StudentAcademicRecords = () => {
                           {/* Category Heading (subheadings like Orientation, Care plan etc) */}
                           {showCategoryHeader && req.category && (
                             <tr className="bg-[#f2f5f9] print:bg-[#f2f5f9] font-semibold text-[#000080]">
-                              <td colSpan={7} className="border-2 border-[#000080] px-3 py-1 italic pl-5">
+                              <td colSpan={6} className="border-2 border-[#000080] px-3 py-1 italic pl-5">
                                 {req.category}
                               </td>
                             </tr>
@@ -1007,17 +1006,6 @@ const StudentAcademicRecords = () => {
                                 ? formatDate(achievement.evaluated_at)
                                 : '—'}
                             </td>
-                            <td className="border-2 border-[#000080] px-3 py-2 text-center print:hidden">
-                              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                                achievement && achievement.status === 'approved'
-                                  ? 'bg-green-50 text-green-700 border border-green-200'
-                                  : achievement && achievement.status === 'pending'
-                                  ? 'bg-amber-50 text-amber-700 border border-amber-200 animate-pulse'
-                                  : 'bg-gray-50 text-gray-400 border border-gray-200'
-                              }`}>
-                                {achievement ? achievement.status.toUpperCase() : 'NOT SUBMITTED'}
-                              </span>
-                            </td>
                           </tr>
                         </React.Fragment>
                       );
@@ -1034,24 +1022,37 @@ const StudentAcademicRecords = () => {
                         {selectedStudent.totalMarks}
                       </td>
                       <td className="border-2 border-[#000080] px-3 py-2.5 text-center text-[#000080] font-bold">—</td>
-                      <td className="border-2 border-[#000080] px-3 py-2.5 print:hidden"></td>
                     </tr>
                   </tbody>
                 </table>
 
                 {/* Signatures & Footer Row */}
-                <div className="mt-16 print:mt-24 grid grid-cols-3 gap-6 text-center text-xs font-bold pt-8 border-t-4 border-dashed border-[#000080] signature-section">
-                  <div className="flex flex-col items-center">
-                    <div className="h-10 border-b border-black w-40 mb-2"></div>
-                    <span>Course Coordinator</span>
+                <div className="mt-12 print:mt-16 flex flex-col gap-6 pt-8 border-t-4 border-dashed border-[#000080] signature-section">
+                  {/* First Row of Signatures */}
+                  <div className="grid grid-cols-3 gap-6 text-center text-xs font-bold">
+                    <div className="flex flex-col items-center">
+                      <div className="h-10 border-b border-black w-40 mb-2"></div>
+                      <span>Course Coordinator</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-10 border-b border-black w-40 mb-2"></div>
+                      <span>Head of Department</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-10 border-b border-black w-40 mb-2"></div>
+                      <span>Principal</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <div className="h-10 border-b border-black w-40 mb-2"></div>
-                    <span>Head of Department</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <div className="h-10 border-b border-black w-40 mb-2"></div>
-                    <span>Principal</span>
+                  {/* Second Row of Signatures (Centered) */}
+                  <div className="flex justify-center gap-12 text-center text-xs font-bold">
+                    <div className="flex flex-col items-center">
+                      <div className="h-10 border-b border-black w-40 mb-2"></div>
+                      <span>Internal Examiner</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-10 border-b border-black w-40 mb-2"></div>
+                      <span>External Examiner</span>
+                    </div>
                   </div>
                 </div>
 
@@ -1274,18 +1275,32 @@ const StudentAcademicRecords = () => {
               </table>
 
               {/* Signatures & Footer */}
-              <div className="mt-16 grid grid-cols-3 gap-6 text-center text-xs font-bold pt-8 border-t-4 border-dashed border-[#000080]">
-                <div className="flex flex-col items-center">
-                  <div className="h-10 border-b border-black w-40 mb-2"></div>
-                  <span>Course Coordinator</span>
+              <div className="mt-12 flex flex-col gap-6 pt-8 border-t-4 border-dashed border-[#000080]">
+                {/* First Row of Signatures */}
+                <div className="grid grid-cols-3 gap-6 text-center text-xs font-bold">
+                  <div className="flex flex-col items-center">
+                    <div className="h-10 border-b border-black w-40 mb-2"></div>
+                    <span>Course Coordinator</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="h-10 border-b border-black w-40 mb-2"></div>
+                    <span>Head of Department</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="h-10 border-b border-black w-40 mb-2"></div>
+                    <span>Principal, MTIN</span>
+                  </div>
                 </div>
-                <div className="flex flex-col items-center">
-                  <div className="h-10 border-b border-black w-40 mb-2"></div>
-                  <span>Head of Department</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="h-10 border-b border-black w-40 mb-2"></div>
-                  <span>Principal, MTIN</span>
+                {/* Second Row of Signatures (Centered) */}
+                <div className="flex justify-center gap-12 text-center text-xs font-bold">
+                  <div className="flex flex-col items-center">
+                    <div className="h-10 border-b border-black w-40 mb-2"></div>
+                    <span>Internal Examiner</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="h-10 border-b border-black w-40 mb-2"></div>
+                    <span>External Examiner</span>
+                  </div>
                 </div>
               </div>
             </div>

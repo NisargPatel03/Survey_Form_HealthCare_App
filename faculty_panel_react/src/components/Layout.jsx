@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-import { LayoutDashboard, LogOut, User, ClipboardCheck, Menu, X } from 'lucide-react';
+import { LayoutDashboard, LogOut, User, ClipboardCheck, Menu, X, FileText, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Layout() {
@@ -8,14 +8,28 @@ export default function Layout() {
   const location = useLocation();
   const [profile, setProfile] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isGuidelinesOpen, setIsGuidelinesOpen] = useState(false);
+
+  const guidelinesPdfs = [
+    { name: '10 B School Health Program Guidelines', file: '/guidelines/10 B School Health  Program Report Guidelines.pdf' },
+    { name: '11 B Anganwadi Assessment Guidelines', file: '/guidelines/11 B Anganwadi Assessment Program Report Guidelines.pdf' },
+    { name: '13 B Health Screening Camp Report', file: '/guidelines/13 B Health Screening Camp Report.pdf' },
+    { name: '14 B Role Play Report', file: '/guidelines/14 B Role Play Report.pdf' },
+    { name: '15 B Procedure Format Guidelines', file: '/guidelines/15 B Procedure Format Guidelines.pdf' },
+    { name: '16 B VISIT REPORT GUIDELINES', file: '/guidelines/16 B VISIT REPORT GUIDELINES.pdf' },
+    { name: '25 B. PRIMARY MANAGEMENT AND CARE (PROTOCOL-BASED)', file: '/guidelines/25 B. PRIMARY MANAGEMENT AND CARE (PROTOCOL-BASED).pdf' },
+    { name: '26 B. Participation in Disaster Mockdrills', file: '/guidelines/26 B. Participation in Disaster Mockdrills.pdf' },
+    { name: '27 B. Interaction with health workers', file: '/guidelines/27 B. Interaction with health workers.pdf' },
+  ];
 
   useEffect(() => {
     fetchProfile();
   }, []);
 
-  // Close mobile menu on route change
+  // Close mobile menu and guidelines dropdown on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
+    setIsGuidelinesOpen(false);
   }, [location.pathname]);
 
   const fetchProfile = async () => {
@@ -129,8 +143,50 @@ export default function Layout() {
               {location.pathname === '/' ? 'Submissions Overview' : 'Requirement Evaluation'}
             </h2>
           </div>
-          <div className="hidden sm:block text-xs font-bold text-primary-600 uppercase tracking-widest bg-primary-50 px-3 py-1.5 rounded-full border border-primary-100">
-            Faculty Panel
+          <div className="flex items-center gap-4">
+            {location.pathname.startsWith('/evaluation/') && (
+              <div className="relative">
+                <button
+                  onClick={() => setIsGuidelinesOpen(!isGuidelinesOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200 rounded-lg text-sm font-bold shadow-sm transition duration-150 cursor-pointer"
+                >
+                  <FileText className="h-4 w-4" />
+                  <span>Guidelines PDFs</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isGuidelinesOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isGuidelinesOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsGuidelinesOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="px-4 py-2 text-xs font-extrabold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-1">
+                        Select a Guideline PDF
+                      </div>
+                      <div className="max-h-80 overflow-y-auto">
+                        {guidelinesPdfs.map((pdf, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              window.open(pdf.file, '_blank');
+                              setIsGuidelinesOpen(false);
+                            }}
+                            className="w-full text-left px-4 py-2.5 text-xs font-semibold text-gray-700 hover:bg-primary-50 hover:text-primary-900 transition duration-150 flex items-start gap-2 border-b border-gray-50/50 last:border-0 cursor-pointer"
+                          >
+                            <FileText className="h-4 w-4 text-primary-500 mt-0.5 flex-shrink-0" />
+                            <span className="leading-tight">{pdf.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+            <div className="hidden sm:block text-xs font-bold text-primary-600 uppercase tracking-widest bg-primary-50 px-3 py-1.5 rounded-full border border-primary-100">
+              Faculty Panel
+            </div>
           </div>
         </header>
         

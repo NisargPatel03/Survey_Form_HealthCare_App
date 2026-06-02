@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaChartPie, FaUsers, FaFileDownload, FaBars, FaTimes, FaMapMarkedAlt, FaSignOutAlt, FaClipboardList, FaFilter, FaGraduationCap } from 'react-icons/fa';
+import { FaHome, FaChartPie, FaUsers, FaFileDownload, FaBars, FaTimes, FaMapMarkedAlt, FaSignOutAlt, FaClipboardList, FaFilter, FaGraduationCap, FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
 
 const Layout = () => {
@@ -8,6 +8,7 @@ const Layout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
     const location = useLocation();
     const navigate = useNavigate();
+    const [expandedSections, setExpandedSections] = useState({ health: true, academic: true });
 
     const handleLogout = () => {
         localStorage.removeItem('isAuthenticated');
@@ -20,15 +21,27 @@ const Layout = () => {
         if (window.innerWidth <= 768) setSidebarOpen(false);
     }, [location]);
 
-    const navItems = [
-        { path: '/', name: 'Dashboard', icon: <FaHome /> },
-        { path: '/analytics', name: 'Analytics', icon: <FaChartPie /> },
-        { path: '/reports', name: 'Custom Reports', icon: <FaFilter /> },
-        { path: '/map', name: 'Health Map', icon: <FaMapMarkedAlt /> },
-        { path: '/families', name: 'Family Directory', icon: <FaUsers /> },
-        { path: '/academic', name: 'Academic Records', icon: <FaGraduationCap /> },
-        { path: '/operations', name: 'Operations', icon: <FaClipboardList /> },
-        { path: '/export', name: 'Export Data', icon: <FaFileDownload /> },
+    const menuSections = [
+        {
+            id: 'health',
+            title: 'Community Health Survey',
+            items: [
+                { path: '/', name: 'Dashboard', icon: <FaHome /> },
+                { path: '/analytics', name: 'Analytics', icon: <FaChartPie /> },
+                { path: '/reports', name: 'Custom Reports', icon: <FaFilter /> },
+                { path: '/map', name: 'Health Map', icon: <FaMapMarkedAlt /> },
+                { path: '/families', name: 'Family Directory', icon: <FaUsers /> },
+                { path: '/operations', name: 'Operations', icon: <FaClipboardList /> },
+                { path: '/export', name: 'Export Data', icon: <FaFileDownload /> },
+            ]
+        },
+        {
+            id: 'academic',
+            title: 'Academic/Clinical Requirements',
+            items: [
+                { path: '/academic', name: 'Academic Records', icon: <FaGraduationCap /> },
+            ]
+        }
     ];
 
     return (
@@ -59,28 +72,47 @@ const Layout = () => {
                     </button>
                 </div>
 
-                <nav className="flex-1 py-6 overflow-y-auto">
-                    <ul className="space-y-2">
-                        {navItems.map((item) => (
-                            <li key={item.path}>
-                                <NavLink
-                                    to={item.path}
-                                    className={({ isActive }) =>
-                                        `flex items-center px-4 py-3 transition-colors ${isActive ? 'bg-secondary border-r-4 border-white' : 'hover:bg-secondary/50'
-                                        }`
-                                    }
-                                    title={item.name}
+                <nav className="flex-1 py-4 overflow-y-auto">
+                    {menuSections.map((section, sIdx) => {
+                        const isExpanded = !sidebarOpen || expandedSections[section.id];
+                        return (
+                            <div key={section.title} className={sIdx > 0 ? 'mt-6' : ''}>
+                                {sIdx > 0 && !sidebarOpen && <hr className="border-secondary/30 my-4 mx-3" />}
+                                
+                                <button
+                                    onClick={() => setExpandedSections(prev => ({ ...prev, [section.id]: !prev[section.id] }))}
+                                    className={`w-full flex items-center justify-between px-4 py-2 text-[10px] font-extrabold uppercase tracking-widest text-teal-100/70 leading-tight hover:text-white transition-colors cursor-pointer focus:outline-none ${!sidebarOpen && 'md:hidden'}`}
                                 >
-                                    <span className="text-xl min-w-[24px] text-center">{item.icon}</span>
-                                    <span className={`ml-4 font-medium whitespace-nowrap transition-opacity duration-200
-                                        ${!sidebarOpen ? 'md:opacity-0 md:hidden' : 'opacity-100'}
-                                    `}>
-                                        {item.name}
-                                    </span>
-                                </NavLink>
-                            </li>
-                        ))}
-                    </ul>
+                                    <span>{section.title}</span>
+                                    {expandedSections[section.id] ? <FaChevronDown size={10} className="text-teal-200" /> : <FaChevronRight size={10} className="text-teal-200" />}
+                                </button>
+                                
+                                <div className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-96 opacity-100 mt-1' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                                    <ul className="space-y-1">
+                                        {section.items.map((item) => (
+                                            <li key={item.path}>
+                                                <NavLink
+                                                    to={item.path}
+                                                    className={({ isActive }) =>
+                                                        `flex items-center py-3 transition-colors ${sidebarOpen ? 'pl-8 pr-4' : 'px-4'} ${isActive ? 'bg-secondary border-r-4 border-white' : 'hover:bg-secondary/50'
+                                                        }`
+                                                    }
+                                                    title={item.name}
+                                                >
+                                                    <span className="text-xl min-w-[24px] text-center">{item.icon}</span>
+                                                    <span className={`ml-4 font-medium whitespace-nowrap transition-opacity duration-200
+                                                        ${!sidebarOpen ? 'md:opacity-0 md:hidden' : 'opacity-100'}
+                                                    `}>
+                                                        {item.name}
+                                                    </span>
+                                                </NavLink>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </nav>
 
                 <div className="p-4 border-t border-secondary text-sm text-center text-gray-200">
