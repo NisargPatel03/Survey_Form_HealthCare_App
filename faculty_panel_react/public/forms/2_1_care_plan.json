@@ -126,6 +126,7 @@
           "key": "care_plan_entries",
           "label": "Care Plan Entries",
           "type": "array",
+          "minItems": 3,
           "required": true,
           "itemSchema": {
             "assessment": {
@@ -175,6 +176,8 @@
           "key": "nutritional_assessment",
           "label": "Nutritional Assessment",
           "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
           "required": true,
           "itemSchema": {
             "meal_time": {
@@ -204,32 +207,32 @@
             "carbohydrates_g": {
               "label": "Carbohydrates (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "fats_g": {
               "label": "Fats (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "proteins_g": {
               "label": "Proteins (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "iron_mg": {
               "label": "Iron (mg)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "calcium_mg": {
               "label": "Calcium (mg)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "remarks": {
               "label": "Remarks (Appetite / Digestion / Allergy)",
               "type": "text",
-              "required": false
+              "required": true
             }
           }
         }
@@ -306,40 +309,39 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Marks",
+          "label": "Evaluation Criteria",
           "type": "object",
-          "required": false,
           "properties": {
             "community_profile": {
-              "label": "Community Profile",
+              "label": "1. Community profile",
               "max_marks": 2
             },
-            "introduction_and_objectives": {
-              "label": "Introduction & Objectives",
+            "intro_obj": {
+              "label": "2. Introduction & Objectives",
               "max_marks": 2
             },
-            "identification_of_needs": {
-              "label": "Identification of Needs/Problems",
+            "id_needs": {
+              "label": "3. Identification of Needs/Problems",
               "max_marks": 4
             },
-            "family_care_plan": {
-              "label": "Family Care Plan",
+            "care_plan": {
+              "label": "4. Family Care plan",
               "max_marks": 10
             },
-            "nutritional_assessment": {
-              "label": "Nutritional Assessment",
+            "nutrition": {
+              "label": "5. Nutritional Assessment",
               "max_marks": 2
             },
-            "health_education": {
-              "label": "Health Education",
+            "health_edu": {
+              "label": "6. Health Education",
               "max_marks": 5
             },
-            "conclusion_and_summary": {
-              "label": "Conclusion and Summary",
+            "conclusion": {
+              "label": "7. Conclusion and Summary",
               "max_marks": 2
             },
-            "bibliography": {
-              "label": "Bibliography",
+            "biblio": {
+              "label": "8. Bibliography",
               "max_marks": 3
             },
             "total": {

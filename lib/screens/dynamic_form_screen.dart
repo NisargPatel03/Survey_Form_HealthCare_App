@@ -225,6 +225,87 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
         return;
       }
     }
+
+    // Validate minimum items for array fields defined in schema
+    final List<Map<String, dynamic>> allFields = [];
+    for (var f in _fields) {
+      if (f is Map) {
+        allFields.add(Map<String, dynamic>.from(f));
+      }
+    }
+    for (var s in _sections) {
+      if (s is Map) {
+        final List<dynamic> sectionFields = s['fields'] ?? [];
+        for (var f in sectionFields) {
+          if (f is Map) {
+            allFields.add(Map<String, dynamic>.from(f));
+          }
+        }
+      }
+    }
+
+    for (var field in allFields) {
+      final key = field['key'];
+      final type = field['type'];
+      if (type == 'array' && key != null) {
+        final minItems = field['minItems'];
+        if (minItems != null) {
+          final dynamic listData = _formData[key];
+          if (listData is! List || listData.length < minItems) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Please add at least $minItems entries for ${field['label'] ?? key}.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+            return;
+          }
+        }
+      }
+    }
+
+    // Validate nutritional assessment meal times uniqueness and completeness
+    if (_formData.containsKey('nutritional_assessment')) {
+      final dynamic assessmentList = _formData['nutritional_assessment'];
+      if (assessmentList is List) {
+        final Set<String> selectedMealTimes = {};
+        for (var item in assessmentList) {
+          if (item is Map) {
+            final mealTime = item['meal_time'];
+            if (mealTime != null && mealTime.toString().trim().isNotEmpty) {
+              selectedMealTimes.add(mealTime.toString().trim());
+            }
+          }
+        }
+        
+        final List<String> requiredMealTimes = [
+          "Early Morning",
+          "Breakfast",
+          "Mid Morning",
+          "Lunch",
+          "Evening Snack",
+          "Dinner",
+          "Bedtime"
+        ];
+        
+        final List<String> missingMeals = [];
+        for (var meal in requiredMealTimes) {
+          if (!selectedMealTimes.contains(meal)) {
+            missingMeals.add(meal);
+          }
+        }
+        
+        if (missingMeals.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please select all 7 meal times in Nutritional Assessment. Missing: ${missingMeals.join(", ")}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      }
+    }
     
     setState(() => _isLoading = true);
     
@@ -380,7 +461,25 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
     final type = field['type'];
     final isRequired = field['required'] == true;
 
-    if (type == 'text' || type == 'number' || type == 'textarea') {
+    if (field['conditional_on'] != null) {
+      final cond = field['conditional_on'];
+      if (cond is Map) {
+        final parentField = cond['field'];
+        final expectedValue = cond['value'];
+        final parentValue = dataMap[parentField];
+        if (expectedValue is List) {
+          if (!expectedValue.contains(parentValue)) {
+            return const SizedBox.shrink();
+          }
+        } else {
+          if (parentValue != expectedValue) {
+            return const SizedBox.shrink();
+          }
+        }
+      }
+    }
+
+    if (type == 'text' || type == 'textbox' || type == 'number' || type == 'textarea') {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
         child: TextFormField(

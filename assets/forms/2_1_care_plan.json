@@ -126,6 +126,7 @@
           "key": "care_plan_entries",
           "label": "Care Plan Entries",
           "type": "array",
+          "minItems": 3,
           "required": true,
           "itemSchema": {
             "assessment": {
@@ -175,6 +176,8 @@
           "key": "nutritional_assessment",
           "label": "Nutritional Assessment",
           "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
           "required": true,
           "itemSchema": {
             "meal_time": {
@@ -204,32 +207,32 @@
             "carbohydrates_g": {
               "label": "Carbohydrates (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "fats_g": {
               "label": "Fats (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "proteins_g": {
               "label": "Proteins (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "iron_mg": {
               "label": "Iron (mg)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "calcium_mg": {
               "label": "Calcium (mg)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "remarks": {
               "label": "Remarks (Appetite / Digestion / Allergy)",
               "type": "text",
-              "required": false
+              "required": true
             }
           }
         }

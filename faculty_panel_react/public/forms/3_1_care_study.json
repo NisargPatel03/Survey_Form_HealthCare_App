@@ -64,6 +64,1089 @@
       ]
     },
     {
+      "section": "General Examination",
+      "fields": [
+        {
+          "key": "consciousness",
+          "label": "Consciousness",
+          "type": "dropdown",
+          "options": ["Conscious", "Semi-conscious", "Unconscious"]
+        },
+        {
+          "key": "orientation",
+          "label": "Orientation",
+          "type": "dropdown",
+          "options": ["Oriented to time, place and person"]
+        },
+        {
+          "key": "nourishment",
+          "label": "Nourishment",
+          "type": "dropdown",
+          "options": ["Well-nourished", "Moderately nourished"]
+        },
+        {
+          "key": "body_built",
+          "label": "Body Built",
+          "type": "dropdown",
+          "options": ["Thin", "Moderate", "Obese"]
+        },
+        {
+          "key": "activity",
+          "label": "Activity",
+          "type": "dropdown",
+          "options": ["Active", "Dull"]
+        },
+        {
+          "key": "look",
+          "label": "Look",
+          "type": "dropdown",
+          "options": ["Pleasant", "Happy", "Alert", "Sad", "Depressed", "Fearful", "Anxious", "Tired"]
+        },
+        {
+          "key": "speech",
+          "label": "Speech",
+          "type": "dropdown",
+          "options": ["Clear", "Sluring", "Stammering", "Maintains eye contact"]
+        }
+      ]
+    },
+    {
+      "section": "Anthropometric Measurement",
+      "fields": [
+        {
+          "key": "anthropometric",
+          "label": "Anthropometric measurement",
+          "type": "textbox",
+          "placeholder": "Enter anthropometric measurement"
+        },
+        {
+          "key": "height",
+          "label": "Height",
+          "type": "textbox",
+          "placeholder": "Enter height"
+        },
+        {
+          "key": "weight",
+          "label": "Weight",
+          "type": "textbox",
+          "placeholder": "Enter weight"
+        },
+        {
+          "key": "bmi",
+          "label": "Bmi : Weight in kg/ height in m2",
+          "type": "textbox",
+          "placeholder": "Enter BMI"
+        }
+      ]
+    },
+    {
+      "section": "Vital Signs",
+      "fields": [
+        {
+          "key": "vital_signs",
+          "label": "Vital signs",
+          "type": "textbox",
+          "placeholder": "Enter vital signs"
+        },
+        {
+          "key": "temperature",
+          "label": "Temperature: 0C /0F",
+          "type": "textbox",
+          "placeholder": "Enter temperature"
+        },
+        {
+          "key": "pulse",
+          "label": "Pulse : Beats / min",
+          "type": "textbox",
+          "placeholder": "Enter pulse rate"
+        },
+        {
+          "key": "respiration",
+          "label": "Respiration Breaths / min",
+          "type": "textbox",
+          "placeholder": "Enter respiration rate"
+        },
+        {
+          "key": "blood_pressure",
+          "label": "Blood pressure mm of Hg",
+          "type": "textbox",
+          "placeholder": "Enter blood pressure"
+        }
+      ]
+    },
+    {
+      "section": "A. Integumentary System — Skin",
+      "fields": [
+        {
+          "key": "skin_colour",
+          "label": "Skin Colour",
+          "type": "dropdown",
+          "options": ["Fair", "Brown", "Dark in complexion"]
+        },
+        {
+          "key": "skin_texture",
+          "label": "Skin Texture",
+          "type": "dropdown",
+          "options": ["Normal", "Dry"]
+        },
+        {
+          "key": "skin_turgor",
+          "label": "Skin Turgor",
+          "type": "dropdown",
+          "options": ["Normal", "Decreased"]
+        },
+        {
+          "key": "discolouration",
+          "label": "Discolouration",
+          "type": "dropdown",
+          "options": ["Absent", "Yellowish", "Cyanosis", "Vitiligo", "Increased pigmentation", "Pallor"]
+        },
+        {
+          "key": "lesions_masses",
+          "label": "Lesions / Masses",
+          "type": "dropdown",
+          "options": ["Absent", "Macule", "Papule", "Nodule", "Vesicle", "Bullae", "Plaque", "Cyst", "Erosion", "Abrasion", "Ulcer", "Fissure", "Crust", "Scar", "Keloid", "Erythema", "Pustule", "Wheal"]
+        },
+        {
+          "key": "skin_subjective",
+          "label": "Subjective Symptoms",
+          "type": "dropdown",
+          "options": ["No complaints", "Pruritis", "Pain", "Feeling of cold", "Warmth", "Tingling", "Numbness"]
+        }
+      ]
+    },
+    {
+      "section": "A. Integumentary System — Nail",
+      "fields": [
+        {
+          "key": "nail_observation",
+          "label": "On Observation",
+          "type": "dropdown",
+          "options": ["Intact", "Onchylosis", "Peeling or cracked"]
+        },
+        {
+          "key": "nail_beds",
+          "label": "Nail Beds",
+          "type": "dropdown",
+          "options": ["Pink", "Cyanosed", "Pale"]
+        },
+        {
+          "key": "nail_plate",
+          "label": "Nail Plate",
+          "type": "dropdown",
+          "options": ["Flat", "Clubbing", "Whitening"]
+        },
+        {
+          "key": "capillary_refill",
+          "label": "Capillary Refill (Seconds)",
+          "type": "textbox",
+          "placeholder": "Enter seconds"
+        },
+        {
+          "key": "nail_cyanosis",
+          "label": "Cyanosis",
+          "type": "dropdown",
+          "options": ["Absent", "Present (specify)"]
+        },
+        {
+          "key": "nail_cyanosis_specify",
+          "label": "If Present, Specify",
+          "type": "textbox",
+          "placeholder": "Specify cyanosis details",
+          "conditional_on": { "field": "nail_cyanosis", "value": "Present (specify)" }
+        }
+      ]
+    },
+    {
+      "section": "A. Integumentary System — Hair",
+      "fields": [
+        {
+          "key": "hair_colour",
+          "label": "Hair Colour",
+          "type": "dropdown",
+          "options": ["Black", "Brown", "Red", "Grey"]
+        },
+        {
+          "key": "hair_texture",
+          "label": "Hair Texture",
+          "type": "dropdown",
+          "options": ["Normal", "Dry"]
+        },
+        {
+          "key": "hair_grooming",
+          "label": "Grooming",
+          "type": "dropdown",
+          "options": ["Not groomed", "Well groomed"]
+        },
+        {
+          "key": "hair_distribution",
+          "label": "Distribution",
+          "type": "dropdown",
+          "options": ["Normal", "Scanty", "Bald", "Alopecia"]
+        }
+      ]
+    },
+    {
+      "section": "B. Head",
+      "fields": [
+        {
+          "key": "head_shape",
+          "label": "Shape",
+          "type": "dropdown",
+          "options": ["Normal cephalic", "Micro cephalic", "Macro cephalic", "Hydro cephalic"]
+        },
+        {
+          "key": "scalp",
+          "label": "Scalp",
+          "type": "dropdown",
+          "options": ["Clean", "Pediculosis", "Presence of dandruff"]
+        },
+        {
+          "key": "face",
+          "label": "Face",
+          "type": "dropdown",
+          "options": ["Normal", "Puffiness", "Moon face", "Bell's palsy"]
+        }
+      ]
+    },
+    {
+      "section": "C. Eyes",
+      "fields": [
+        {
+          "key": "eye_brows",
+          "label": "Eye Brows",
+          "type": "dropdown",
+          "options": ["Symmetrical", "Asymmetrically distributed", "Scanty"]
+        },
+        {
+          "key": "eye_lashes_lids",
+          "label": "Eye Lashes / Eye Lids",
+          "type": "dropdown",
+          "options": ["Equally distributed / Normal", "Oedematous", "Ptosis"]
+        },
+        {
+          "key": "pupillary_reflex",
+          "label": "Pupillary Reflex",
+          "type": "dropdown",
+          "options": ["PERRLA", "Unequal reaction to light"]
+        },
+        {
+          "key": "pupil_shape",
+          "label": "Pupil Shape",
+          "type": "dropdown",
+          "options": ["Round", "Oval", "Yellowish in colour"]
+        },
+        {
+          "key": "conjunctiva",
+          "label": "Conjunctiva",
+          "type": "dropdown",
+          "options": ["Normal", "Pale", "Yellowish", "Red", "Flushed"]
+        },
+        {
+          "key": "vision",
+          "label": "Vision",
+          "type": "dropdown",
+          "options": ["Normal", "Abnormal (specify)"]
+        },
+        {
+          "key": "vision_specify",
+          "label": "If Abnormal, Specify (including use of spectacles)",
+          "type": "textbox",
+          "placeholder": "Specify vision abnormality",
+          "conditional_on": { "field": "vision", "value": "Abnormal (specify)" }
+        },
+        {
+          "key": "corneal_reflex",
+          "label": "Corneal Reflex",
+          "type": "dropdown",
+          "options": ["Present", "Absent"]
+        },
+        {
+          "key": "eye_subjective",
+          "label": "Subjective Symptoms",
+          "type": "dropdown",
+          "options": ["No complaints", "Pain", "Itching", "Increased production of tears", "Decreased production of tears"]
+        }
+      ]
+    },
+    {
+      "section": "D. Ears",
+      "fields": [
+        {
+          "key": "pinna",
+          "label": "Pinna",
+          "type": "dropdown",
+          "options": ["Normally placed", "Anotia", "Microtia", "Macrotia"]
+        },
+        {
+          "key": "cerumen",
+          "label": "Cerumen",
+          "type": "dropdown",
+          "options": ["Canal is clear", "Blocked"]
+        },
+        {
+          "key": "otorrhoea",
+          "label": "Otorrhoea",
+          "type": "dropdown",
+          "options": ["Absent", "Purulent", "Serous", "Blood", "Sanguinous"]
+        },
+        {
+          "key": "hearing",
+          "label": "Hearing",
+          "type": "dropdown",
+          "options": ["Normal", "Decreased", "Hearing loss"]
+        },
+        {
+          "key": "ear_subjective",
+          "label": "Subjective Symptoms",
+          "type": "dropdown",
+          "options": ["No complaints", "Otalgia", "Tinnitus", "Vertigo"]
+        }
+      ]
+    },
+    {
+      "section": "E. Nose",
+      "fields": [
+        {
+          "key": "nasal_septum",
+          "label": "Nasal Septum",
+          "type": "dropdown",
+          "options": ["Midline", "Deviated"]
+        },
+        {
+          "key": "nasal_pathway",
+          "label": "Nasal Pathway",
+          "type": "dropdown",
+          "options": ["Patent", "Obstructed", "Nasal polyp"]
+        },
+        {
+          "key": "smell",
+          "label": "Smell",
+          "type": "dropdown",
+          "options": ["Normal", "Absent"]
+        },
+        {
+          "key": "nasal_discharge",
+          "label": "Nasal Discharge",
+          "type": "dropdown",
+          "options": ["Absent", "Watery", "Purulent", "Mucoid", "Epistaxis"]
+        },
+        {
+          "key": "frontal_maxillary_sinuses",
+          "label": "Frontal / Maxillary Sinuses",
+          "type": "dropdown",
+          "options": ["Absent", "Painful", "Tender"]
+        }
+      ]
+    },
+    {
+      "section": "Mouth and Pharynx",
+      "fields": [
+        {
+          "key": "lips_colour",
+          "label": "Lips Colour",
+          "type": "dropdown",
+          "options": ["Pink", "Pale", "Dark"]
+        },
+        {
+          "key": "lips_symmetry",
+          "label": "Lips Symmetry",
+          "type": "dropdown",
+          "options": ["Symmetrical", "Asymmetrical"]
+        },
+        {
+          "key": "gums",
+          "label": "Gums",
+          "type": "dropdown",
+          "options": ["Pink in colour", "Bleeding", "Swollen", "Spongy"]
+        },
+        {
+          "key": "teeth_colour",
+          "label": "Teeth Colour",
+          "type": "dropdown",
+          "options": ["White", "Yellowish", "Stains"]
+        },
+        {
+          "key": "dental_caries",
+          "label": "Dental Caries",
+          "type": "dropdown",
+          "options": ["Absent", "Present"]
+        },
+        {
+          "key": "no_of_teeth",
+          "label": "Number of Teeth",
+          "type": "textbox",
+          "placeholder": "Enter number of teeth"
+        },
+        {
+          "key": "mucus_membrane",
+          "label": "Mucus Membrane",
+          "type": "dropdown",
+          "options": ["Pink in colour / Moist", "Dry", "Lesions (specify)"]
+        },
+        {
+          "key": "mucus_membrane_specify",
+          "label": "If Lesions, Specify",
+          "type": "textbox",
+          "placeholder": "Specify lesions",
+          "conditional_on": { "field": "mucus_membrane", "value": "Lesions (specify)" }
+        },
+        {
+          "key": "breath_odour",
+          "label": "Breath Odour (Halitosis)",
+          "type": "dropdown",
+          "options": ["Absent", "Present"]
+        },
+        {
+          "key": "gag_reflex",
+          "label": "Gag Reflex",
+          "type": "dropdown",
+          "options": ["Present", "Absent"]
+        },
+        {
+          "key": "tonsils",
+          "label": "Tonsils",
+          "type": "dropdown",
+          "options": ["Not enlarged", "Enlarged", "Painful"]
+        },
+        {
+          "key": "voice",
+          "label": "Voice",
+          "type": "dropdown",
+          "options": ["Clear", "Harsh", "Aphonia", "Dysphonia"]
+        },
+        {
+          "key": "mouth_subjective",
+          "label": "Subjective Symptoms",
+          "type": "dropdown",
+          "options": ["No complaints", "Toothache", "Dysphagia", "Odynophagia", "Throat pain"]
+        }
+      ]
+    },
+    {
+      "section": "Neck",
+      "fields": [
+        {
+          "key": "neck_rom",
+          "label": "Range of Motion",
+          "type": "dropdown",
+          "options": ["Possible", "Painful", "Absent"]
+        },
+        {
+          "key": "lymph_node",
+          "label": "Lymph Node",
+          "type": "dropdown",
+          "options": ["Not enlarged", "Enlarged", "Painful"]
+        },
+        {
+          "key": "lymph_node_size",
+          "label": "Lymph Node Size",
+          "type": "textbox",
+          "placeholder": "Specify size if enlarged"
+        },
+        {
+          "key": "trachea",
+          "label": "Trachea",
+          "type": "dropdown",
+          "options": ["Midline", "Deviation"]
+        },
+        {
+          "key": "thyroid_gland",
+          "label": "Thyroid Gland",
+          "type": "dropdown",
+          "options": ["Not enlarged", "Enlarged", "Removed"]
+        },
+        {
+          "key": "jugular_vein",
+          "label": "Jugular Vein",
+          "type": "dropdown",
+          "options": ["Not distended", "Distended"]
+        }
+      ]
+    },
+    {
+      "section": "H. Cardiorespiratory System",
+      "fields": [
+        {
+          "key": "thorax",
+          "label": "Thorax",
+          "type": "dropdown",
+          "options": ["Symmetrical", "Asymmetrical", "Pectus carinatum", "Barrel chest"]
+        },
+        {
+          "key": "thorax_expansion",
+          "label": "Thorax Expansion",
+          "type": "dropdown",
+          "options": ["Normal / Symmetrical", "Delayed", "Shallow"]
+        },
+        {
+          "key": "heart_sounds",
+          "label": "Heart Sounds",
+          "type": "dropdown",
+          "options": ["S1, S2", "Murmur", "Gallop sound"]
+        },
+        {
+          "key": "breath_sounds",
+          "label": "Breath Sounds",
+          "type": "dropdown",
+          "options": ["Normal", "Wheeze", "Friction", "Rhonchi", "Crackles", "Stridor"]
+        },
+        {
+          "key": "apical_pulse",
+          "label": "Apical Pulse (Beats/min)",
+          "type": "textbox",
+          "placeholder": "Enter apical pulse"
+        },
+        {
+          "key": "cough",
+          "label": "Cough",
+          "type": "dropdown",
+          "options": ["Absent", "Dry", "Whooping", "Productive"]
+        },
+        {
+          "key": "sputum_present",
+          "label": "Sputum",
+          "type": "dropdown",
+          "options": ["Absent", "Present"]
+        },
+        {
+          "key": "sputum_consistency",
+          "label": "Sputum Consistency",
+          "type": "dropdown",
+          "options": ["Mucoid", "Frothy", "Rusty", "Sticky", "Purulent", "Bad odour"],
+          "conditional_on": { "field": "sputum_present", "value": "Present" }
+        },
+        {
+          "key": "sputum_colour",
+          "label": "Sputum Colour",
+          "type": "dropdown",
+          "options": ["Green", "Yellow", "Blood stained"],
+          "conditional_on": { "field": "sputum_present", "value": "Present" }
+        },
+        {
+          "key": "cardio_subjective",
+          "label": "Subjective Symptoms",
+          "type": "dropdown",
+          "options": ["No complaints", "Diaphoresis", "Breathless", "Giddiness", "Palpitation", "Chest pain", "Shoulder pain", "Chest tightness", "Heart burn", "Exercise intolerance"]
+        }
+      ]
+    },
+    {
+      "section": "I. Breast & Axilla",
+      "fields": [
+        {
+          "key": "breast_symmetry",
+          "label": "Symmetry",
+          "type": "dropdown",
+          "options": ["Symmetrical", "Asymmetrical"]
+        },
+        {
+          "key": "nipple",
+          "label": "Nipple",
+          "type": "dropdown",
+          "options": ["Normal", "Retracted", "Inverted"]
+        },
+        {
+          "key": "nipple_colour",
+          "label": "Nipple Colour",
+          "type": "textbox",
+          "placeholder": "Enter nipple colour"
+        },
+        {
+          "key": "breast_discharge",
+          "label": "Discharge",
+          "type": "dropdown",
+          "options": ["Absent", "Milky", "Yellowish", "Purulent"]
+        },
+        {
+          "key": "breast_lesions",
+          "label": "Lesions / Masses",
+          "type": "dropdown",
+          "options": ["Absent", "Ulceration", "Nodes", "Swelling (moving)", "Swelling (painful/tender)"]
+        },
+        {
+          "key": "axillary_nodes",
+          "label": "Axillary Nodes",
+          "type": "dropdown",
+          "options": ["Not palpable", "Palpable / Moving", "Painful"]
+        },
+        {
+          "key": "breast_hair",
+          "label": "Hair Distribution",
+          "type": "dropdown",
+          "options": ["Well distributed", "Scanty"]
+        }
+      ]
+    },
+    {
+      "section": "J. Abdomen",
+      "fields": [
+        {
+          "key": "abdomen_inspection",
+          "label": "On Inspection",
+          "type": "dropdown",
+          "options": ["Flat", "Linea nigra", "Distention", "Scar", "Hernia", "Peristaltic movement visible"]
+        },
+        {
+          "key": "umbilicus",
+          "label": "Umbilicus",
+          "type": "dropdown",
+          "options": ["Clean", "Everted"]
+        },
+        {
+          "key": "bowel_sounds",
+          "label": "On Auscultation — Bowel Sounds",
+          "type": "dropdown",
+          "options": ["Present", "Absent", "Murmurs"]
+        },
+        {
+          "key": "percussion",
+          "label": "On Percussion",
+          "type": "dropdown",
+          "options": ["Fluid not detected", "Fluid detected", "Masses detected", "Air detected"]
+        },
+        {
+          "key": "palpation",
+          "label": "On Palpation",
+          "type": "dropdown",
+          "options": ["Soft", "Tender"]
+        },
+        {
+          "key": "liver",
+          "label": "Liver",
+          "type": "dropdown",
+          "options": ["Non palpable", "Palpable"]
+        },
+        {
+          "key": "spleen",
+          "label": "Spleen",
+          "type": "dropdown",
+          "options": ["Non palpable", "Palpable"]
+        },
+        {
+          "key": "abdomen_masses",
+          "label": "Masses",
+          "type": "dropdown",
+          "options": ["Non palpable", "Palpable"]
+        },
+        {
+          "key": "abdomen_subjective",
+          "label": "Subjective Symptoms",
+          "type": "dropdown",
+          "options": ["No complaints", "Nausea", "Vomiting", "Heart burn", "Abdominal cramps", "Polyphagia"]
+        }
+      ]
+    },
+    {
+      "section": "K. Musculoskeletal",
+      "fields": [
+        {
+          "key": "postural_curves",
+          "label": "Postural Curves",
+          "type": "dropdown",
+          "options": ["Normal", "Kyphosis", "Lordosis", "Scoliosis"]
+        },
+        {
+          "key": "muscle_tone",
+          "label": "Muscle Tone",
+          "type": "dropdown",
+          "options": ["Normal", "Hypertonia", "Hypotonia", "Flaccid", "Spasticity", "Rigidity"]
+        },
+        {
+          "key": "muscle_strength",
+          "label": "Muscle Strength",
+          "type": "dropdown",
+          "options": ["Normal", "Active", "Hyperactive", "Weaker than normal"]
+        }
+      ]
+    },
+    {
+      "section": "L. Upper Extremities",
+      "fields": [
+        {
+          "key": "upper_symmetry",
+          "label": "Symmetry",
+          "type": "dropdown",
+          "options": ["Symmetrical", "Asymmetrical"]
+        },
+        {
+          "key": "upper_rom",
+          "label": "Range of Motion",
+          "type": "dropdown",
+          "options": ["Possible", "Not possible (specify)"]
+        },
+        {
+          "key": "upper_rom_specify",
+          "label": "If Not Possible, Specify",
+          "type": "textbox",
+          "placeholder": "Specify ROM limitation",
+          "conditional_on": { "field": "upper_rom", "value": "Not possible (specify)" }
+        },
+        {
+          "key": "radial_pulse",
+          "label": "Peripheral Pulse (Radial)",
+          "type": "dropdown",
+          "options": ["Normal rate and rhythm", "Abnormal (specify)"]
+        },
+        {
+          "key": "radial_pulse_specify",
+          "label": "If Abnormal, Specify",
+          "type": "textbox",
+          "placeholder": "Specify abnormality",
+          "conditional_on": { "field": "radial_pulse", "value": "Abnormal (specify)" }
+        },
+        {
+          "key": "upper_reflexes",
+          "label": "Reflexes (Biceps / Triceps)",
+          "type": "dropdown",
+          "options": ["Normal", "Abnormal (specify)"]
+        },
+        {
+          "key": "upper_reflexes_specify",
+          "label": "If Abnormal, Specify Reflexes",
+          "type": "textbox",
+          "placeholder": "Specify abnormal reflexes",
+          "conditional_on": { "field": "upper_reflexes", "value": "Abnormal (specify)" }
+        },
+        {
+          "key": "upper_swelling",
+          "label": "Swelling",
+          "type": "dropdown",
+          "options": ["Absent", "Present (specify area)"]
+        },
+        {
+          "key": "upper_swelling_specify",
+          "label": "Specify Swelling Area",
+          "type": "textbox",
+          "placeholder": "Specify area",
+          "conditional_on": { "field": "upper_swelling", "value": "Present (specify area)" }
+        },
+        {
+          "key": "upper_cyanosis",
+          "label": "Cyanosis",
+          "type": "dropdown",
+          "options": ["Absent", "Present (specify area)"]
+        },
+        {
+          "key": "upper_cyanosis_specify",
+          "label": "Specify Cyanosis Area",
+          "type": "textbox",
+          "placeholder": "Specify area",
+          "conditional_on": { "field": "upper_cyanosis", "value": "Present (specify area)" }
+        },
+        {
+          "key": "upper_joints",
+          "label": "Joints",
+          "type": "dropdown",
+          "options": ["Absent", "Stiffness", "Swelling", "Tenderness", "Crepitus"]
+        },
+        {
+          "key": "upper_deformity",
+          "label": "Deformity",
+          "type": "dropdown",
+          "options": ["Absent", "Present (specify)"]
+        },
+        {
+          "key": "upper_deformity_specify",
+          "label": "Specify Deformity",
+          "type": "textbox",
+          "placeholder": "Specify deformity",
+          "conditional_on": { "field": "upper_deformity", "value": "Present (specify)" }
+        }
+      ]
+    },
+    {
+      "section": "M. Lower Extremities",
+      "fields": [
+        {
+          "key": "lower_symmetry",
+          "label": "Symmetry",
+          "type": "dropdown",
+          "options": ["Symmetrical", "Asymmetrical"]
+        },
+        {
+          "key": "toe_nails_capillary",
+          "label": "Toe Nails Capillary Refill (Seconds)",
+          "type": "textbox",
+          "placeholder": "Enter seconds"
+        },
+        {
+          "key": "lower_rom",
+          "label": "Range of Motion",
+          "type": "dropdown",
+          "options": ["Possible", "Not possible (specify)"]
+        },
+        {
+          "key": "lower_rom_specify",
+          "label": "If Not Possible, Specify",
+          "type": "textbox",
+          "placeholder": "Specify ROM limitation",
+          "conditional_on": { "field": "lower_rom", "value": "Not possible (specify)" }
+        },
+        {
+          "key": "peripheral_pulses",
+          "label": "Peripheral Pulses (Dorsalis Pedis / Posterior Tibial)",
+          "type": "dropdown",
+          "options": ["Normal rate, rhythm, volume", "Abnormal (specify)"]
+        },
+        {
+          "key": "peripheral_pulses_specify",
+          "label": "If Abnormal, Specify",
+          "type": "textbox",
+          "placeholder": "Specify abnormality",
+          "conditional_on": { "field": "peripheral_pulses", "value": "Abnormal (specify)" }
+        },
+        {
+          "key": "lower_reflexes",
+          "label": "Reflexes (Patellar / Achilles / Plantar)",
+          "type": "dropdown",
+          "options": ["Normal", "Abnormal (specify)"]
+        },
+        {
+          "key": "lower_reflexes_specify",
+          "label": "If Abnormal, Specify Reflexes",
+          "type": "textbox",
+          "placeholder": "Specify abnormal reflexes",
+          "conditional_on": { "field": "lower_reflexes", "value": "Abnormal (specify)" }
+        },
+        {
+          "key": "lower_oedema",
+          "label": "Oedema / Swelling",
+          "type": "dropdown",
+          "options": ["Absent", "Present (specify area)"]
+        },
+        {
+          "key": "lower_oedema_specify",
+          "label": "Specify Oedema Area",
+          "type": "textbox",
+          "placeholder": "Specify area",
+          "conditional_on": { "field": "lower_oedema", "value": "Present (specify area)" }
+        },
+        {
+          "key": "lower_cyanosis",
+          "label": "Cyanosis",
+          "type": "dropdown",
+          "options": ["Absent", "Present (specify)"]
+        },
+        {
+          "key": "lower_cyanosis_specify",
+          "label": "Specify Cyanosis Details",
+          "type": "textbox",
+          "placeholder": "Specify cyanosis details",
+          "conditional_on": { "field": "lower_cyanosis", "value": "Present (specify)" }
+        },
+        {
+          "key": "lower_joints",
+          "label": "Joints",
+          "type": "dropdown",
+          "options": ["Absent", "Stiffness", "Swelling", "Tenderness", "Crepitus"]
+        },
+        {
+          "key": "lower_deformity",
+          "label": "Deformity",
+          "type": "dropdown",
+          "options": ["Absent", "Talipes equino varus", "Talipes equino valgum", "Bow legs", "Present (specify)"]
+        },
+        {
+          "key": "lower_deformity_specify",
+          "label": "Specify Deformity",
+          "type": "textbox",
+          "placeholder": "Specify deformity",
+          "conditional_on": { "field": "lower_deformity", "value": "Present (specify)" }
+        },
+        {
+          "key": "gait",
+          "label": "Gait",
+          "type": "dropdown",
+          "options": ["Normal", "Limps", "Steppage", "Scissoring", "Dystonia", "Ataxia"]
+        },
+        {
+          "key": "lower_subjective",
+          "label": "Subjective Symptoms",
+          "type": "dropdown",
+          "options": ["No complaints", "Pain while walking", "Pain during activities", "Muscle cramps", "Myalgia", "Problems with flexion", "Problems with extension", "Problems with abduction", "Problems with adduction", "Problems with external rotation", "Problems with internal rotation"]
+        }
+      ]
+    },
+    {
+      "section": "N. Genitourinary System — Female",
+      "fields": [
+        {
+          "key": "labia_majora",
+          "label": "Labia Majora",
+          "type": "dropdown",
+          "options": ["Dark pink and moist", "Oedema", "Lesions", "Laceration"]
+        },
+        {
+          "key": "labia_minora",
+          "label": "Labia Minora",
+          "type": "dropdown",
+          "options": ["Soft", "Atrophy", "Adhesions", "Ulcers", "Dry"]
+        },
+        {
+          "key": "urethral_orifice",
+          "label": "Urethral Orifice",
+          "type": "dropdown",
+          "options": ["Intact", "Discharge", "Polyps", "Fistulas"]
+        },
+        {
+          "key": "vaginal_orifice",
+          "label": "Vaginal Orifice",
+          "type": "dropdown",
+          "options": ["Normal", "Cystocele", "Rectocele", "Bulging", "Discharge", "Tenderness", "Lesions"]
+        }
+      ]
+    },
+    {
+      "section": "N. Genitourinary System — Male",
+      "fields": [
+        {
+          "key": "penis",
+          "label": "Penis",
+          "type": "dropdown",
+          "options": ["Smooth and pink", "Discharge", "Lesions", "Oedema"]
+        },
+        {
+          "key": "scrotum",
+          "label": "Scrotum",
+          "type": "dropdown",
+          "options": ["Symmetrical", "Lumps", "Nodules"]
+        },
+        {
+          "key": "inguinal_ring",
+          "label": "Inguinal Ring",
+          "type": "dropdown",
+          "options": ["Normal", "Tender", "Bulging"]
+        }
+      ]
+    },
+    {
+      "section": "N. Rectum and Anus",
+      "fields": [
+        {
+          "key": "rectum_inspection",
+          "label": "On Inspection",
+          "type": "dropdown",
+          "options": ["No protrusion / No lesions", "External haemorrhoids", "Ulcers", "Rashes", "Protrusion", "Lesions"]
+        },
+        {
+          "key": "digital_palpation",
+          "label": "Digital Palpation",
+          "type": "dropdown",
+          "options": ["Intact", "Mass", "Bleeding", "Patent lesion"]
+        }
+      ]
+    },
+    {
+      "section": "Disease Condition",
+      "fields": [
+        {
+          "key": "definition",
+          "label": "Definition",
+          "type": "textarea",
+          "placeholder": "Enter definition of the disease condition"
+        },
+        {
+          "key": "etiology",
+          "label": "Etiology",
+          "type": "textarea",
+          "placeholder": "Enter etiology"
+        },
+        {
+          "key": "etiology_book_picture",
+          "label": "Book Pictures (Etiology)",
+          "type": "array",
+          "itemLabel": "Book Picture",
+          "hint": "Add details or link for Book Picture"
+        },
+        {
+          "key": "etiology_patient_picture",
+          "label": "Patient Pictures (Etiology)",
+          "type": "array",
+          "itemLabel": "Patient Picture",
+          "hint": "Add details or link for Patient Picture"
+        },
+        {
+          "key": "clinical_manifestation",
+          "label": "Clinical Manifestation",
+          "type": "textarea",
+          "placeholder": "Enter clinical manifestation"
+        },
+        {
+          "key": "clinical_manifestation_book_picture",
+          "label": "Book Pictures (Clinical Manifestation)",
+          "type": "array",
+          "itemLabel": "Book Picture",
+          "hint": "Add details or link for Book Picture"
+        },
+        {
+          "key": "clinical_manifestation_patient_picture",
+          "label": "Patient Pictures (Clinical Manifestation)",
+          "type": "array",
+          "itemLabel": "Patient Picture",
+          "hint": "Add details or link for Patient Picture"
+        },
+        {
+          "key": "pathophysiology",
+          "label": "Pathophysiology",
+          "type": "textarea",
+          "placeholder": "Describe pathophysiology"
+        },
+        {
+          "key": "pathophysiology_book_picture",
+          "label": "Book Pictures (Pathophysiology)",
+          "type": "array",
+          "itemLabel": "Book Picture",
+          "hint": "Add details or link for Book Picture"
+        },
+        {
+          "key": "pathophysiology_patient_picture",
+          "label": "Patient Pictures (Pathophysiology)",
+          "type": "array",
+          "itemLabel": "Patient Picture",
+          "hint": "Add details or link for Patient Picture"
+        },
+        {
+          "key": "investigation",
+          "label": "Investigation",
+          "type": "textarea",
+          "placeholder": "Enter investigations"
+        },
+        {
+          "key": "investigation_book_picture",
+          "label": "Book Pictures (Investigation)",
+          "type": "array",
+          "itemLabel": "Book Picture",
+          "hint": "Add details or link for Book Picture"
+        },
+        {
+          "key": "investigation_patient_picture",
+          "label": "Patient Pictures (Investigation)",
+          "type": "array",
+          "itemLabel": "Patient Picture",
+          "hint": "Add details or link for Patient Picture"
+        },
+        {
+          "key": "complication",
+          "label": "Complication",
+          "type": "textarea",
+          "placeholder": "Enter complications"
+        },
+        {
+          "key": "management_medical_surgical",
+          "label": "Management — Medical / Surgical",
+          "type": "textarea",
+          "placeholder": "Enter medical/surgical management"
+        },
+        {
+          "key": "management_nursing",
+          "label": "Management — Nursing",
+          "type": "textarea",
+          "placeholder": "Enter nursing management"
+        }
+      ]
+    },
+    {
       "section": "II. Health Problems Identified",
       "fields": [
         {
@@ -126,8 +1209,7 @@
           "key": "care_plan_entries",
           "label": "Care Plan Entries",
           "type": "array",
-          "minItems": 1,
-          "maxItems": 3,
+          "minItems": 5,
           "required": true,
           "itemSchema": {
             "assessment": {
@@ -208,32 +1290,32 @@
             "carbohydrates_g": {
               "label": "Carbohydrates (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "fats_g": {
               "label": "Fats (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "proteins_g": {
               "label": "Proteins (g)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "iron_mg": {
               "label": "Iron (mg)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "calcium_mg": {
               "label": "Calcium (mg)",
               "type": "number",
-              "required": false
+              "required": true
             },
             "remarks": {
               "label": "Remarks (Appetite / Digestion / Allergy)",
               "type": "text",
-              "required": false
+              "required": true
             }
           }
         }
@@ -310,45 +1392,60 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Marks",
+          "label": "Evaluation Criteria",
           "type": "object",
-          "required": false,
           "properties": {
-            "community_profile": {
-              "label": "Community Profile",
-              "max_marks": 2
-            },
-            "introduction_and_objectives": {
-              "label": "Introduction & Objectives",
-              "max_marks": 2
-            },
-            "identification_of_needs": {
-              "label": "Identification of Needs/Problems",
-              "max_marks": 4
-            },
-            "family_care_plan": {
-              "label": "Family Care Plan",
-              "max_marks": 10
-            },
-            "nutritional_assessment": {
-              "label": "Nutritional Assessment",
-              "max_marks": 2
-            },
-            "health_education": {
-              "label": "Health Education",
+            "intro": {
+              "label": "1. Introduction",
               "max_marks": 5
             },
-            "conclusion_and_summary": {
-              "label": "Conclusion and Summary",
-              "max_marks": 2
+            "obj": {
+              "label": "2. Objectives",
+              "max_marks": 5
             },
-            "bibliography": {
-              "label": "Bibliography",
-              "max_marks": 3
+            "roaster": {
+              "label": "3. Family Roaster /Composition",
+              "max_marks": 10
+            },
+            "exam": {
+              "label": "4. General Examination",
+              "max_marks": 15
+            },
+            "disease": {
+              "label": "5. Disease Condition",
+              "max_marks": 10
+            },
+            "needs": {
+              "label": "6. Identification Of Needs/Problems",
+              "max_marks": 5
+            },
+            "care_plan": {
+              "label": "7. Family Care plan",
+              "max_marks": 15
+            },
+            "nutrition": {
+              "label": "8. Nutritional Assessment",
+              "max_marks": 5
+            },
+            "health_edu": {
+              "label": "9. Health Education",
+              "max_marks": 10
+            },
+            "av_aids": {
+              "label": "10. A. V. Aids",
+              "max_marks": 10
+            },
+            "conclusion": {
+              "label": "11. Conclusion and Summary",
+              "max_marks": 5
+            },
+            "biblio": {
+              "label": "12. Bibliography",
+              "max_marks": 5
             },
             "total": {
               "label": "Total",
-              "max_marks": 30
+              "max_marks": 100
             }
           }
         }
