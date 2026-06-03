@@ -227,13 +227,15 @@ const StudentAcademicRecords = () => {
 
   // Filter students based on active semester and search queries
   const filteredStudents = useMemo(() => {
-    return Object.values(studentProfiles).filter(student => {
-      const matchesSemester = student.semester === activeSemester;
-      const matchesSearch = 
-        student.student_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        student.student_name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSemester && matchesSearch;
-    });
+    return Object.values(studentProfiles)
+      .filter(student => {
+        const matchesSemester = student.semester === activeSemester;
+        const matchesSearch = 
+          student.student_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          student.student_name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesSemester && matchesSearch;
+      })
+      .sort((a, b) => a.student_id.localeCompare(b.student_id, undefined, { numeric: true, sensitivity: 'base' }));
   }, [studentProfiles, activeSemester, searchQuery]);
 
   // General Batch Summary Statistics

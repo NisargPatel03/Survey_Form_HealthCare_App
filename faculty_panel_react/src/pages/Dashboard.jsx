@@ -106,7 +106,9 @@ export default function Dashboard({ isHistory = false }) {
       pendingCount,
       semesterStr: getStudentSemester(allStudentSubmissions[0])
     };
-  }).filter(student => student.displaySubmissions.length > 0);
+  })
+  .filter(student => student.displaySubmissions.length > 0)
+  .sort((a, b) => a.studentId.localeCompare(b.studentId, undefined, { numeric: true, sensitivity: 'base' }));
 
   // Group displayStudents by Semester
   const semesterGroups = displayStudents.reduce((acc, student) => {
