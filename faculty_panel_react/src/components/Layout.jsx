@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-import { LayoutDashboard, LogOut, User, ClipboardCheck, Menu, X, FileText, ChevronDown } from 'lucide-react';
+import { LayoutDashboard, LogOut, User, ClipboardCheck, Menu, X, FileText, ChevronDown, History } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Layout() {
@@ -79,6 +79,17 @@ export default function Layout() {
           <LayoutDashboard className="h-5 w-5" />
           <span className="font-medium">Dashboard</span>
         </Link>
+        <Link
+          to="/history"
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+            location.pathname === '/history' 
+              ? 'bg-white/10 text-white shadow-lg border border-white/5' 
+              : 'text-primary-100 hover:bg-white/5 hover:text-white'
+          }`}
+        >
+          <History className="h-5 w-5" />
+          <span className="font-medium">History</span>
+        </Link>
       </nav>
 
       <div className="p-4 border-t border-primary-800/50">
@@ -140,7 +151,7 @@ export default function Layout() {
               <Menu className="h-6 w-6 text-gray-600" />
             </button>
             <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-800 truncate">
-              {location.pathname === '/' ? 'Submissions Overview' : 'Requirement Evaluation'}
+              {location.pathname === '/' ? 'Submissions Overview' : location.pathname === '/history' ? 'History Overview' : 'Requirement Evaluation'}
             </h2>
           </div>
           <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">

@@ -82,7 +82,8 @@ function App() {
         <Route element={
           session && userRole === 'faculty' ? <Layout /> : <Navigate to="/login" replace />
         }>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard isHistory={false} />} />
+          <Route path="/history" element={<Dashboard isHistory={true} />} />
           <Route path="/evaluation/:id" element={<Evaluation />} />
         </Route>
 

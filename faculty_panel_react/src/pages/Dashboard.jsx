@@ -5,8 +5,9 @@ import { Search, Filter, Clock, CheckCircle, XCircle, AlertCircle, FileText, Dow
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-export default function Dashboard() {
+export default function Dashboard({ isHistory = false }) {
   const [submissions, setSubmissions] = useState([]);
+  const [allSubmissionsForProgress, setAllSubmissionsForProgress] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
@@ -34,7 +35,21 @@ export default function Dashboard() {
           .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setSubmissions(data);
+      setSubmissions(data || []);
+
+      if (data && data.length > 0) {
+        const studentIds = [...new Set(data.map(sub => sub.student_id))];
+        const { data: allData, error: allErr } = await supabase
+            .from('requirement_submissions')
+            .select('*')
+            .in('student_id', studentIds);
+        
+        if (!allErr) {
+          setAllSubmissionsForProgress(allData || []);
+        }
+      } else {
+        setAllSubmissionsForProgress([]);
+      }
     } catch (error) {
       console.error('Error fetching submissions:', error);
     } finally {
@@ -67,11 +82,37 @@ export default function Dashboard() {
     return '5';
   };
 
-  // Group by Semester for Tabs
-  const semesterGroups = Object.entries(studentGroups).reduce((acc, [id, subs]) => {
-    const sem = getStudentSemester(subs[0]);
+  // Filter students and their submissions based on page mode (Dashboard vs History)
+  const displayStudents = Object.entries(studentGroups).map(([studentId, allStudentSubmissions]) => {
+    const studentProgressSubs = allSubmissionsForProgress.filter(s => s.student_id === studentId);
+    const progressList = studentProgressSubs.length > 0 ? studentProgressSubs : allStudentSubmissions;
+
+    const approvedCount = progressList.filter(s => s.status === 'approved').length;
+    const pendingCount = allStudentSubmissions.filter(s => s.status === 'submitted' || s.status === 'resubmission_required').length;
+    
+    const displaySubmissions = (isHistory ? progressList : allStudentSubmissions).filter(s => {
+      if (isHistory) {
+        return s.status === 'approved';
+      } else {
+        return s.status === 'submitted' || s.status === 'resubmission_required';
+      }
+    });
+
+    return {
+      studentId,
+      allSubmissions: progressList,
+      displaySubmissions,
+      approvedCount,
+      pendingCount,
+      semesterStr: getStudentSemester(allStudentSubmissions[0])
+    };
+  }).filter(student => student.displaySubmissions.length > 0);
+
+  // Group displayStudents by Semester
+  const semesterGroups = displayStudents.reduce((acc, student) => {
+    const sem = student.semesterStr;
     if (!acc[sem]) acc[sem] = [];
-    acc[sem].push([id, subs]);
+    acc[sem].push(student);
     return acc;
   }, {});
 
@@ -180,8 +221,14 @@ export default function Dashboard() {
       {/* Header Section */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div>
-          <h2 className="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">Faculty Dashboard</h2>
-          <p className="text-gray-500 text-sm mt-1">Manage and evaluate requirements grouped by semester</p>
+          <h2 className="text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">
+            {isHistory ? 'Faculty History' : 'Faculty Dashboard'}
+          </h2>
+          <p className="text-gray-500 text-sm mt-1">
+            {isHistory 
+              ? 'View and download approved student records' 
+              : 'Manage and evaluate requirements grouped by semester'}
+          </p>
         </div>
         
         <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto no-scrollbar scroll-smooth">
@@ -216,13 +263,9 @@ export default function Dashboard() {
       {/* Grid of Student Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {(semesterGroups[activeSemester] || [])
-          .filter(([id]) => id.toLowerCase().includes(search.toLowerCase()))
-          .map(([studentId, studentSubmissions]) => {
-            const pendingCount = studentSubmissions.filter(s => s.status === 'submitted').length;
-            const approvedCount = studentSubmissions.filter(s => s.status === 'approved').length;
-            
-            // Get semester and handle different formats (string/number)
-            const semesterStr = getStudentSemester(studentSubmissions[0]);
+          .filter((student) => student.studentId.toLowerCase().includes(search.toLowerCase()))
+          .map((student) => {
+            const { studentId, displaySubmissions, allSubmissions, approvedCount, pendingCount, semesterStr } = student;
             const totalRequired = SEMESTER_TOTALS[semesterStr] || 22; // Default to 22 if unknown
             
             const isComplete = approvedCount >= totalRequired;
@@ -239,9 +282,9 @@ export default function Dashboard() {
                   {/* Card Header */}
                   <div className="flex justify-between items-start">
                     <div className={`${isComplete ? 'bg-green-100' : 'bg-primary-100'} p-3 rounded-2xl`}>
-                      {isComplete ? <CheckCircle className="h-6 w-6 text-green-600" /> : <AlertCircle className="h-6 w-6 text-primary-600" />}
+                       {isComplete ? <CheckCircle className="h-6 w-6 text-green-600" /> : <AlertCircle className="h-6 w-6 text-primary-600" />}
                     </div>
-                    {pendingCount > 0 ? (
+                    {pendingCount > 0 && !isHistory ? (
                       <span className="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-lg animate-pulse">
                         {pendingCount} NEW
                       </span>
@@ -287,7 +330,7 @@ export default function Dashboard() {
 
                     {isComplete && (
                       <button 
-                        onClick={() => generateCombinedPDF(studentId, studentSubmissions)}
+                        onClick={() => generateCombinedPDF(studentId, allSubmissions.filter(s => s.status === 'approved'))}
                         className="w-full py-3 rounded-2xl font-bold text-sm bg-green-600 text-white shadow-lg shadow-green-100 hover:bg-green-700 transition-all flex items-center justify-center gap-2"
                       >
                         <Download className="h-4 w-4" />
@@ -302,7 +345,7 @@ export default function Dashboard() {
                   <div className="bg-gray-50 border-t border-gray-100 p-4 space-y-3 animate-in slide-in-from-top-4 duration-300">
                     <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Requirements List</h4>
                     <div className="space-y-2">
-                      {studentSubmissions.map((sub) => (
+                      {displaySubmissions.map((sub) => (
                         <Link 
                           key={sub.id}
                           to={`/evaluation/${sub.id}`}
@@ -324,12 +367,14 @@ export default function Dashboard() {
               </div>
             );
           })}
-        {Object.keys(studentGroups).length === 0 && (
+        {displayStudents.length === 0 && (
           <div className="col-span-full py-20 text-center space-y-4 bg-white rounded-3xl border-2 border-dashed border-gray-200">
             <div className="inline-block p-4 bg-gray-50 rounded-full">
               <AlertCircle className="h-8 w-8 text-gray-400" />
             </div>
-            <p className="text-gray-500 font-medium">No submissions assigned to you yet.</p>
+            <p className="text-gray-500 font-medium">
+              {isHistory ? 'No approved submissions yet.' : 'No pending submissions to review.'}
+            </p>
           </div>
         )}
       </div>
