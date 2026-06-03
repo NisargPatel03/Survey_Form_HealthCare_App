@@ -85,7 +85,8 @@
         {
           "key": "specific_objectives",
           "label": "B. Specific Objectives",
-          "type": "textarea",
+          "type": "array",
+          "itemLabel": "Specific Objective",
           "hint": "List each specific objective separately",
           "required": true
         }
@@ -119,9 +120,33 @@
         {
           "key": "staffing_pattern",
           "label": "Staffing Pattern",
-          "type": "textarea",
-          "hint": "Describe the staff roles, designations, and count observed at the centre",
-          "required": true
+          "type": "array",
+          "minItems": 1,
+          "required": true,
+          "hint": "List the categories of staff and their numbers at the centre",
+          "itemSchema": {
+            "sr_no": {
+              "label": "Sr. No.",
+              "type": "number",
+              "required": true
+            },
+            "designation": {
+              "label": "Designation / Role",
+              "type": "text",
+              "hint": "e.g. Medical Officer, Staff Nurse, ANM, ASHA, Pharmacist",
+              "required": true
+            },
+            "number_of_staff": {
+              "label": "Number of Staff",
+              "type": "number",
+              "required": true
+            },
+            "remarks": {
+              "label": "Remarks",
+              "type": "text",
+              "required": false
+            }
+          }
         }
       ]
     },
@@ -161,9 +186,11 @@
         {
           "key": "references",
           "label": "References",
-          "type": "textarea",
+          "type": "array",
+          "minItems": 3,
+          "itemLabel": "Reference",
           "hint": "List all references used (books, websites, guidelines, etc.)",
-          "required": false
+          "required": true
         }
       ]
     },

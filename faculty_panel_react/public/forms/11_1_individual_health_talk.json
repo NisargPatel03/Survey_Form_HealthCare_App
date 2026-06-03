@@ -157,7 +157,7 @@
           "key": "bibliography",
           "label": "Bibliography",
           "type": "array",
-          "minItems": 1,
+          "minItems": 3,
           "itemLabel": "Reference",
           "hint": "List all references used in the health talk",
           "required": true

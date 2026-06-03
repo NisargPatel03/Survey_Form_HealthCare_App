@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'survey_detail_screen.dart';
 import 'faq_screen.dart';
 import 'annexures_screen.dart';
-import 'academic_details_screen.dart';
 import '../models/course_requirement.dart';
 import 'dynamic_form_screen.dart';
 
@@ -30,6 +29,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   String? _courseName;
   int _unreadCount = 0;
   List<Map<String, dynamic>> _notifications = [];
+  Map<String, String> _submissionStatuses = {};
 
   @override
   void initState() {
@@ -47,6 +47,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         _semester = prefs.getString('semester_${widget.studentId}');
         _courseName = prefs.getString('courseName_${widget.studentId}');
       });
+      _loadSubmissions();
     }
 
     try {
@@ -82,6 +83,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                 _academicYear = serverYear;
                 _courseName = serverCourse;
               });
+              _loadSubmissions();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Academic records updated: Promoted to $serverSemester ($serverYear)'),
@@ -94,6 +96,31 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       }
     } catch (e) {
       print('Error syncing academic details from server: $e');
+    }
+  }
+
+  Future<void> _loadSubmissions() async {
+    if (_courseName == null) return;
+    try {
+      final data = await Supabase.instance.client
+          .from('requirement_submissions')
+          .select('requirement_sr_no, status')
+          .eq('student_id', widget.studentId.trim())
+          .eq('course_name', _courseName!.trim());
+      
+      final Map<String, String> statuses = {};
+      for (var row in data) {
+        final srNo = row['requirement_sr_no'] as String;
+        final status = row['status'] as String;
+        statuses[srNo] = status;
+      }
+      if (mounted) {
+        setState(() {
+          _submissionStatuses = statuses;
+        });
+      }
+    } catch (e) {
+      print('Error loading submission statuses: $e');
     }
   }
 
@@ -489,22 +516,91 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           ),
         );
       }
+      final status = _submissionStatuses[req.srNo];
+      Color? tileColor;
+      Widget? trailingWidget;
+
+      if (!req.isSurvey && status != null) {
+        if (status == 'submitted') {
+          tileColor = Colors.blue.shade50;
+          trailingWidget = Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade300),
+            ),
+            child: Text(
+              'Submitted',
+              style: TextStyle(color: Colors.blue.shade900, fontWeight: FontWeight.bold, fontSize: 11),
+            ),
+          );
+        } else if (status == 'approved') {
+          tileColor = Colors.green.shade50;
+          trailingWidget = Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.green.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.green.shade300),
+            ),
+            child: Text(
+              'Approved',
+              style: TextStyle(color: Colors.green.shade900, fontWeight: FontWeight.bold, fontSize: 11),
+            ),
+          );
+        } else if (status == 'resubmission_required') {
+          tileColor = Colors.orange.shade50;
+          trailingWidget = Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.orange.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.orange.shade300),
+            ),
+            child: Text(
+              'Resubmit',
+              style: TextStyle(color: Colors.orange.shade900, fontWeight: FontWeight.bold, fontSize: 11),
+            ),
+          );
+        } else if (status == 'rejected') {
+          tileColor = Colors.red.shade50;
+          trailingWidget = Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.red.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.red.shade300),
+            ),
+            child: Text(
+              'Rejected',
+              style: TextStyle(color: Colors.red.shade900, fontWeight: FontWeight.bold, fontSize: 11),
+            ),
+          );
+        }
+      }
+
+      if (trailingWidget == null) {
+        trailingWidget = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Qty: ${req.quantity}'),
+            const SizedBox(width: 8),
+            Icon(Icons.arrow_forward_ios, size: 14, color: Colors.blue.shade300),
+          ],
+        );
+      }
+
       items.add(
         ListTile(
+          tileColor: tileColor,
           leading: CircleAvatar(
             backgroundColor: req.isSurvey ? Colors.green.shade100 : Colors.blue.shade50,
             child: Text(req.srNo, style: TextStyle(fontSize: 12, color: req.isSurvey ? Colors.green.shade800 : Colors.blue.shade900)),
           ),
           title: Text(req.name, style: TextStyle(fontWeight: req.isSurvey ? FontWeight.bold : FontWeight.normal)),
           subtitle: Text(req.category),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Qty: ${req.quantity}'),
-              const SizedBox(width: 8),
-              Icon(Icons.arrow_forward_ios, size: 14, color: Colors.blue.shade300),
-            ],
-          ),
+          trailing: trailingWidget,
           onTap: () {
             if (req.isSurvey) {
               Navigator.push(
@@ -522,7 +618,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                     requirementSrNo: req.srNo,
                   ),
                 ),
-              );
+              ).then((_) => _loadSubmissions());
             }
           },
         ),

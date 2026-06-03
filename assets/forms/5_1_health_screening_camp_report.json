@@ -323,7 +323,7 @@
           "key": "references",
           "label": "References",
           "type": "array",
-          "minItems": 1,
+          "minItems": 3,
           "itemLabel": "Reference",
           "hint": "List all references, textbooks, and sources consulted for the report",
           "required": true

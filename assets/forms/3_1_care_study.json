@@ -298,9 +298,9 @@
           "key": "bibliography",
           "label": "Bibliography",
           "type": "array",
+          "minItems": 3,
           "itemLabel": "Reference",
-          "minItems": 1,
-          "maxItems": 10,
+          "hint": "List references used",
           "required": true
         }
       ]

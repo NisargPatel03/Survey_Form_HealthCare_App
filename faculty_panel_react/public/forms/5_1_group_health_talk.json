@@ -199,8 +199,8 @@
           "key": "bibliography",
           "label": "Bibliography",
           "type": "array",
+          "minItems": 3,
           "itemLabel": "Reference",
-          "minItems": 1,
           "hint": "Use APA or Vancouver citation style",
           "required": true
         }

@@ -195,6 +195,37 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
     
+    // Validate references / bibliography (minimum 3 required)
+    final dynamic references = _formData['references'] ?? _formData['bibliography'];
+    if (references != null) {
+      if (references is! List || references.length < 3) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please provide a minimum of 3 references before submitting.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      
+      int validCount = 0;
+      for (var ref in references) {
+        if (ref != null && ref.toString().trim().isNotEmpty) {
+          validCount++;
+        }
+      }
+      
+      if (validCount < 3) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please fill out at least 3 non-empty references before submitting.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+    
     setState(() => _isLoading = true);
     
     try {
