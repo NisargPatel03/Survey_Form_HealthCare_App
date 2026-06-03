@@ -120,18 +120,6 @@
           "label": "Present Complaint",
           "type": "textarea",
           "required": true
-        },
-        {
-          "key": "known_allergies",
-          "label": "Known Allergies",
-          "type": "text",
-          "required": false
-        },
-        {
-          "key": "current_medications",
-          "label": "Current Medications",
-          "type": "textarea",
-          "required": false
         }
       ]
     },
@@ -226,9 +214,43 @@
         {
           "key": "recording_and_reporting",
           "label": "Recording and Reporting / Documentation",
-          "type": "textarea",
-          "hint": "Describe what was recorded, reported, and documented after the procedure — include date, time, observations, and to whom it was reported",
-          "required": true
+          "type": "array",
+          "itemLabel": "Parameter Entry",
+          "minItems": 1,
+          "required": true,
+          "itemSchema": {
+            "sr_no": {
+              "label": "SR No.",
+              "type": "number",
+              "required": true
+            },
+            "number_of_parameters": {
+              "label": "Number of Parameters",
+              "type": "number",
+              "required": true
+            },
+            "name_of_parameters": {
+              "label": "Name of Parameters",
+              "type": "array",
+              "itemLabel": "Parameter Name",
+              "required": true
+            },
+            "normal_value": {
+              "label": "Normal Value",
+              "type": "text",
+              "required": true
+            },
+            "client_value": {
+              "label": "Client Value",
+              "type": "text",
+              "required": true
+            },
+            "outcome_remarks": {
+              "label": "Outcome Remarks",
+              "type": "textarea",
+              "required": true
+            }
+          }
         }
       ]
     },
@@ -265,44 +287,43 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Marks",
+          "label": "Evaluation Criteria",
           "type": "object",
-          "required": false,
           "properties": {
-            "introduction_and_relevance": {
-              "label": "Introduction & Relevance to Community Health Nursing",
+            "intro": {
+              "label": "1. Introduction & Relevance",
               "max_marks": 5
             },
-            "clarity_of_objectives": {
-              "label": "Clarity of Objectives",
+            "obj": {
+              "label": "2. Clarity of Objectives",
               "max_marks": 5
             },
-            "client_baseline_data": {
-              "label": "Client Baseline Data (Demographics, Health History, Present Complaint)",
+            "baseline": {
+              "label": "3. Client Baseline Data",
               "max_marks": 5
             },
-            "purpose_of_procedure": {
-              "label": "Purpose of the Procedure",
+            "purpose": {
+              "label": "4. Purpose of the Procedure",
               "max_marks": 5
             },
-            "articles_used": {
-              "label": "Articles Used with Their Purpose",
+            "articles": {
+              "label": "5. Articles Used with Their Purpose",
               "max_marks": 5
             },
-            "steps_with_rationale": {
-              "label": "Steps of Procedure with Rationale",
+            "steps": {
+              "label": "6. Steps of Procedure with Rationale",
               "max_marks": 10
             },
-            "recording_and_reporting": {
-              "label": "Recording and Reporting / Documentation",
+            "recording": {
+              "label": "7. Recording and Reporting",
               "max_marks": 5
             },
-            "nursing_responsibilities": {
-              "label": "Nursing Responsibilities After Procedure",
+            "resp": {
+              "label": "8. Nursing Responsibilities After",
               "max_marks": 5
             },
-            "references": {
-              "label": "References / Bibliography (APA/Vancouver style)",
+            "biblio": {
+              "label": "9. References / Bibliography",
               "max_marks": 5
             },
             "total": {

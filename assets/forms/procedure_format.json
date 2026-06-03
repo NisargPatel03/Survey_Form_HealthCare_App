@@ -120,18 +120,6 @@
           "label": "Present Complaint",
           "type": "textarea",
           "required": true
-        },
-        {
-          "key": "known_allergies",
-          "label": "Known Allergies",
-          "type": "text",
-          "required": false
-        },
-        {
-          "key": "current_medications",
-          "label": "Current Medications",
-          "type": "textarea",
-          "required": false
         }
       ]
     },
@@ -226,9 +214,43 @@
         {
           "key": "recording_and_reporting",
           "label": "Recording and Reporting / Documentation",
-          "type": "textarea",
-          "hint": "Describe what was recorded, reported, and documented after the procedure — include date, time, observations, and to whom it was reported",
-          "required": true
+          "type": "array",
+          "itemLabel": "Parameter Entry",
+          "minItems": 1,
+          "required": true,
+          "itemSchema": {
+            "sr_no": {
+              "label": "SR No.",
+              "type": "number",
+              "required": true
+            },
+            "number_of_parameters": {
+              "label": "Number of Parameters",
+              "type": "number",
+              "required": true
+            },
+            "name_of_parameters": {
+              "label": "Name of Parameters",
+              "type": "array",
+              "itemLabel": "Parameter Name",
+              "required": true
+            },
+            "normal_value": {
+              "label": "Normal Value",
+              "type": "text",
+              "required": true
+            },
+            "client_value": {
+              "label": "Client Value",
+              "type": "text",
+              "required": true
+            },
+            "outcome_remarks": {
+              "label": "Outcome Remarks",
+              "type": "textarea",
+              "required": true
+            }
+          }
         }
       ]
     },

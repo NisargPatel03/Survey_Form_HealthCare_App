@@ -1357,6 +1357,19 @@
       ]
     },
     {
+      "section": "VI. A.V. Aids",
+      "fields": [
+        {
+          "key": "av_aids_used",
+          "label": "A.V. Aids Used",
+          "type": "array",
+          "itemLabel": "A.V. Aid",
+          "minItems": 1,
+          "required": true
+        }
+      ]
+    },
+    {
       "section": "VII. Summary & Conclusion",
       "fields": [
         {

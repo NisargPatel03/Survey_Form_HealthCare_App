@@ -375,6 +375,48 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       }
     }
 
+    // Validate Recording and Reporting parameters count matches array length
+    if (_formData.containsKey('recording_and_reporting')) {
+      final recData = _formData['recording_and_reporting'];
+      if (recData is List) {
+        for (var item in recData) {
+          if (item is Map) {
+            final expectedStr = item['number_of_parameters']?.toString() ?? '0';
+            final expected = int.tryParse(expectedStr) ?? 0;
+            final namesList = item['name_of_parameters'];
+            final actual = (namesList is List) ? namesList.length : 0;
+            if (actual != expected) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Validation Error in Recording & Reporting: '
+                    'Expected $expected parameter names based on "Number of Parameters", but found $actual parameter(s).'
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+          }
+        }
+      }
+    }
+
+    // Validate Minimum 5 Health Talk Plan entries
+    final List<String> healthTalkReqs = ['5.1', '11.1', '9.1', '9.2', '10.1'];
+    if (healthTalkReqs.contains(widget.requirementSrNo)) {
+      final planData = _formData['health_talk_plan'];
+      if (planData is! List || planData.length < 5) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Validation Error: You must fill in at least 5 entries in the Health Talk Plan.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
     setState(() => _isLoading = true);
     
     try {
@@ -1193,7 +1235,13 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('${arrayField['itemLabel'] ?? 'Entry'} #${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+              Expanded(
+                child: Text(
+                  '${arrayField['itemLabel'] ?? 'Entry'} #${index + 1}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
               IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red, size: 20),
                 onPressed: () {

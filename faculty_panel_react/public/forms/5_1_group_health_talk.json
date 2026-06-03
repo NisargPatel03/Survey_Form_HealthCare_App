@@ -6,12 +6,9 @@
       "section": "Student & Submission Information",
       "fields": [
         {
-          "key": "student_names",
-          "label": "Name of the Students",
-          "type": "array",
-          "itemLabel": "Student Name",
-          "minItems": 1,
-          "hint": "List all student names involved in the group health talk",
+          "key": "student_name",
+          "label": "Name of Student",
+          "type": "text",
           "required": true
         },
         {
@@ -127,7 +124,7 @@
           "key": "health_talk_plan",
           "label": "Health Talk Plan",
           "type": "array",
-          "minItems": 1,
+          "minItems": 5,
           "required": true,
           "itemSchema": {
             "sr_no": {

@@ -88,7 +88,7 @@
           "key": "health_talk_plan",
           "label": "Health Talk Plan",
           "type": "array",
-          "minItems": 1,
+          "minItems": 5,
           "required": true,
           "itemSchema": {
             "sr_no": {
