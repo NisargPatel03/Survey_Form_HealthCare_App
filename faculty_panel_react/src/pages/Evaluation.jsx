@@ -114,18 +114,19 @@ export default function Evaluation() {
       };
 
       const getStudentSemester = (s) => {
-        let sem = s.class_semester || s.form_data?.class_semester || s.form_data?.semester_year || s.form_data?.semester;
-        if (!sem && s.course_name) {
-          if (s.course_name.includes('NUR 401') || s.course_name.includes('Nursing - II')) {
-            sem = '7';
-          } else if (s.course_name.includes('NUR 303') || s.course_name.includes('Nursing - I')) {
-            sem = '5';
-          }
+        let sem;
+        const course = (s.course_name || '').toUpperCase();
+        if (course.includes('NUR 401') || course.includes('NURSING - II') || course.includes('NURSING-II') || course.includes('SEM-7') || course.includes('7TH')) {
+          sem = '7';
+        } else if (course.includes('NUR 303') || course.includes('NURSING - I') || course.includes('NURSING-I') || course.includes('SEM-5') || course.includes('5TH')) {
+          sem = '5';
+        } else {
+          sem = s.class_semester || s.form_data?.class_semester || s.form_data?.semester_year || s.form_data?.semester;
         }
         sem = (sem || '5').toString().trim();
         if (sem.includes('7')) return '7';
         if (sem.includes('5')) return '5';
-        return sem;
+        return '5';
       };
 
       const semester = getStudentSemester(sub);
