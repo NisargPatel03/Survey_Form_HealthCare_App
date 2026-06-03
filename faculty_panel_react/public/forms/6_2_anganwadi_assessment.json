@@ -148,7 +148,7 @@
           "label": "Staffing Pattern",
           "type": "array",
           "minItems": 1,
-          "hint": "List all staff at the Anganwadi center with their designation and name if available",
+          "hint": "List the categories of staff and their numbers at the centre",
           "required": true,
           "itemSchema": {
             "sr_no": {
@@ -157,13 +157,18 @@
               "required": true
             },
             "designation": {
-              "label": "Designation",
+              "label": "Designation / Role",
               "type": "text",
-              "hint": "e.g. Anganwadi Worker (AWW), Anganwadi Helper (AWH), Supervisor",
+              "hint": "e.g. Medical Officer, Staff Nurse, ANM, ASHA, Pharmacist",
               "required": true
             },
-            "name": {
-              "label": "Name (if applicable)",
+            "number_of_staff": {
+              "label": "Number of Staff",
+              "type": "number",
+              "required": true
+            },
+            "remarks": {
+              "label": "Remarks",
               "type": "text",
               "required": false
             }
@@ -190,7 +195,7 @@
             "image/jpeg",
             "application/pdf"
           ],
-          "hint": "Upload a hand-drawn or digital sketch of the Anganwadi center layout",
+          "hint": "Draw or upload a sketch of the Anganwadi center layout",
           "required": false
         }
       ]
@@ -377,6 +382,12 @@
           }
         },
         {
+          "key": "total_problems_identified",
+          "label": "Total Numbers of Common Problems Identified Among School Children",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "common_problems_identified",
           "label": "Common Problems Identified Among Anganwadi Children",
           "type": "array",
@@ -434,48 +445,47 @@
       "fields": [
         {
           "key": "marks",
-          "label": "Marks",
+          "label": "Evaluation Criteria",
           "type": "object",
-          "required": false,
           "properties": {
-            "introduction": {
-              "label": "Introduction (clear context and relevance)",
+            "intro": {
+              "label": "1. Introduction",
               "max_marks": 5
             },
-            "objectives": {
-              "label": "Objectives (general and specific objectives defined)",
+            "obj": {
+              "label": "2. Objectives",
               "max_marks": 5
             },
-            "anganwadi_assessment": {
-              "label": "Assessment of Anganwadi (infrastructure and accessibility)",
+            "assessment": {
+              "label": "3. Assessment of Anganwadi",
               "max_marks": 5
             },
-            "services_provided": {
-              "label": "Services Provided (detailed and accurate listing of ICDS services)",
+            "services": {
+              "label": "4. Services Provided",
               "max_marks": 5
             },
-            "staffing_pattern": {
-              "label": "Staffing Pattern (worker/helper roles correctly mentioned)",
+            "staffing": {
+              "label": "5. Staffing Pattern",
               "max_marks": 5
             },
-            "layout_and_schedule": {
-              "label": "Physical Layout & Schedule (layout understanding, weekly planning)",
+            "layout": {
+              "label": "6. Physical Layout & Schedule",
               "max_marks": 5
             },
-            "weekly_diet_menu": {
-              "label": "Weekly Diet Menu (appropriate, nutritious, and varied)",
+            "diet": {
+              "label": "7. Weekly Diet Menu",
               "max_marks": 5
             },
-            "student_activities": {
-              "label": "Student Activities (active involvement and variety)",
+            "activities": {
+              "label": "8. Student Activities",
               "max_marks": 5
             },
-            "health_assessment": {
-              "label": "Health Assessment of Children (accurate screening and interpretation)",
+            "assessment_child": {
+              "label": "9. Health Assessment of Children",
               "max_marks": 5
             },
-            "conclusion_and_summary": {
-              "label": "Conclusion and Summary (clarity in findings and reflection)",
+            "conclusion": {
+              "label": "10. Conclusion and Summary",
               "max_marks": 5
             },
             "total": {

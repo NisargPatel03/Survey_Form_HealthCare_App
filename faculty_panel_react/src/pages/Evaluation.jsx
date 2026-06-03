@@ -378,6 +378,7 @@ export default function Evaluation() {
                                     ) : item?.toString()}
                                   </div>
                                 ))}
+                                {renderDistributionChart(field.key, value)}
                               </div>
                             ) : (field.type === 'sketch' || field.key === 'physical_layout_sketch' || field.key === 'layout_sketch_or_map') ? (
                               value ? (
@@ -587,3 +588,79 @@ export default function Evaluation() {
     </div>
   );
 }
+
+const renderDistributionChart = (fieldKey, listData) => {
+  if (!Array.isArray(listData) || listData.length === 0) return null;
+
+  const chartableKeys = [
+    'gender_wise_distribution',
+    'religion_wise_distribution',
+    'education_wise_distribution',
+    'family_type_distribution',
+    'occupation_wise_distribution',
+    'house_type_distribution',
+    'drainage_distribution',
+    'waste_disposal_distribution',
+    'age_wise_distribution',
+    'problems_identified',
+    'common_problems_identified',
+    'community_diagnosis'
+  ];
+
+  if (!chartableKeys.includes(fieldKey)) return null;
+
+  // Map elements to standard structure and sort descending
+  const items = listData
+    .map(item => {
+      if (typeof item !== 'object' || item === null) return null;
+      const category = item.category || item.condition || item.health_problem || 'Unknown';
+      const pct = parseFloat(item.percentage) || 0;
+      const freq = parseFloat(item.frequency || item.number_of_problems_identified) || 0;
+      return { category, pct, freq };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.pct - a.pct);
+
+  if (items.length === 0) return null;
+
+  const colors = [
+    'bg-blue-600',
+    'bg-teal-500',
+    'bg-orange-500',
+    'bg-purple-500',
+    'bg-red-500',
+    'bg-indigo-500',
+    'bg-pink-500',
+    'bg-amber-500'
+  ];
+
+  return (
+    <div className="mt-4 p-4 bg-white rounded-xl border border-blue-150 shadow-sm space-y-4 w-full">
+      <div className="flex items-center gap-2 text-blue-800 border-b border-blue-50 pb-2">
+        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" />
+        </svg>
+        <span className="font-bold text-sm">Distribution Visualization</span>
+      </div>
+      <div className="space-y-3">
+        {items.map((item, idx) => {
+          const colorClass = colors[idx % colors.length];
+          return (
+            <div key={idx} className="space-y-1">
+              <div className="flex justify-between text-xs font-semibold text-gray-700">
+                <span className="truncate max-w-[70%]" title={item.category}>{item.category}</span>
+                <span className="text-gray-500 font-bold">{item.freq} ({item.pct.toFixed(1)}%)</span>
+              </div>
+              <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full rounded-full transition-all duration-500 ${colorClass}`}
+                  style={{ width: `${Math.min(100, Math.max(0, item.pct))}%` }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};

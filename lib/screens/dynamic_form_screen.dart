@@ -307,6 +307,74 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       }
     }
     
+    // Validate that the sum of table frequencies equals the entered total count
+    final Map<String, String> arrayToTotalMap = {
+      'gender_wise_distribution': 'total_gender',
+      'religion_wise_distribution': 'total_religion',
+      'education_wise_distribution': 'total_education',
+      'family_type_distribution': 'total_families',
+      'occupation_wise_distribution': 'total_occupations',
+      'house_type_distribution': 'total_houses',
+      'drainage_distribution': 'total_drainage_houses',
+      'waste_disposal_distribution': 'total_waste_houses',
+      'age_wise_distribution': 'total_population',
+      'problems_identified': 'total_problems_identified',
+      'common_problems_identified': 'total_problems_identified',
+      'community_diagnosis': 'total_community_problems',
+    };
+
+    final Map<String, String> arrayLabels = {
+      'gender_wise_distribution': 'Gender Wise Distribution',
+      'religion_wise_distribution': 'Religion Wise Distribution',
+      'education_wise_distribution': 'Education Wise Distribution',
+      'family_type_distribution': 'Type of Family Wise Distribution',
+      'occupation_wise_distribution': 'Occupation Wise Distribution',
+      'house_type_distribution': 'House Wise Distribution',
+      'drainage_distribution': 'Drainage Wise Distribution',
+      'waste_disposal_distribution': 'Disposal of Waste',
+      'age_wise_distribution': 'Age Wise Distribution',
+      'problems_identified': 'Problems Identified',
+      'common_problems_identified': 'Common Problems Identified',
+      'community_diagnosis': 'Community Diagnosis: Health Problems Identified',
+    };
+
+    for (var entry in arrayToTotalMap.entries) {
+      final arrayKey = entry.key;
+      final totalKey = entry.value;
+      
+      if (_formData.containsKey(totalKey) && _formData.containsKey(arrayKey)) {
+        final totalValStr = _formData[totalKey]?.toString() ?? '';
+        if (totalValStr.trim().isNotEmpty) {
+          final totalVal = double.tryParse(totalValStr) ?? 0.0;
+          final arrayData = _formData[arrayKey];
+          if (arrayData is List && arrayData.isNotEmpty) {
+            double sumFrequencies = 0.0;
+            for (var item in arrayData) {
+              if (item is Map) {
+                final itemNumKey = item.containsKey('number_of_problems_identified') 
+                    ? 'number_of_problems_identified' 
+                    : 'frequency';
+                final val = double.tryParse(item[itemNumKey]?.toString() ?? '') ?? 0.0;
+                sumFrequencies += val;
+              }
+            }
+            if (sumFrequencies != totalVal) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Validation Error in ${arrayLabels[arrayKey]}: '
+                    'Sum of frequencies (${sumFrequencies.toInt()}) must equal the entered total (${totalVal.toInt()}).'
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+          }
+        }
+      }
+    }
+
     setState(() => _isLoading = true);
     
     try {
@@ -355,6 +423,30 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
           }
         }
       }
+
+      // Sort specific fields high-to-low by percentage/frequency before submitting:
+      void sortDescending(String arrayKey, String sortKey) {
+        if (_formData.containsKey(arrayKey)) {
+          final dynamic listData = _formData[arrayKey];
+          if (listData is List) {
+            final List<dynamic> sortedList = List.from(listData);
+            sortedList.sort((a, b) {
+              if (a is Map && b is Map) {
+                final valA = double.tryParse(a[sortKey]?.toString() ?? '') ?? 0.0;
+                final valB = double.tryParse(b[sortKey]?.toString() ?? '') ?? 0.0;
+                return valB.compareTo(valA); // Descending order
+              }
+              return 0;
+            });
+            _formData[arrayKey] = sortedList;
+          }
+        }
+      }
+
+      sortDescending('problems_identified', 'percentage');
+      sortDescending('common_problems_identified', 'percentage');
+      sortDescending('age_wise_distribution', 'percentage');
+      sortDescending('community_diagnosis', 'percentage');
 
       // 2. Submit to DB
       await _submissionService.submitRequirement(
@@ -483,6 +575,7 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
         child: TextFormField(
+          key: key == 'percentage' ? ValueKey(dataMap[key]?.toString()) : null,
           initialValue: dataMap[key]?.toString(),
           decoration: InputDecoration(
             labelText: label,
@@ -499,7 +592,85 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
           },
           onChanged: (value) {
             dataMap[key] = value;
+            
+            final Map<String, String> arrayToTotalMap = {
+              'gender_wise_distribution': 'total_gender',
+              'religion_wise_distribution': 'total_religion',
+              'education_wise_distribution': 'total_education',
+              'family_type_distribution': 'total_families',
+              'occupation_wise_distribution': 'total_occupations',
+              'house_type_distribution': 'total_houses',
+              'drainage_distribution': 'total_drainage_houses',
+              'waste_disposal_distribution': 'total_waste_houses',
+              'age_wise_distribution': 'total_population',
+              'problems_identified': 'total_problems_identified',
+              'common_problems_identified': 'total_problems_identified',
+              'community_diagnosis': 'total_community_problems',
+            };
+
+            // Helper to find the array key containing this element map
+            String? findArrayKey(Map<String, dynamic> itemMap) {
+              for (var entry in _formData.entries) {
+                if (entry.value is List) {
+                  for (var element in entry.value) {
+                    if (identical(element, itemMap)) {
+                      return entry.key;
+                    }
+                  }
+                }
+              }
+              return null;
+            }
+
+            // 1. Calculate percentage for edited array item
+            if (key == 'number_of_problems_identified' || key == 'frequency') {
+              final arrKey = findArrayKey(dataMap);
+              if (arrKey != null) {
+                final totalKey = arrayToTotalMap[arrKey];
+                if (totalKey != null) {
+                  final totalVal = double.tryParse(_formData[totalKey]?.toString() ?? '');
+                  final itemVal = double.tryParse(value);
+                  if (totalVal != null && totalVal > 0 && itemVal != null) {
+                    final pct = (itemVal / totalVal) * 100;
+                    dataMap['percentage'] = double.parse(pct.toStringAsFixed(2));
+                  } else {
+                    dataMap['percentage'] = 0.0;
+                  }
+                }
+              }
+            }
+
+            // 2. Recalculate all item percentages if a total field is updated
+            if (arrayToTotalMap.values.contains(key)) {
+              final totalVal = double.tryParse(value);
+              if (totalVal != null && totalVal > 0) {
+                // Find all arrays associated with this total field key
+                final associatedArrays = arrayToTotalMap.entries
+                    .where((entry) => entry.value == key)
+                    .map((entry) => entry.key)
+                    .toList();
+
+                for (var arrKey in associatedArrays) {
+                  if (_formData[arrKey] is List) {
+                    for (var item in _formData[arrKey]) {
+                      if (item is Map) {
+                        final itemNumKey = item.containsKey('number_of_problems_identified') 
+                            ? 'number_of_problems_identified' 
+                            : 'frequency';
+                        final itemVal = double.tryParse(item[itemNumKey]?.toString() ?? '');
+                        if (itemVal != null) {
+                          final pct = (itemVal / totalVal) * 100;
+                          item['percentage'] = double.parse(pct.toStringAsFixed(2));
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            
             _saveDraft();
+            setState(() {});
           },
           onSaved: (value) => dataMap[key] = value,
         ),
@@ -835,6 +1006,8 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
               for (int i = 0; i < listData.length; i++)
                 _buildArrayItem(field, listData, i, key),
 
+              _buildDistributionChart(key, listData),
+
               const SizedBox(height: 12),
               Center(
                 child: OutlinedButton.icon(
@@ -858,6 +1031,149 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
       );
     }
     return const SizedBox();
+  }
+
+  Widget _buildDistributionChart(String arrayKey, List<dynamic> listData) {
+    if (listData.isEmpty) return const SizedBox.shrink();
+
+    final Set<String> chartableKeys = {
+      'gender_wise_distribution',
+      'religion_wise_distribution',
+      'education_wise_distribution',
+      'family_type_distribution',
+      'occupation_wise_distribution',
+      'house_type_distribution',
+      'drainage_distribution',
+      'waste_disposal_distribution',
+      'age_wise_distribution',
+      'problems_identified',
+      'common_problems_identified',
+      'community_diagnosis',
+    };
+
+    if (!chartableKeys.contains(arrayKey)) return const SizedBox.shrink();
+
+    final List<Map<String, dynamic>> items = [];
+    for (var element in listData) {
+      if (element is Map) {
+        final category = element['category']?.toString() ?? element['condition']?.toString() ?? element['health_problem']?.toString() ?? 'Unknown';
+        final pctStr = element['percentage']?.toString() ?? '0';
+        final pct = double.tryParse(pctStr) ?? 0.0;
+        final freqStr = element['frequency']?.toString() ?? element['number_of_problems_identified']?.toString() ?? '0';
+        final freq = double.tryParse(freqStr) ?? 0.0;
+        items.add({
+          'label': category,
+          'value': freq,
+          'percentage': pct,
+        });
+      }
+    }
+
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    items.sort((a, b) => (b['percentage'] as double).compareTo(a['percentage'] as double));
+
+    final List<Color> colors = [
+      Colors.blue.shade600,
+      Colors.teal.shade500,
+      Colors.orange.shade500,
+      Colors.purple.shade500,
+      Colors.red.shade500,
+      Colors.indigo.shade500,
+      Colors.pink.shade500,
+      Colors.amber.shade600,
+    ];
+
+    return Container(
+      margin: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            spreadRadius: 1,
+            blurRadius: 4,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.bar_chart, size: 20, color: Colors.blue.shade700),
+              const SizedBox(width: 8),
+              Text(
+                'Distribution Visualization',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blue.shade800),
+              ),
+            ],
+          ),
+          const Divider(),
+          const SizedBox(height: 8),
+          ...items.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final item = entry.value;
+            final label = item['label'];
+            final val = item['value'];
+            final pct = item['percentage'];
+            final color = colors[idx % colors.length];
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          label,
+                          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text('${val.toInt()} (${pct.toStringAsFixed(1)}%)', 
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.blueGrey)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Stack(
+                    children: [
+                      Container(
+                        height: 8,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      FractionallySizedBox(
+                        widthFactor: (pct / 100.0).clamp(0.0, 1.0),
+                        child: Container(
+                          height: 8,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [color, color.withOpacity(0.7)],
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
   }
 
   Widget _buildArrayItem(Map<String, dynamic> arrayField, List<dynamic> listData, int index, String arrayKey) {

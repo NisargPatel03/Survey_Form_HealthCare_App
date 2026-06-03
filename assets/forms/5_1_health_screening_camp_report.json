@@ -242,6 +242,12 @@
           }
         },
         {
+          "key": "total_problems_identified",
+          "label": "Total Numbers of Problems Identified",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "problems_identified",
           "label": "Frequency and Percentage of Problems Identified",
           "type": "array",

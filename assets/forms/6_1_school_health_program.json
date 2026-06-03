@@ -269,6 +269,12 @@
           }
         },
         {
+          "key": "total_problems_identified",
+          "label": "Total Numbers of Common Problems Identified Among School Children",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "common_problems_identified",
           "label": "Common Problems Identified Among School Children",
           "type": "array",

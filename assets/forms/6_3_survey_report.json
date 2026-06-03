@@ -175,6 +175,12 @@
           "required": false
         },
         {
+          "key": "total_gender",
+          "label": "Total Gender-wise Population",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "gender_wise_distribution",
           "label": "Table 2: Gender Wise Distribution",
           "type": "array",
@@ -210,6 +216,12 @@
           "required": false
         },
         {
+          "key": "total_religion",
+          "label": "Total Religion-wise Population",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "religion_wise_distribution",
           "label": "Table 3: Religion Wise Distribution",
           "type": "array",
@@ -239,6 +251,12 @@
           "label": "Table 3 Description",
           "type": "textarea",
           "required": false
+        },
+        {
+          "key": "total_education",
+          "label": "Total Education-wise Population",
+          "type": "number",
+          "required": true
         },
         {
           "key": "education_wise_distribution",
@@ -279,6 +297,12 @@
           "required": false
         },
         {
+          "key": "total_families",
+          "label": "Total Families",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "family_type_distribution",
           "label": "Table 5: Type of Family Wise Distribution",
           "type": "array",
@@ -313,6 +337,12 @@
           "label": "Table 5 Description",
           "type": "textarea",
           "required": false
+        },
+        {
+          "key": "total_occupations",
+          "label": "Total Occupations",
+          "type": "number",
+          "required": true
         },
         {
           "key": "occupation_wise_distribution",
@@ -358,6 +388,12 @@
       "section": "5. Environmental Characteristics",
       "fields": [
         {
+          "key": "total_houses",
+          "label": "Total Houses",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "house_type_distribution",
           "label": "Table 1: House Wise Distribution",
           "type": "array",
@@ -394,6 +430,12 @@
           "required": false
         },
         {
+          "key": "total_drainage_houses",
+          "label": "Total Houses (Drainage Assessment)",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "drainage_distribution",
           "label": "Table 2: Drainage Wise Distribution",
           "type": "array",
@@ -427,6 +469,12 @@
           "label": "Table 2 Description",
           "type": "textarea",
           "required": false
+        },
+        {
+          "key": "total_waste_houses",
+          "label": "Total Houses (Waste Disposal Assessment)",
+          "type": "number",
+          "required": true
         },
         {
           "key": "waste_disposal_distribution",
@@ -513,6 +561,12 @@
     {
       "section": "6. Community Diagnosis",
       "fields": [
+        {
+          "key": "total_community_problems",
+          "label": "Total Numbers of Community Problems Identified",
+          "type": "number",
+          "required": true
+        },
         {
           "key": "community_diagnosis",
           "label": "Community Diagnosis: Health Problems Identified",

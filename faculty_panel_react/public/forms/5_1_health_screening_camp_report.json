@@ -242,6 +242,12 @@
           }
         },
         {
+          "key": "total_problems_identified",
+          "label": "Total Numbers of Problems Identified",
+          "type": "number",
+          "required": true
+        },
+        {
           "key": "problems_identified",
           "label": "Frequency and Percentage of Problems Identified",
           "type": "array",
@@ -337,30 +343,29 @@
           "key": "marks",
           "label": "Evaluation Criteria",
           "type": "object",
-          "required": false,
           "properties": {
-            "introduction_and_objectives": {
-              "label": "Introduction and Objectives",
+            "intro": {
+              "label": "1. Introduction and Objectives",
               "max_marks": 5
             },
-            "planning_and_preparation": {
-              "label": "Planning and Preparation",
+            "planning": {
+              "label": "2. Planning and Preparation",
               "max_marks": 10
             },
-            "services_provided_during_camp": {
-              "label": "Services Provided During Camp",
+            "services": {
+              "label": "3. Services Provided During Camp",
               "max_marks": 10
             },
-            "camp_statistics_and_outcome": {
-              "label": "Camp Statistics and Outcome",
+            "statistics": {
+              "label": "4. Camp Statistics and Outcome",
               "max_marks": 10
             },
-            "nursing_student_role_participation": {
-              "label": "Nursing Student's Role and Participation",
+            "role": {
+              "label": "5. Nursing Student’s Role",
               "max_marks": 10
             },
-            "conclusion_and_references": {
-              "label": "Conclusion and References",
+            "conclusion": {
+              "label": "6. Conclusion and References",
               "max_marks": 5
             },
             "total": {
